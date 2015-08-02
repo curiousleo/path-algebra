@@ -1,0 +1,30 @@
+# Report.tex is generated from Report.lagda
+Report/Report.tex
+src/Everything.agda
+
+# Emacs
+*#
+*~
+\.#*
+
+# Agda
+*.agdai
+
+# LaTeX, BibLaTex, latexmk
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.dvi
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.pdf
+*.ptb
+*.run.xml
+*.tex.blg
+
+# XeLaTeX
+fonts.dir
+fonts.scale
