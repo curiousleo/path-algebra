@@ -82,8 +82,6 @@ correct zero i j with i F.≟ j
   ∎
       
 correct (suc n) i j =
-  let l′ = estimate (suc n)
-      l  = estimate n in
   begin
     l i j + (⨁[ q ← ⊤ ] (A[ i , q ] * l q j))
       ≈⟨ +-cong (correct n i j) refl ⟩
@@ -92,10 +90,18 @@ correct (suc n) i j =
     I[ i , j ] + ((⨁[ q ← ⊤ ] (A[ i , q ] * l q j)) + (⨁[ q ← ⊤ ] (A[ i , q ] * l q j)))
       ≈⟨ +-cong refl (+-idempotent _) ⟩
     I[ i , j ] + (⨁[ q ← ⊤ ] (A[ i , q ] * l q j))
-      ≈⟨ +-cong refl (fold-cong (λ q → A[ i , q ] * l q j) _ ⊤ (λ q _ → *-cong refl (correct n q j))) ⟩
-    I[ i , j ] + (⨁[ q ← ⊤ ] (A[ i , q ] * (I[ q , j ] + (⨁[ t ← ⊤ ] (A[ q , t ] * l t j)))))
-      ≈⟨ +-cong refl (fold-cong (λ q → A[ i , q ] * (I[ q , j ] + (⨁[ t ← ⊤ ] (A[ q , t ] * l t j)))) _ ⊤ (λ q _ → *-cong refl (+-cong {!!} refl))) ⟩
-    I[ i , j ] + (⨁[ q ← ⊤ ] (A[ i , q ] * (l q j + (⨁[ t ← ⊤ ] (A[ q , t ] * l t j)))))
-      ≡⟨⟩
+      ≈⟨ +-cong refl (fold-cong (λ q → A[ i , q ] * l q j) _ ⊤ (λ q _ → *-cong refl (lemma q))) ⟩
     I[ i , j ] + (⨁[ q ← ⊤ ] (A[ i , q ] * l′ q j))
   ∎
+  where
+    l′ = estimate (suc n)
+    l  = estimate n
+
+    lemma = λ q →
+      begin
+        l q j                  ≈⟨ correct n q j ⟩
+        I[ q , j ] + _         ≈⟨ +-cong refl (sym (+-idempotent _)) ⟩
+        I[ q , j ] + (_ + _)   ≈⟨ sym (+-assoc _ _ _) ⟩
+        (I[ q , j ] + _) + _   ≈⟨ +-cong (sym (correct n q j)) refl ⟩
+        l q j + (⨁[ t ← ⊤ ] (A[ q , t ] * l t j))
+      ∎
