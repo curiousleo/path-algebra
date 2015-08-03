@@ -49,7 +49,7 @@ record DijkstraAlgebra c ℓ : Set (suc (c ⊔ ℓ)) where
   field
     Carrier           : Set c
     _≈_               : Rel Carrier ℓ
-    _≟_              : Decidable _≈_
+    _≟_               : Decidable _≈_
     _+_               : Op₂ Carrier
     _*_               : Op₂ Carrier
     0#                : Carrier
