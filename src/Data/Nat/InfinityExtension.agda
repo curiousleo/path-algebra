@@ -13,11 +13,13 @@ data ℕ∞ : Set where
   ↑ : ℕ → ℕ∞
   ∞ : ℕ∞
 
+-- Minimum
 _⊓_ : ℕ∞ → ℕ∞ → ℕ∞
 _⊓_ (↑ m) (↑ n) = ↑ (m Nat.⊓ n)
 _⊓_ (↑ m) ∞     = ↑ m
 _⊓_ ∞     n     = n
 
+-- Maximum
 _⊔_ : ℕ∞ → ℕ∞ → ℕ∞
 ↑ m ⊔ ↑ n = ↑ (m Nat.⊔ n)
 ↑ m ⊔ ∞   = ∞
