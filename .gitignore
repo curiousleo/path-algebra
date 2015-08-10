@@ -1,4 +1,4 @@
-# Report.tex is generated from Report.lagda
+.dir-locals.el
 pub/itp16.tex
 pub/agda.sty
 pub/llncs.cls
