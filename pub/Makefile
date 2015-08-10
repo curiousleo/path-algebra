@@ -1,6 +1,6 @@
 AGDA=agda
-AFLAGS=-i../lib/agda-stdlib/src -i../src -i. --latex --latex-dir=. --allow-unsolved-metas
-LATEX=latexmk -xelatex
+AFLAGS=-i../lib/agda-stdlib/src -i../src -i. --latex --latex-dir=.
+LATEX=latexmk -pdf
 
 LLNCSZIP=llncs2e.zip
 
@@ -25,4 +25,4 @@ clean:
 purge: clean
 	rm -f agda.sty llncs.cls
 
-.PHONY: clean purge
+.PHONY: all clean purge
