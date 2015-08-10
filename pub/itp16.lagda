@@ -4,7 +4,7 @@
 
 \begin{document}
 
-\title{A verified implementation of Dijkstra's algorithm}
+\title{A Verified Implementation of\\Dijkstra's Algorithm}
 \titlerunning{Dijkstra's algorithm}
 \author{Leonhard Markert \and Timothy Griffin \and Dominic P.~Mulligan}
 %\authorrunning{Leonhard Markert et al.}
