@@ -4,18 +4,18 @@
 -- Definition of an abstract version of Dijkstra's algorithm
 ------------------------------------------------------------------------
 
-open import Dijkstra.Algebra
-open import Dijkstra.Adjacency
+open import Algebra.Path.Structure
+open import Data.Matrix.Adjacency
 
 open import Data.Fin using (Fin; zero; suc)
 open import Data.Nat using (ℕ; zero; suc; _∸_; _≤_)
 
 module Dijkstra.Algorithm
-    {c ℓ} (alg : DijkstraAlgebra c ℓ)
+    {c ℓ} (alg : PathAlgebra c ℓ)
     {n} (i : Fin (suc n)) (adj : Adj alg (suc n))
     where
 
-open import Dijkstra.Algebra.Properties
+open import Algebra.Path.Properties
 
 open import Data.Fin.Subset
 import Data.Fin.Subset.Extra as Sub
@@ -34,8 +34,8 @@ import Relation.Binary.PropositionalEquality as P
 open P using (_≡_)
 
 -- Bring the algebra's operators, constants and properties into scope
-open DijkstraAlgebra alg renaming (Carrier to Weight)
-open RequiresDijkstraAlgebra alg using (decTotalOrderᴸ)
+open PathAlgebra alg renaming (Carrier to Weight)
+open RequiresPathAlgebra alg using (decTotalOrderᴸ)
 
 -- This decidable total order is used to sort vertices by their
 -- current estimate

@@ -4,7 +4,7 @@
 -- Dijkstra algebra definition
 ------------------------------------------------------------------------
 
-module Dijkstra.Algebra where
+module Algebra.Path.Structure where
 
 open import Algebra public
 open import Algebra.Structures
@@ -17,7 +17,7 @@ open import Function
 open import Level
 open import Relation.Binary
 
-record IsDijkstraAlgebra {a ℓ} {A : Set a} (≈ : Rel A ℓ)
+record IsPathAlgebra {a ℓ} {A : Set a} (≈ : Rel A ℓ)
                          (+ * : Op₂ A) (0# 1# : A) : Set (a ⊔ ℓ) where
   open FunctionProperties ≈
   open MoreFunctionProperties ≈
@@ -42,7 +42,7 @@ record IsDijkstraAlgebra {a ℓ} {A : Set a} (≈ : Rel A ℓ)
                   )
 
 
-record DijkstraAlgebra c ℓ : Set (suc (c ⊔ ℓ)) where
+record PathAlgebra c ℓ : Set (suc (c ⊔ ℓ)) where
   infixl 7 _*_
   infixl 6 _+_
   infix  4 _≈_
@@ -54,9 +54,9 @@ record DijkstraAlgebra c ℓ : Set (suc (c ⊔ ℓ)) where
     _*_               : Op₂ Carrier
     0#                : Carrier
     1#                : Carrier
-    isDijkstraAlgebra : IsDijkstraAlgebra _≈_ _+_ _*_ 0# 1#
+    isPathAlgebra : IsPathAlgebra _≈_ _+_ _*_ 0# 1#
 
-  open IsDijkstraAlgebra isDijkstraAlgebra public
+  open IsPathAlgebra isPathAlgebra public
 
   decSetoid : DecSetoid c ℓ
   decSetoid =

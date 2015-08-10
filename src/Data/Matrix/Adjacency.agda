@@ -1,7 +1,7 @@
-open import Dijkstra.Algebra
+open import Algebra.Path.Structure
 
-module Dijkstra.Adjacency
-       {c ℓ} (alg : DijkstraAlgebra c ℓ)
+module Data.Matrix.Adjacency
+       {c ℓ} (alg : PathAlgebra c ℓ)
        where
 
 open import Level
@@ -13,7 +13,7 @@ open import Data.Nat.Base using (ℕ)
 import Relation.Binary.PropositionalEquality as P
 open P using (_≡_)
 
-open DijkstraAlgebra alg renaming (Carrier to Weight)
+open PathAlgebra alg renaming (Carrier to Weight)
 
 -- An adjacency matrix is a square matrix of weights whose diagonal
 -- entries are equivalent to 1#

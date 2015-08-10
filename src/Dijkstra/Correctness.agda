@@ -6,8 +6,8 @@
 -- of one matrix row
 ------------------------------------------------------------------------
 
-open import Dijkstra.Algebra
-import Dijkstra.Adjacency as Adj
+open import Algebra.Path.Structure
+import Data.Matrix.Adjacency as Adj
 
 open import Data.Fin using (Fin; zero; suc)
 open import Data.Nat
@@ -15,11 +15,11 @@ open import Data.Nat
   renaming (_≤_ to _N≤_)
 
 module Dijkstra.Correctness
-    {c ℓ} (alg : DijkstraAlgebra c ℓ)
+    {c ℓ} (alg : PathAlgebra c ℓ)
     {n} (i : Fin (suc n)) (adj : Adj.Adj alg (suc n))
     where
 
-open import Dijkstra.Algebra.Properties
+open import Algebra.Path.Properties
 open import Dijkstra.Algorithm alg i adj
 open import Dijkstra.Properties alg i adj
 
@@ -46,8 +46,8 @@ open P.≡-Reasoning
 
 open Adj alg
 open DecTotalOrder Data.Nat.decTotalOrder using () renaming (refl to ≤-refl)
-open DijkstraAlgebra alg renaming (Carrier to Weight)
-open RequiresDijkstraAlgebra alg
+open PathAlgebra alg renaming (Carrier to Weight)
+open RequiresPathAlgebra alg
 open DecTotalOrder decTotalOrderᴸ using (_≤_)
 open import Dijkstra.EstimateOrder decTotalOrderᴸ using (estimateOrder)
 open import Dijkstra.Bigop +-commutativeMonoid
