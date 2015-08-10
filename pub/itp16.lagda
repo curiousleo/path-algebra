@@ -1,6 +1,7 @@
 \documentclass{llncs}
 %
 \usepackage{makeidx}  % allows for indexgeneration
+\usepackage{agda}
 %
 \begin{document}
 
@@ -50,6 +51,11 @@ the convex case; that is, we shall study the boundary-value problem
 \end{eqnarray*}
 with $H(t,\cdot)$ a convex function of $x$, going to $+\infty$ when
 $\left\|x\right\| \to \infty$.
+
+\begin{code}
+data Bool : Set where
+  true false : Bool
+\end{code}
 
 %
 \subsection{Autonomous Systems}
