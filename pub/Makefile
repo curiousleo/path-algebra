@@ -18,6 +18,6 @@ llncs.cls:
 	rm llncs2e.zip
 
 clean:
-	rm itp16.{aux,fls,log,agdai,fdb_latexmk,pdf}
+	rm -f itp16.{aux,fls,log,agdai,fdb_latexmk,pdf}
 
 .PHONY: clean
