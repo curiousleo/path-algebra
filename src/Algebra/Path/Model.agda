@@ -4,9 +4,9 @@
 -- A model Dijkstra algebra
 ------------------------------------------------------------------------
 
-module Dijkstra.Algebra.Model where
+module Algebra.Path.Model where
 
-open import Dijkstra.Algebra
+open import Algebra.Path.Structure
 
 open import Data.Nat.InfinityExtension
 open import Data.Nat.InfinityExtension.Properties

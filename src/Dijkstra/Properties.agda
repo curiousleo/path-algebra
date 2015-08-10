@@ -4,8 +4,8 @@
 -- Properties of Dijkstra's algorithm
 ------------------------------------------------------------------------
 
-open import Dijkstra.Algebra
-open import Dijkstra.Adjacency
+open import Algebra.Path.Structure
+open import Data.Matrix.Adjacency
 
 open import Data.Fin using (Fin)
 open import Data.Nat
@@ -13,11 +13,11 @@ open import Data.Nat
   renaming (_≤_ to _N≤_)
 
 module Dijkstra.Properties
-    {c ℓ} (alg : DijkstraAlgebra c ℓ)
+    {c ℓ} (alg : PathAlgebra c ℓ)
     {n} (i : Fin (suc n)) (adj : Adj alg (suc n))
     where
 
-open import Dijkstra.Algebra.Properties
+open import Algebra.Path.Properties
 open import Dijkstra.Algorithm alg i adj
 
 open import Data.Fin.Subset
@@ -47,15 +47,15 @@ open P.≡-Reasoning
   renaming (begin_ to start_; _≡⟨_⟩_ to _≣⟨_⟩_; _∎ to _■)
 
 -- Bring the algebra's operators, constants and properties into scope
-open DijkstraAlgebra alg renaming (Carrier to Weight)
-open RequiresDijkstraAlgebra alg
+open PathAlgebra alg renaming (Carrier to Weight)
+open RequiresPathAlgebra alg
 
 -- This decidable total order is used to sort vertices by their
 -- current estimate
 open DecTotalOrder decTotalOrderᴸ using (_≤_)
 open import Dijkstra.EstimateOrder decTotalOrderᴸ using (estimateOrder)
 
--- Setoid reasoning for the DijkstraAlgebra setoid
+-- Setoid reasoning for the PathAlgebra setoid
 open EqR setoid
 
 -- The set of visited vertices is never empty

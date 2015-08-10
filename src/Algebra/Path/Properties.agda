@@ -1,10 +1,10 @@
 ------------------------------------------------------------------------
--- Dijkstra correctness proof
+-- Path correctness proof
 --
--- Properties of Dijkstra algebras
+-- Properties of Path algebras
 ------------------------------------------------------------------------
 
-module Dijkstra.Algebra.Properties where
+module Algebra.Path.Properties where
 
 open import Data.Empty
 open import Data.Product
@@ -19,7 +19,7 @@ import Algebra.MoreFunctionProperties as MoreFunctionProperties
 
 open import Relation.Nullary
 
-open import Dijkstra.Algebra
+open import Algebra.Path.Structure
 
 open import Function.Equality using (module Π)
 open import Function.Equivalence using (_⇔_; equivalence; module Equivalence)
@@ -162,10 +162,10 @@ module RequiresCommutativeMonoid
       ... | inj₁ ≈x = inj₂ (x , (trans (sym ≈x) (comm _ _)))
       ... | inj₂ ≈y = inj₁ (y , (sym ≈y))
 
-module RequiresDijkstraAlgebra
-       {c ℓ} (dijkstra : DijkstraAlgebra c ℓ) where
+module RequiresPathAlgebra
+       {c ℓ} (dijkstra : PathAlgebra c ℓ) where
 
-  open DijkstraAlgebra dijkstra
+  open PathAlgebra dijkstra
   open FunctionProperties _≈_
   open MoreFunctionProperties _≈_
   open import Relation.Binary.EqReasoning setoid
