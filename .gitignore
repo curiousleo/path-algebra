@@ -1,5 +1,7 @@
 # Report.tex is generated from Report.lagda
-Report/Report.tex
+pub/itp16.tex
+pub/agda.sty
+pub/llncs.cls
 src/Everything.agda
 
 # Emacs
