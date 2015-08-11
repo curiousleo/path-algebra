@@ -13,6 +13,9 @@
 \AgdaHide{
 \begin{code}
 module itp16 where
+
+open import Function     -- stdlib configured?
+open import Data.Matrix  -- project set up correctly?
 \end{code}
 }
 
@@ -62,17 +65,6 @@ Agda~\cite{norell_dependently_2009}
 
 \subsection{Sorted Vectors}
 \label{subsect.sorted.vectors}
-
-\begin{code}
--- Make sure the standard library is configured correctly
-open import Function
-
--- Make sure the project code can be imported
-open import Data.Matrix
-
-data Test : Set where
-  test : Test
-\end{code}
 
 \subsection{Dijkstra Algebras and Their Models}
 \label{subsect.dijkstra.algebras.and.their.models}
