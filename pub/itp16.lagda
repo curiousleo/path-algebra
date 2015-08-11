@@ -66,6 +66,42 @@ Agda~\cite{norell_dependently_2009}
 \subsection{Sorted Vectors}
 \label{subsect.sorted.vectors}
 
+\begin{code}
+open import Relation.Binary
+
+module Sorted
+  {a ℓ₁ ℓ₂}
+  (totalOrder : DecTotalOrder a ℓ₁ ℓ₂)
+  where
+
+open import Level
+
+open import Data.Empty
+open import Data.Fin
+  using (Fin; zero; suc)
+open import Data.Nat
+  using (ℕ; zero; suc; _+_)
+open import Data.Nat.Properties.Simple
+open import Data.Product
+open import Data.Sum
+open import Data.Unit
+  hiding (_≤_; _≤?_; total; _≟_)
+import Data.Vec as V
+open V
+  using (Vec; foldr)
+  renaming ([] to []′; _∷_ to _∷′_; _++_ to _++′_)
+
+open import Function
+
+open import Relation.Binary.PropositionalEquality
+  hiding (isEquivalence; [_])
+
+open import Relation.Nullary
+
+open DecTotalOrder totalOrder
+  renaming (trans to ≤-trans; refl to ≤-refl)
+\end{code}
+
 \subsection{Dijkstra Algebras and Their Models}
 \label{subsect.dijkstra.algebras.and.their.models}
 
