@@ -53,6 +53,12 @@ There will be two blank lines before and after the Abstract. \dots
 \label{subsect.sorted.vectors}
 
 \begin{code}
+-- Make sure the standard library is configured correctly
+open import Function
+
+-- Make sure the project code can be imported
+open import Data.Matrix
+
 data Test : Set where
   test : Test
 \end{code}
