@@ -1,8 +1,4 @@
-include llncs.mk
-
-LLNCSDEPS = $(patsubst %, pub/%, $(LLNCSFILES))
-
-all: deps .dir-locals.el $(LLNCSDEPS)
+all: deps llncs .dir-locals.el
 
 deps:
 	git submodule update --init
@@ -11,8 +7,7 @@ deps:
 	@echo "((agda2-mode" > $@
 	@echo " (agda2-include-dirs \".\" \"$(CURDIR)/lib/agda-stdlib/src\" \"$(CURDIR)/src\")))" >> $@
 
-$(LLNCSDEPS):
-	$(MAKE) -C pub $(patsubst pub/%, %, $@)
+llncs:
+	$(MAKE) -C pub llncs
 
-.NOTPARALLEL: $(LLNCSDEPS)
 .PHONY: all deps

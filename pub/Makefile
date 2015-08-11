@@ -1,17 +1,19 @@
 include ../agda.mk
-include ../llncs.mk
 
 AFLAGS += --latex --latex-dir=.
 LATEX = latexmk
 LFLAGS = -pdf -silent
 
+LLNCSFILES = llncs.cls splncs03.bst
 LLNCSZIP = llncs2e.zip
 
-itp16.pdf: itp16.tex $(LLNCSFILES)
+itp16.pdf: itp16.tex llncs
 	$(LATEX) $(LFLAGS) $<
 
 itp16.tex: itp16.lagda
 	$(AGDA) $(AFLAGS) $<
+
+llncs: $(LLNCSFILES)
 
 $(LLNCSFILES): $(LLNCSZIP)
 	unzip -DD -u -q $(LLNCSZIP) $@
@@ -22,7 +24,7 @@ $(LLNCSZIP):
 	     -o $(LLNCSZIP)
 
 clean:
-	rm -f itp16.{tex,aux,fls,log,agdai,fdb_latexmk,pdf,ptb}
+	rm -f itp16.{tex,aux,bbl,blg,fls,log,out,agdai,fdb_latexmk,pdf,ptb}
 
 purge: clean
 	rm -f agda.sty $(LLNCSFILES) $(LLNCSZIP)
