@@ -6,7 +6,7 @@
 \usepackage[colorlinks]{hyperref}
 \usepackage{microtype}
 
-\bibliographystyle{alpha}
+\bibliographystyle{splncs03}
 
 \begin{document}
 
