@@ -1,0 +1,970 @@
+
+@inproceedings{abel_wellfounded_2013,
+	address = {New York, NY},
+	title = {Wellfounded {Recursion} with {Copatterns}: {A} {Unified} {Approach} to {Termination} and {Productivity}},
+	isbn = {978-1-4503-2326-0},
+	shorttitle = {Wellfounded {Recursion} with {Copatterns}},
+	url = {http://doi.acm.org/10.1145/2500365.2500591},
+	doi = {10.1145/2500365.2500591},
+	abstract = {In this paper, we study strong normalization of a core language based on System F-omega which supports programming with finite and infinite structures. Building on our prior work, finite data such as finite lists and trees are defined via constructors and manipulated via pattern matching, while infinite data such as streams and infinite trees is defined by observations and synthesized via copattern matching. In this work, we take a type-based approach to strong normalization by tracking size information about finite and infinite data in the type. This guarantees compositionality. More importantly, the duality of pattern and copatterns provide a unifying semantic concept which allows us for the first time to elegantly and uniformly support both well-founded induction and coinduction by mere rewriting. The strong normalization proof is structured around Girard's reducibility candidates. As such our system allows for non-determinism and does not rely on coverage. Since System F-omega is general enough that it can be the target of compilation for the Calculus of Constructions, this work is a significant step towards representing observation-centric infinite data in proof assistants such as Coq and Agda.},
+	urldate = {2014-12-11},
+	booktitle = {Proceedings of the 18th {ACM} {SIGPLAN} {International} {Conference} on {Functional} {Programming}},
+	publisher = {ACM},
+	author = {Abel, Andreas M. and Pientka, Brigitte},
+	year = {2013},
+	keywords = {coinduction, pattern matching, productivity, recursion, Strong normalization, type-based termination},
+	pages = {185--196},
+	file = {ACM Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/IUA44FKE/Abel and Pientka - 2013 - Wellfounded Recursion with Copatterns A Unified A.pdf:application/pdf}
+}
+
+@inproceedings{hinze_unifying_2013,
+	address = {New York, NY, USA},
+	title = {Unifying {Structured} {Recursion} {Schemes}},
+	isbn = {978-1-4503-2326-0},
+	url = {http://doi.acm.org/10.1145/2500365.2500578},
+	doi = {10.1145/2500365.2500578},
+	abstract = {Folds over inductive datatypes are well understood and widely used. In their plain form, they are quite restricted; but many disparate generalisations have been proposed that enjoy similar calculational benefits. There have also been attempts to unify the various generalisations: two prominent such unifications are the 'recursion schemes from comonads' of Uustalu, Vene and Pardo, and our own 'adjoint folds'. Until now, these two unified schemes have appeared incompatible. We show that this appearance is illusory: in fact, adjoint folds subsume recursion schemes from comonads. The proof of this claim involves standard constructions in category theory that are nevertheless not well known in functional programming: Eilenberg-Moore categories and bialgebras.},
+	urldate = {2014-12-19},
+	booktitle = {Proceedings of the 18th {ACM} {SIGPLAN} {International} {Conference} on {Functional} {Programming}},
+	publisher = {ACM},
+	author = {Hinze, Ralf and Wu, Nicolas and Gibbons, Jeremy},
+	year = {2013},
+	keywords = {adjunctions, bialgebras, comonads, distributive laws, recursion schemes},
+	pages = {209--220},
+	file = {ACM Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/32G2K9PN/Hinze et al. - 2013 - Unifying Structured Recursion Schemes.pdf:application/pdf}
+}
+
+@incollection{howard_formulae-as-types_1980,
+	address = {London; New York},
+	title = {The {Formulæ}-as-{Types} {Notion} of {Construction}},
+	abstract = {Original paper manuscript from 1969},
+	booktitle = {To {H}. {B}. {Curry}: {Essays} on {Combinatory} {Logic}, {Lambda} {Calculus} and {Formalism}},
+	publisher = {Academic Press},
+	author = {Howard, William A.},
+	editor = {Seldin, Jonathan P. and Hindley, Roger},
+	year = {1980},
+	pages = {479--490}
+}
+
+@book{bertot_interactive_2004,
+	address = {Berlin; Heidelberg},
+	series = {Texts in {Theoretical} {Computer} {Science}: {An} {EATCS} {Series}},
+	title = {Interactive {Theorem} {Proving} and {Program} {Development}},
+	isbn = {978-3-642-05880-6 978-3-662-07964-5},
+	url = {http://link.springer.com/10.1007/978-3-662-07964-5},
+	urldate = {2014-11-12},
+	publisher = {Springer},
+	author = {Bertot, Yves and Castéran, Pierre},
+	editor = {Brauer, Wilfried and Rozenberg, Grzegorz and Salomaa, Arto},
+	year = {2004}
+}
+
+@book{graham_concrete_1994,
+	address = {Reading, Mass},
+	edition = {2nd ed},
+	title = {Concrete mathematics: a foundation for computer science},
+	isbn = {0-201-55802-5},
+	shorttitle = {Concrete mathematics},
+	publisher = {Addison-Wesley},
+	author = {Graham, Ronald L.},
+	collaborator = {Knuth, Donald Ervin and Patashnik, Oren},
+	year = {1994},
+	keywords = {Computer science, Mathematics}
+}
+
+@article{abbott_containers:_2005,
+	title = {Containers: {Constructing} strictly positive types},
+	volume = {342},
+	issn = {0304-3975},
+	shorttitle = {Containers},
+	url = {http://www.sciencedirect.com/science/article/pii/S0304397505003373},
+	doi = {10.1016/j.tcs.2005.06.002},
+	abstract = {We introduce the notion of a Martin-Löf category—a locally cartesian closed category with disjoint coproducts and initial algebras of container functors (the categorical analogue of W-types)—and then establish that nested strictly positive inductive and coinductive types, which we call strictly positive types, exist in any Martin-Löf category.
+
+Central to our development are the notions of containers and container functors. These provide a new conceptual analysis of data structures and polymorphic functions by exploiting dependent type theory as a convenient way to define constructions in Martin-Löf categories. We also show that morphisms between containers can be full and faithfully interpreted as polymorphic functions (i.e. natural transformations) and that, in the presence of W-types, all strictly positive types (including nested inductive and coinductive types) give rise to containers.},
+	number = {1},
+	urldate = {2015-02-09},
+	journal = {Theoretical Computer Science},
+	author = {Abbott, Michael and Altenkirch, Thorsten and Ghani, Neil},
+	month = sep,
+	year = {2005},
+	keywords = {category theory, coinduction, Container functors, Final coalgebras, Induction, Initial algebras, Type theory, W-Types},
+	pages = {3--27},
+	file = {ScienceDirect Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/ADPV998W/Abbott et al. - 2005 - Containers Constructing strictly positive types.pdf:application/pdf;ScienceDirect Snapshot:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/IVU9X8NI/S0304397505003373.html:text/html}
+}
+
+@incollection{abbott_derivatives_2003,
+	title = {Derivatives of {Containers}},
+	copyright = {©2003 Springer-Verlag Berlin Heidelberg},
+	isbn = {978-3-540-40332-6 978-3-540-44904-1},
+	url = {http://link.springer.com/chapter/10.1007/3-540-44904-3_2},
+	abstract = {We are investigating McBride’s idea that the type of one-hole contexts are the formal derivative of a functor from a categorical perspective. Exploiting our recent work on containers we are able to characterise derivatives by a universal property and show that the laws of calculus including a rule for initial algebras as presented by McBride hold — hence the differentiable containers include those generated by polynomials and least fixpoints. Finally, we discuss abstract containers (i.e. quotients of containers) — this includes a container which plays the role of e x in calculus by being its own derivative.},
+	language = {en},
+	urldate = {2014-11-02},
+	booktitle = {Typed {Lambda} {Calculi} and {Applications}},
+	publisher = {Springer Berlin Heidelberg},
+	author = {Abbott, Michael and Altenkirch, Thorsten and Ghani, Neil and McBride, Conor},
+	editor = {Hofmann, Martin},
+	month = jan,
+	year = {2003},
+	keywords = {Logics and Meanings of Programs, Mathematical Logic and Formal Languages, Programming Languages, Compilers, Interpreters, Programming Techniques},
+	pages = {16--30},
+	file = {Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/9VIFEFQN/Abbott et al. - 2003 - Derivatives of Containers.pdf:application/pdf;Snapshot:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/PHQX3TF5/3-540-44904-3_2.html:text/html}
+}
+
+@article{griffin_stable_2002,
+	title = {The {Stable} {Paths} {Problem} and {Interdomain} {Routing}},
+	volume = {10},
+	issn = {1063-6692},
+	url = {http://dl.acm.org/citation.cfm?id=508325.508332},
+	abstract = {Dynamic routing protocols such as RIP and OSPF essentially implement distributed algorithms for solving the shortest paths problem. The border gateway protocol (BGP) is currently the only interdomain routing protocol deployed in the Internet. BGP does not solve a shortest paths problem since any interdomain protocol is required to allow policy-based metrics to override distance-based metrics and enable autonomous systems to independently define their routing policies with little or no global coordination. It is then natural to ask if BGP can be viewed as a distributed algorithm for solving some fundamental problem. We introduce the stable paths problem and show that BGP can be viewed as a distributed algorithm for solving this problem. Unlike a shortest path tree, such a solution does not represent a global optimum, but rather an equilibrium point in which each node is assigned its local optimum.We study the stable paths problem using a derived structure called a dispute wheel, representing conflicting routing policies at various nodes. We show that if no dispute wheel can be constructed, then there exists a unique solution for the stable paths problem. We define the simple path-vector protocol (SPVP), a distributed algorithm for solving the stable paths problem. SPVP is intended to capture the dynamic behavior of BGP at an abstract level. If SPVP converges, then the resulting state corresponds to a stable paths solution. If there is no solution, then SPVP always diverges. In fact, SPVP can even diverge when a solution exists. We show that SPVP will converge to the unique solution of an instance of the stable paths problem if no dispute wheel exists.},
+	number = {2},
+	urldate = {2014-11-07},
+	journal = {IEEE/ACM Trans. Netw.},
+	author = {Griffin, Timothy G. and Shepherd, F. Bruce and Wilfong, Gordon},
+	month = apr,
+	year = {2002},
+	keywords = {BGP, Border Gateway Protocol, interdomain routing, internet routing, path vector protocols, stable routing},
+	pages = {232--243},
+	file = {ACM Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/75FJUJDM/Griffin et al. - 2002 - The Stable Paths Problem and Interdomain Routing.pdf:application/pdf}
+}
+
+@book{luo_computation_1994,
+	address = {Oxford; New York},
+	series = {International series of monographs on computer science},
+	title = {Computation and {Reasoning}: {A} {Type} {Theory} for {Computer} {Science}},
+	isbn = {0-19-853835-9},
+	shorttitle = {Computation and reasoning},
+	abstract = {The book develops a type theory, studies its properties, and explains its uses in applications to computer science.  In particular, it shows how the study of type theory may offer a powerful and uniform language for programming, program specification and development, and logical reasoning.  The type theory developed here reflects a conceptual distinction between logical propositions and computational data types.  Starting from introducing the basic concepts, the author explains intuitively the meaning and use of the type-theoretic language with proof-theoretic justifications, and discusses various issues in the study of type theory.  The pragmatic use of the language is illustrated by developing an approach to specification and data refinement in type theory, which supports modular development of spcdifications, programs and proofs.},
+	language = {English},
+	publisher = {Oxford University Press},
+	author = {Luo, Zhaohui},
+	month = mar,
+	year = {1994},
+	keywords = {Computer science},
+	file = {[Luo_Z.]_Computation_and_reasoning._A_type_theory_(BookFi.org).djvu:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/8J2463AD/[Luo_Z.]_Computation_and_reasoning._A_type_theory_(BookFi.org).djvu:image/vnd.djvu}
+}
+
+@inproceedings{washburn_boxes_2003,
+	address = {New York, NY, USA},
+	title = {Boxes {Go} {Bananas}: {Encoding} {Higher}-order {Abstract} {Syntax} with {Parametric} {Polymorphism}},
+	isbn = {1-58113-756-7},
+	shorttitle = {Boxes {Go} {Bananas}},
+	url = {http://doi.acm.org/10.1145/944705.944728},
+	doi = {10.1145/944705.944728},
+	abstract = {Higher-order abstract syntax is a simple technique for implementing languages with functional programming. Object variables and binders are implemented by variables and binders in the host language. By using this technique, one can avoid implementing common and tricky routines dealing with variables, such as capture-avoiding substitution. However, despite the advantages this technique provides, it is not commonly used because it is difficult to write sound elimination forms (such as folds or catamorphisms) for higher-order abstract syntax. To fold over such a datatype, one must either simultaneously define an inverse operation (which may not exist) or show that all functions embedded in the datatype are parametri.In this paper, we show how first-class polymorphism can be used to guarantee the parametricity of functions embedded in higher-order abstract syntax. With this restriction, we implement a library of iteration operators over data-structures containing functionals. From this implementation, we derive "fusion laws" that functional programmers may use to reason about the iteration operator. Finally, we show how this use of parametric polymorphism corresponds to the Schürmann, Despeyroux and Pfenning method of enforcing parametricity through modal types. We do so by using this library to give a sound and complete encoding of their calculus into System F?. This encoding can serve as a starting point for reasoning about higher-order structures in polymorphic languages.},
+	urldate = {2014-11-02},
+	booktitle = {Proceedings of the {Eighth} {ACM} {SIGPLAN} {International} {Conference} on {Functional} {Programming}},
+	publisher = {ACM},
+	author = {Washburn, Geoffrey and Weirich, Stephanie},
+	year = {2003},
+	keywords = {catamorphism, higher-order abstract syntax, modal type system, parametricity, parametric polymorphism},
+	pages = {249--262},
+	file = {ACM Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/QTXE38JS/Washburn and Weirich - 2003 - Boxes Go Bananas Encoding Higher-order Abstract S.pdf:application/pdf}
+}
+
+@article{erwig_inductive_2001,
+	title = {Inductive graphs and functional graph algorithms},
+	volume = {11},
+	issn = {1469-7653},
+	url = {http://journals.cambridge.org/article_S0956796801004075},
+	doi = {10.1017/S0956796801004075},
+	abstract = {We propose a new style of writing graph algorithms in functional languages which is based on an alternative view of graphs as inductively defined data types. We show how this graph model can be implemented efficiently, and then we demonstrate how graph algorithms can be succinctly given by recursive function definitions based on the inductive graph view. We also regard this as a contribution to the teaching of algorithms and data structures in functional languages since we can use the functional-style graph algorithms instead of the imperative algorithms that are dominant today.},
+	number = {05},
+	urldate = {2014-11-01},
+	journal = {Journal of Functional Programming},
+	author = {Erwig, Martin},
+	month = sep,
+	year = {2001},
+	pages = {467--492},
+	file = {Cambridge Journals Snapshot:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/MRJFUUUH/displayAbstract.html:text/html;Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/DXK5HHJ3/Erwig - 2001 - Inductive graphs and functional graph algorithms.pdf:application/pdf}
+}
+
+@article{mcbride_applicative_2008,
+	title = {Applicative programming with effects},
+	volume = {18},
+	issn = {1469-7653},
+	url = {http://journals.cambridge.org/article_S0956796807006326},
+	doi = {10.1017/S0956796807006326},
+	abstract = {In this article, we introduce Applicative functors – an abstract characterisation of an applicative style of effectful programming, weaker than Monads and hence more widespread. Indeed, it is the ubiquity of this programming pattern that drew us to the abstraction. We retrace our steps in this article, introducing the applicative pattern by diverse examples, then abstracting it to define the Applicative type class and introducing a bracket notation that interprets the normal application syntax in the idiom of an Applicative functor. Furthermore, we develop the properties of applicative functors and the generic operations they support. We close by identifying the categorical structure of applicative functors and examining their relationship both with Monads and with Arrow.},
+	number = {01},
+	urldate = {2015-03-11},
+	journal = {Journal of Functional Programming},
+	author = {McBride, Conor and Paterson, Ross},
+	month = jan,
+	year = {2008},
+	pages = {1--13},
+	file = {Cambridge Journals Snapshot:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/MTP9GESV/displayAbstract.html:text/html;Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/TWCJ7ZJB/Mcbride and Paterson - 2008 - Applicative programming with effects.pdf:application/pdf}
+}
+
+@phdthesis{mcbride_dependently_1999,
+	title = {Dependently {Typed} {Functional} {Programs} and their {Proofs}},
+	abstract = {Available from http://www.lfcs.informatics.ed.ac.uk/reports/00/ECS-LFCS-00-419/},
+	school = {University of Edinburgh},
+	author = {McBride, Conor},
+	year = {1999},
+	file = {ECS-LFCS-00-419.pdf:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/T3JGDRBJ/ECS-LFCS-00-419.pdf:application/pdf}
+}
+
+@article{butler_pvs_1998,
+	title = {A {PVS} {Graph} {Theory} {Library}},
+	author = {Butler, Ricky W and Sjogren, Jon A},
+	year = {1998}
+}
+
+@phdthesis{girard_interpretation_1972,
+	address = {Paris},
+	type = {Doctoral thesis},
+	title = {Interprétation fonctionnelle et élimination des coupures de l’arithmétique d’ordre supérieur},
+	school = {Université Paris 7},
+	author = {Girard, Jean-Yves},
+	year = {1972}
+}
+
+@article{gonthier_introduction_2010,
+	title = {An introduction to small scale reflection in {Coq}},
+	volume = {3},
+	issn = {1972-5787},
+	url = {http://jfr.unibo.it/article/view/1979},
+	abstract = {This tutorial presents the SSReflect extension to the Coq system. This extension consists of an extension to the Coq language of script, and of a set of libraries, originating from the formal proof of the Four Color theorem. This tutorial proposes a guided tour in some of the basic libraries distributed in the SSReflect package. It focuses on the application of the small scale reflection methodology to the formalization of finite objects in intuitionistic type theory.},
+	number = {2},
+	journal = {Journal of Formalized Reasoning},
+	author = {Gonthier, Georges and Mahboubi, Assia},
+	year = {2010},
+	pages = {95--152}
+}
+
+@article{lehmann_algebraic_1981,
+	title = {Algebraic specification of data types: {A} synthetic approach},
+	volume = {14},
+	issn = {0025-5661, 1433-0490},
+	shorttitle = {Algebraic specification of data types},
+	url = {http://link.springer.com/article/10.1007/BF01752392},
+	doi = {10.1007/BF01752392},
+	abstract = {A mathematical interpretation is given to the notion of a data type, which allows procedural data types and circularly defined data types. This interpretation seems to provide a good model for what most computer scientists would call data types, data structures, types, modes, clusters or classes. The spirit of this paper is that of McCarthy [43] and Hoare [18]. The mathematical treatment is the conjunction of the ideas of Scott on the solution of domain equations [34], [35], and [36] and the initiality property noticed by the ADJ group (ADJ [2] and [3]). The present work adds operations to the data types proposed by Scott and proposes an alternative to the equational specifications proposed by Guttag [14], Guttag and Horning [15] and ADJ [2]. The advantages of such a mathematical interpretation are the following: throwing light on some ill-understood constructs in high-level programming languages, easing the task of writing correct programs and making possible proofs of correctness for programs or implementations.},
+	language = {en},
+	number = {1},
+	urldate = {2014-10-13},
+	journal = {Mathematical systems theory},
+	author = {Lehmann, Daniel J. and Smyth, Michael B.},
+	month = dec,
+	year = {1981},
+	keywords = {Computational Mathematics and Numerical Analysis, Theory of Computation},
+	pages = {97--139},
+	file = {Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/ZAT8EGPS/Lehmann and Smyth - 1981 - Algebraic specification of data types A synthetic.pdf:application/pdf;Snapshot:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/N229DV7X/BF01752392.html:text/html}
+}
+
+@unpublished{wadler_proofs_2000,
+	title = {Proofs {Are} {Programs}: 19th {Century} {Logic} and 21st {Century} {Computing}},
+	shorttitle = {Proofs {Are} {Programs}},
+	abstract = {As the 19th century drew to a close, logicians formalized an ideal notion of proof. They were driven by nothing other than an abiding interest in truth, and their proofs were as ethereal as the mind of God. Yet within decades these mathematical abstractions were realized by the hand of man, in the digital stored-program computer. How it came to be recognized that proofs and programs are the same thing is a story that spans a century, a chase with as many twists and turns as a thriller. At the end of the storyis a new principle for designing programming languages that will guide computers into the 21st century.For my money, Gentzen’s natural deduction and Church’s lambda calculus are on a par with Einstein’s relativity and Dirac’s quantum physics for elegance and insight. And the maths are a lot simpler. I want to show you the essence of these ideas. I’ll need a few symbols, but not too many, and I’ll explain as I go along.To simplify, I’ll present the story as we understand it now, with some asides to fill in the history. First, I’ll introduce Gentzen’s natural deduction, a formalism for proofs. Next, I’ll introduce Church’s lambda calculus, a formalism for programs. Then I’ll explain why proofs and programs are really the same thing, and how simplifying a proof corresponds to executing a program. Finally, I’ll conclude with a look at how these principles are being applied to design a new generation of programming languages, particularly mobile code for the Internet.},
+	author = {Wadler, Philip},
+	year = {2000},
+	file = {frege.pdf:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/3KHIVQX3/frege.pdf:application/pdf;PhilPapers - Snapshot:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/W57U85XV/WADPAP.html:text/html}
+}
+
+@book{gondran_graphs_2008,
+	address = {New York},
+	series = {Operations {Research}/{Computer} {Science} {Interfaces}},
+	title = {Graphs, {Dioids} and {Semirings}: {New} {Models} and {Algorithms}},
+	isbn = {978-0-387-75449-9},
+	shorttitle = {Graphs, dioids and semirings},
+	number = {41},
+	publisher = {Springer},
+	author = {Gondran, Michel},
+	collaborator = {Minoux, Michel},
+	year = {2008},
+	keywords = {Computer Systems Organization and Communication Networks, Dioid, Dioids and Semirings - New Models and Algorithms, Graph, graphs, Graph theory, Halbring, Mathematical Programming, Operations Research, Semirings (Mathematics)},
+	file = {Snapshot:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/RA9STXSC/978-0-387-75449-9.html:text/html}
+}
+
+@inproceedings{oliveira_functional_2012,
+	address = {New York, NY, USA},
+	title = {Functional {Programming} with {Structured} {Graphs}},
+	isbn = {978-1-4503-1054-3},
+	url = {http://doi.acm.org/10.1145/2364527.2364541},
+	doi = {10.1145/2364527.2364541},
+	abstract = {This paper presents a new functional programming model for graph structures called structured graphs. Structured graphs extend conventional algebraic datatypes with explicit definition and manipulation of cycles and/or sharing, and offer a practical and convenient way to program graphs in functional programming languages like Haskell. The representation of sharing and cycles (edges) employs recursive binders and uses an encoding inspired by parametric higher-order abstract syntax. Unlike traditional approaches based on mutable references or node/edge lists, well-formedness of the graph structure is ensured statically and reasoning can be done with standard functional programming techniques. Since the binding structure is generic, we can define many useful generic combinators for manipulating structured graphs. We give applications and show how to reason about structured graphs.},
+	urldate = {2014-11-01},
+	booktitle = {Proceedings of the 17th {ACM} {SIGPLAN} {International} {Conference} on {Functional} {Programming}},
+	publisher = {ACM},
+	author = {Oliveira, Bruno C.d.S. and Cook, William R.},
+	year = {2012},
+	keywords = {graphs, haskell, parametric hoas},
+	pages = {77--88},
+	file = {ACM Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/JS49Q5J9/Oliveira and Cook - 2012 - Functional Programming with Structured Graphs.pdf:application/pdf}
+}
+
+@inproceedings{wadler_theorems_1989,
+	address = {New York, NY, USA},
+	title = {Theorems for {Free}!},
+	isbn = {0-89791-328-0},
+	url = {http://doi.acm.org/10.1145/99370.99404},
+	doi = {10.1145/99370.99404},
+	urldate = {2014-11-05},
+	booktitle = {Proceedings of the {Fourth} {International} {Conference} on {Functional} {Programming} {Languages} and {Computer} {Architecture}},
+	publisher = {ACM},
+	author = {Wadler, Philip},
+	year = {1989},
+	pages = {347--359},
+	file = {ACM Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/FR45J3F5/Wadler - 1989 - Theorems for Free!.pdf:application/pdf;ACM Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/MM87HH88/Wadler - 1989 - Theorems for Free!.pdf:application/pdf}
+}
+
+@article{noschinski_graph_2014,
+	title = {A {Graph} {Library} for {Isabelle}},
+	issn = {1661-8270, 1661-8289},
+	url = {http://link.springer.com/article/10.1007/s11786-014-0183-z},
+	doi = {10.1007/s11786-014-0183-z},
+	abstract = {In contrast to other areas of mathematics such as calculus, number theory or probability theory, there is currently no standard library for graph theory for the Isabelle/HOL proof assistant. We present a formalization of directed graphs and essential related concepts. The library supports general infinite directed graphs (digraphs) with labeled and parallel arcs, but care has been taken not to complicate reasoning on more restricted classes of digraphs. We use this library to formalize a characterization of Euler Digraphs and to verify a method of checking Kuratowski subgraphs used in the LEDA library.},
+	language = {en},
+	urldate = {2014-11-04},
+	journal = {Mathematics in Computer Science},
+	author = {Noschinski, Lars},
+	month = jun,
+	year = {2014},
+	keywords = {Computer Science, general, Euler, Graph theory, HOL, Isabelle, Kuratowski, Mathematics, general, Primary 05C20, Secondary 05C45},
+	pages = {1--17},
+	file = {Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/8C4THN3F/Noschinski - 2014 - A Graph Library for Isabelle.pdf:application/pdf;Snapshot:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/P4ZRSPW5/s11786-014-0183-z.html:text/html}
+}
+
+@unpublished{gustafsson_foldable_2014,
+	title = {Foldable containers and dependent types},
+	url = {https://nicolaspouillard.fr/publis/explore-iso.pdf},
+	abstract = {Manuscript submitted for publication in the 16th International Symposium on Principles and Practice of Declarative Programming},
+	urldate = {2014-11-07},
+	author = {Gustafsson, Daniel and Pouillard, Nicolas},
+	year = {2014},
+	note = {Submitted for publication in the 16th International Symposium on Principles and Practice of Declarative Programming}
+}
+
+@book{cormen_introduction_2009,
+	address = {Cambridge, Massachusetts},
+	edition = {3rd ed},
+	title = {Introduction to {Algorithms}},
+	isbn = {978-0-262-03384-8},
+	publisher = {MIT Press},
+	editor = {Cormen, Thomas H.},
+	year = {2009},
+	keywords = {Computer algorithms, Computer programming}
+}
+
+@incollection{bertot_canonical_2008,
+	address = {Berlin; Heidelberg},
+	title = {Canonical {Big} {Operators}},
+	copyright = {©2008 Springer Berlin Heidelberg},
+	isbn = {978-3-540-71065-3 978-3-540-71067-7},
+	url = {http://link.springer.com/chapter/10.1007/978-3-540-71067-7_11},
+	abstract = {In this paper, we present an approach to describe uniformly iterated "big" operations to provide lemmas that encapsulate all the commonly used reasoning steps on these constructs. We show that these iterated operations can be handled generically using the syntactic notation and canonical structure facilities provided by the Coq system. We then show how these canonical big operations played a crucial enabling role in the study of various parts of linear algebra and multi-dimensional real analysis, as illustrated by the formal proofs of the properties of determinants, of the Cayley-Hamilton theorem and of Kantorovitch’s theorem.},
+	language = {en},
+	urldate = {2014-11-05},
+	booktitle = {Theorem {Proving} in {Higher} {Order} {Logics}},
+	publisher = {Springer},
+	author = {Bertot, Yves and Gonthier, Georges and Biha, Sidi Ould and Pasca, Ioana},
+	editor = {Mohamed, Otmane Ait and Muñoz, César and Tahar, Sofiène},
+	month = jan,
+	year = {2008},
+	keywords = {Artificial Intelligence (incl. Robotics), Logic Design, Logics and Meanings of Programs, Mathematical Logic and Formal Languages, Software Engineering},
+	pages = {86--101},
+	file = {Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/8PSKZXUS/Bertot et al. - 2008 - Canonical Big Operators.pdf:application/pdf;Snapshot:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/6XGFMTDK/978-3-540-71067-7_11.html:text/html}
+}
+
+@article{hancock_programming_2006,
+	title = {Programming interfaces and basic topology},
+	volume = {137},
+	issn = {0168-0072},
+	url = {http://www.sciencedirect.com/science/article/pii/S0168007205000710},
+	doi = {10.1016/j.apal.2005.05.022},
+	abstract = {A pattern of interaction that arises again and again in programming is a “handshake”, in which two agents exchange data. The exchange is thought of as provision of a service. Each interaction is initiated by a specific agent—the client or Angel—and concluded by the other—the server or Demon.
+
+We present a category in which the objects—called interaction structures in the paper—serve as descriptions of services provided across such handshaken interfaces. The morphisms—called (general) simulations—model components that provide one such service, relying on another. The morphisms are relations between the underlying sets of the interaction structures. The proof that a relation is a simulation can serve (in principle) as an executable program, whose specification is that it provides the service described by its domain, given an implementation of the service described by its codomain.
+
+This category is then shown to coincide with the subcategory of “generated” basic topologies in Sambin’s terminology, where a basic topology is given by a closure operator whose induced sup-lattice structure need not be distributive; and moreover, this operator is inductively generated from a basic cover relation. This coincidence provides topologists with a natural source of examples for non-distributive formal topology. It raises a number of questions of interest both for formal topology and programming.
+
+The extra structure needed to make such a basic topology into a real formal topology is then interpreted in the context of interaction structures.},
+	number = {1–3},
+	urldate = {2015-02-09},
+	journal = {Annals of Pure and Applied Logic},
+	author = {Hancock, Peter and Hyvernat, Pierre},
+	month = jan,
+	year = {2006},
+	keywords = {Constructive type theory, Formal topology, Predicate transformers, Simulation},
+	pages = {189--239},
+	file = {ScienceDirect Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/A57Q7NNV/Hancock and Hyvernat - 2006 - Programming interfaces and basic topology.pdf:application/pdf;ScienceDirect Snapshot:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/KHV4ZJ8I/S0168007205000710.html:text/html}
+}
+
+@book{artin_theorie_1972,
+	address = {Berlin; New York},
+	edition = {Second edition},
+	series = {Séminaire de géométrie algébrique du {Bois}-{Marie}},
+	title = {Théorie des topos et cohomologie étale des schémas},
+	isbn = {3-540-05896-6},
+	number = {SGA 4},
+	publisher = {Springer},
+	author = {Artin, Michael},
+	collaborator = {Grothendieck, Alexander and Verdier, Jean Louis},
+	year = {1972},
+	keywords = {Categories (Mathematics), Geometry, Algebraic, Homology theory, Sheaf theory}
+}
+
+@inproceedings{chlipala_parametric_2008,
+	address = {New York, NY, USA},
+	title = {Parametric {Higher}-order {Abstract} {Syntax} for {Mechanized} {Semantics}},
+	isbn = {978-1-59593-919-7},
+	url = {http://doi.acm.org/10.1145/1411204.1411226},
+	doi = {10.1145/1411204.1411226},
+	abstract = {We present parametric higher-order abstract syntax (PHOAS), a new approach to formalizing the syntax of programming languages in computer proof assistants based on type theory. Like higher-order abstract syntax (HOAS), PHOAS uses the meta language's binding constructs to represent the object language's binding constructs. Unlike HOAS, PHOAS types are definable in general-purpose type theories that support traditional functional programming, like Coq's Calculus of Inductive Constructions. We walk through how Coq can be used to develop certified, executable program transformations over several statically-typed functional programming languages formalized with PHOAS; that is, each transformation has a machine-checked proof of type preservation and semantic preservation. Our examples include CPS translation and closure conversion for simply-typed lambda calculus, CPS translation for System F, and translation from a language with ML-style pattern matching to a simpler language with no variable-arity binding constructs. By avoiding the syntactic hassle associated with first-order representation techniques, we achieve a very high degree of proof automation.},
+	urldate = {2014-11-02},
+	booktitle = {Proceedings of the 13th {ACM} {SIGPLAN} {International} {Conference} on {Functional} {Programming}},
+	publisher = {ACM},
+	author = {Chlipala, Adam},
+	year = {2008},
+	keywords = {compiler verification, dependent types, interactive proof assistants, type-theoretic semantics},
+	pages = {143--156},
+	file = {ACM Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/728CHDEW/Chlipala - 2008 - Parametric Higher-order Abstract Syntax for Mechan.pdf:application/pdf}
+}
+
+@article{abbott__2004,
+	title = {∂ for {Data}: {Differentiating} {Data} {Structures}},
+	volume = {65},
+	issn = {0169-2968},
+	shorttitle = {\&{Part}; for {Data}},
+	url = {http://dl.acm.org/citation.cfm?id=1227143.1227145},
+	abstract = {This paper and our conference paper (Abbott, Altenkirch, Ghani, and McBride, 2003b) explain and analyse the notion of the derivative of a data structure as the type of its one-hole contexts based on the central observation made by McBride (2001). To make the idea precise we need a generic notion of a data type, which leads to the notion of a container, introduced in (Abbott, Altenkirch, and Ghani, 2003a) and investigated extensively in (Abbott, 2003). Using containers we can provide a notion of linear map which is the concept missing from McBride's first analysis. We verify the usual laws of differential calculus including the chain rule and establish laws for initial algebras and terminal coalgebras.},
+	number = {1-2},
+	urldate = {2014-11-02},
+	journal = {Fundam. Inf.},
+	author = {Abbott, Michael and Altenkirch, Thorsten and McBride, Conor and Ghani, Neil},
+	month = aug,
+	year = {2004},
+	pages = {1--28}
+}
+
+@incollection{coquand_type_2014,
+	edition = {Fall 2014},
+	title = {Type {Theory}},
+	url = {http://plato.stanford.edu/archives/fall2014/entries/type-theory/},
+	abstract = {The topic of type theory is fundamental both in logic and computerscience. We limit ourselves here to sketch some aspects that areimportant in logic. For the importance of types in computer science, werefer the reader for instance to Reynolds 1983 and 1985.},
+	urldate = {2014-10-17},
+	booktitle = {The {Stanford} {Encyclopedia} of {Philosophy}},
+	author = {Coquand, Thierry},
+	editor = {Zalta, Edward N.},
+	year = {2014},
+	keywords = {category theory, Frege, Gottlob, Frege, Gottlob: theorem and foundations for arithmetic, logic: paraconsistent, mathematics: inconsistent, Peano, Giuseppe, Principia Mathematica, Russell, Bertrand, type theory: Church's type theory, type theory: constructive},
+	file = {SEP - Snapshot:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/H8MRIB3N/entriesype-theory.html:text/html}
+}
+
+@incollection{meijer_functional_1991,
+	title = {Functional programming with bananas, lenses, envelopes and barbed wire},
+	copyright = {©1991 Springer-Verlag},
+	isbn = {978-3-540-54396-1 978-3-540-47599-6},
+	url = {http://link.springer.com/chapter/10.1007/3540543961_7},
+	abstract = {We develop a calculus for lazy functional programming based on recursion operators associated with data type definitions. For these operators we derive various algebraic laws that are useful in deriving and manipulating programs. We shall show that all example functions in Bird and Wadler's “Introduction to Functional Programming” can be expressed using these operators.},
+	language = {en},
+	urldate = {2014-12-19},
+	booktitle = {Functional {Programming} {Languages} and {Computer} {Architecture}},
+	publisher = {Springer Berlin Heidelberg},
+	author = {Meijer, Erik and Fokkinga, Maarten and Paterson, Ross},
+	editor = {Hughes, John},
+	month = jan,
+	year = {1991},
+	keywords = {Logics and Meanings of Programs, Processor Architectures, Programming Languages, Compilers, Interpreters, Programming Techniques},
+	pages = {124--144},
+	file = {Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/TAZXDSJE/Meijer et al. - 1991 - Functional programming with bananas, lenses, envel.pdf:application/pdf;Snapshot:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/23BPTV5S/3540543961_7.html:text/html}
+}
+
+@article{conchon_designing_2007,
+	title = {Designing a {Generic} {Graph} {Library} {Using} {ML} {Functors}.},
+	volume = {8},
+	journal = {Trends in functional programming},
+	author = {Conchon, Sylvain and Filliâtre, Jean-Christophe and Signoles, Julien},
+	year = {2007},
+	pages = {124--140},
+	file = {Conchon et al. - 2007 - Designing a Generic Graph Library Using ML Functor.pdf:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/UI68GRPW/Conchon et al. - 2007 - Designing a Generic Graph Library Using ML Functor.pdf:application/pdf}
+}
+
+@inproceedings{sobrinho_routing_2010,
+	title = {Routing in {Equilibrium}},
+	abstract = {Abstract — Some path problems cannot be modeled using semirings because the associated algebraic structure is not distributive. Rather than attempting to compute globally optimal paths with such structures, it may be sufficient in some cases to find locally optimal paths—paths that represent a stable local equilibrium. For example, this is the type of routing system that has evolved to connect Internet Service Providers (ISPs) where link weights implement bilateral commercial relationships between them. Previous work has shown that routing equilibria can be computed for some non-distributive algebras using algorithms in the Bellman-Ford family. However, no polynomial time bound was known for such algorithms. In this paper, we show that routing equilibria can be computed using Dijkstra’s algorithm for one class of non-distributive structures. This provides the first polynomial time algorithm for computing locally optimal solutions to path problems. We discuss possible applications to Internet routing. I. GLOBAL VS. LOCAL OPTIMA A great deal of research has followed from the observation—first made about 40 years ago—that the linear algebra structure (R, +, ×, 0, 1) and many of its associated algorithms can be generalized to a very large class of algebraic structures called semirings (see [6], [1] for modern surveys of this area). These structures have the form (S, ⊕, ⊗, 0, 1), where the crucial property is distributivity of ⊗ over ⊕. A particularly interesting sub-case occurs when the operation ⊕ is selective, as this relates to the kinds of problems one encounters in routing in communications networks. For instance, the structure (R∪\{∞\}, min, +, ∞, 0) is associated with distances and shortest-paths in graphs. A communication network G = (V, E, a) is represented by an adjacency matrix A where A[i, j]  = a(i, j) is the weight of link (i, j)  ∈ E: A[i, j]  = 0 if there is no link from i to j. The matrix A ∗ of optimal weights is defined as A ∗ [i, j] = a(P), (1)},
+	booktitle = {Proceedings of the 19th {International} {Symposium} on {Mathematical} {Theory} of {Networks} and {Systems}},
+	author = {Sobrinho, João Luís and Griffin, Timothy G.},
+	year = {2010},
+	file = {Citeseer - Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/AHVC6WN5/Sobrinho and Griffin - 2010 - Routing in Equilibrium.pdf:application/pdf;Citeseer - Snapshot:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/TSH2XUJ8/summary.html:text/html}
+}
+
+@book{sorensen_lectures_2006,
+	address = {Amsterdam; Boston},
+	edition = {First edition},
+	series = {Studies in {Logic} and the {Foundation} of {Mathematics}},
+	title = {Lectures on the {Curry}-{Howard} {Isomorphism}},
+	volume = {149},
+	isbn = {978-0-444-52077-7},
+	abstract = {The Curry-Howard isomorphism states an amazing correspondence between systems of formal logic as encountered in proof theory and computational calculi as found in type theory. For instance, minimal propositional logic corresponds to simply typed lambda-calculus, first-order logic corresponds to dependent types, second-order logic corresponds to polymorphic types, sequent calculus is related to explicit substitution, etc.  The isomorphism has many aspects, even at the syntactic level: formulas correspond to types, proofs correspond to terms, provability corresponds to inhabitation, proof normalization corresponds to term reduction, etc.  But there is more to the isomorphism than this. For instance, it is an old idea---due to Brouwer, Kolmogorov, and Heyting---that a constructive proof of an implication is a procedure that transforms proofs of the antecedent into proofs of the succedent; the Curry-Howard isomorphism gives syntactic representations of such procedures. The Curry-Howard isomorphism also provides theoretical foundations for many modern proof-assistant systems (e.g. Coq). This book give an introduction  to parts of proof theory and related aspects of type theory relevant for the Curry-Howard isomorphism. It can serve as an introduction to any or both of typed lambda-calculus and intuitionistic logic. Key features  - The Curry-Howard Isomorphism treated as common theme  - Reader-friendly introduction to two complementary subjects: Lambda-calculus and constructive logics  - Thorough study of the connection between calculi and logics  - Elaborate study of classical logics and control operators  - Account of dialogue games for classical and intuitionistic logic  - Theoretical foundations of computer-assisted reasoning The Curry-Howard Isomorphism treated as the common theme. Reader-friendly introduction to two complementary subjects: lambda-calculus and  constructive logics Thorough study of the connection between calculi and logics. Elaborate study of classical logics and control operators. Account of dialogue games for classical and intuitionistic logic. Theoretical foundations of computer-assisted reasoning},
+	language = {English},
+	publisher = {Elsevier},
+	author = {Sørensen, Morten H. and Urzyczyn, Pawel},
+	month = jun,
+	year = {2006},
+	keywords = {Curry-Howard isomorphism, Lambda calculus, Proof theory}
+}
+
+@book{rodrigues_magalhaes_less_2012,
+	title = {Less {Is} {More} : {Generic} {Programming} {Theory} and {Practice}},
+	isbn = {978-90-393-5823-8},
+	shorttitle = {Less {Is} {More}},
+	url = {http://dspace.library.uu.nl/handle/1874/254098},
+	abstract = {Abstraction is ubiquitous in computer programming. The work of this thesis focuses on one specific form of abstraction. Computer programs manipulate data, which can either be primitive machine data (such as integer or fractional numbers) or programmer-defined data (such as lists, trees, matrices, images, etc.). There is only a small number of primitive datatypes, but a potentially infinite number of programmer-defined data. The structure of the latter data depends on the problem at hand, and while some structures appear very often (such as sequences of values), others are truly specific to a particular problem. Some kind of functionality is generally desired for all types of data. Reading and storing files to the disk, for instance, is as important for machine integers as it is for complex healthcare databases, or genealogy trees. And not just reading and writing files: testing for equality, sorting, traversing, computing the length, all are examples of functionality that is often desired for all kinds of data. Most programming languages allow defining complex datatypes as a form of abstraction, but few provide good support for defining behaviour that is generic over data. As such, programmers are forced to specify this behaviour over and over again, once for each new type of data, and also to adapt this code whenever the structure of their data changes. This is a tedious task, and can quickly become time-consuming, leading some programmers to write programs to generate this type of functionality automatically from the structure of data. We think that a programming language should allow programmers to define generic programs, which specify behaviour that is generic over the type of data. Moreover, it should automatically provide generic behaviour for new data, eliminating the need for repeated writing and rewriting of trivial code that just specialises general behaviour to a particular type of data. It should do so in a convenient way for the programmer, leading to more abstract and concise programs, while remaining clear and efficient. This leads us to the two research questions we set out to answer: 1) There are many different approaches to generic programming, varying in complexity and expressiveness. How can we better understand each of the approaches, and the way they relate to each other? 2) Poor runtime efficiency, insufficient datatype support, and lack of proper language integration are often pointed out as deficiencies in generic programming implementations. How can we best address these concerns? We answer the first question in the first part of this thesis. We start by picking a number of generic programming approaches and define a concise model for each of them. We then use this model to formally express how to embed the structural representation of data of one approach into another, allowing us to better understand the relation between different approaches. The second part of this thesis deals with answering the second question, devoting one chapter to analysing and mitigating each of the practical concerns},
+	language = {en},
+	urldate = {2015-04-08},
+	publisher = {Utrecht University},
+	author = {Rodrigues Magalhães, J. P.},
+	month = sep,
+	year = {2012},
+	file = {Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/PP299BEJ/Rodrigues Magalhães - 2012 - Less Is More  Generic Programming Theory and Prac.pdf:application/pdf;Snapshot:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/6FEEJAKB/254098.html:text/html}
+}
+
+@incollection{norell_dependently_2009,
+	address = {Berlin; Heidelberg},
+	series = {Lecture {Notes} in {Computer} {Science}},
+	title = {Dependently {Typed} {Programming} in {Agda}},
+	copyright = {©2009 Springer Berlin Heidelberg},
+	isbn = {978-3-642-04651-3 978-3-642-04652-0},
+	url = {http://link.springer.com/chapter/10.1007/978-3-642-04652-0_5},
+	abstract = {In Hindley-Milner style languages, such as Haskell and ML, there is a clear separation between types and values. In a dependently typed language the line is more blurry - types can contain (depend on) arbitrary values and appear as arguments and results of ordinary functions.},
+	language = {en},
+	number = {5832},
+	urldate = {2015-05-15},
+	booktitle = {Advanced {Functional} {Programming}},
+	publisher = {Springer},
+	author = {Norell, Ulf},
+	editor = {Koopman, Pieter and Plasmeijer, Rinus and Swierstra, Doaitse},
+	year = {2009},
+	keywords = {Algorithm Analysis and Problem Complexity, Mathematical Logic and Formal Languages, Programming Languages, Compilers, Interpreters, Programming Techniques, Software Engineering, Theory of Computation},
+	pages = {230--266},
+	file = {Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/PZW88C6G/Norell - 2009 - Dependently Typed Programming in Agda.pdf:application/pdf;Snapshot:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/U3J2JPZ2/978-3-642-04652-0_5.html:text/html}
+}
+
+@article{barthe_setoids_2003,
+	title = {Setoids in type theory},
+	volume = {13},
+	issn = {1469-7653},
+	url = {http://journals.cambridge.org/article_S0956796802004501},
+	doi = {10.1017/S0956796802004501},
+	abstract = {Formalising mathematics in dependent type theory often requires to represent sets as setoids, i.e. types with an explicit equality relation. This paper surveys some possible definitions of setoids and assesses their suitability as a basis for developing mathematics. According to whether the equality relation is required to be reflexive or not we have total or partial setoid, respectively. There is only one definition of total setoid, but four different definitions of partial setoid, depending on four different notions of setoid function. We prove that one approach to partial setoids in unsuitable, and that the other approaches can be divided in two classes of equivalence. One class contains definitions of partial setoids that are equivalent to total setoids; the other class contains an inherently different definition, that has been useful in the modeling of type systems. We also provide some elements of discussion on the merits of each approach from the viewpoint of formalizing mathematics. In particular, we exhibit a difficulty with the common definition of subsetoids in the partial setoid approach.},
+	number = {02},
+	urldate = {2015-04-12},
+	journal = {Journal of Functional Programming},
+	author = {Barthe, Gilles and Capretta, Venanzio and Pons, Olivier},
+	month = mar,
+	year = {2003},
+	pages = {261--293},
+	file = {Cambridge Journals Snapshot:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/CZSHC22X/displayAbstract.html:text/html;Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/G6U8M2BR/Barthe et al. - 2003 - Setoids in type theory.pdf:application/pdf}
+}
+
+@incollection{lindblad_tool_2006,
+	series = {Lecture {Notes} in {Computer} {Science}},
+	title = {A {Tool} for {Automated} {Theorem} {Proving} in {Agda}},
+	copyright = {©2006 Springer-Verlag Berlin Heidelberg},
+	isbn = {978-3-540-31428-8 978-3-540-31429-5},
+	url = {http://link.springer.com/chapter/10.1007/11617990_10},
+	abstract = {We present a tool for automated theorem proving in Agda, an implementation of Martin-Löf’s intuitionistic type theory. The tool is intended to facilitate interactive proving by relieving the user from filling in simple but tedious parts of a proof. The proof search is conducted directly in type theory and produces proof terms. Any proof term is verified by the Agda type-checker, which ensures soundness of the tool. Some effort has been spent on trying to produce human readable results, which allows the user to examine the generated proofs. We have tested the tool on examples mainly in the area of (functional) program verification. Most examples we have considered contain induction, and some contain generalisation. The contribution of this work outside the Agda community is to extend the experience of automated proof for intuitionistic type theory.},
+	language = {en},
+	number = {3839},
+	urldate = {2015-04-15},
+	booktitle = {Types for {Proofs} and {Programs}},
+	publisher = {Springer Berlin Heidelberg},
+	author = {Lindblad, Fredrik and Benke, Marcin},
+	editor = {Filliâtre, Jean-Christophe and Paulin-Mohring, Christine and Werner, Benjamin},
+	year = {2006},
+	keywords = {Artificial Intelligence (incl. Robotics), Logics and Meanings of Programs, Mathematical Logic and Formal Languages, Programming Languages, Compilers, Interpreters, Symbolic and Algebraic Manipulation},
+	pages = {154--169},
+	file = {Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/2QGCFJ97/Lindblad and Benke - 2006 - A Tool for Automated Theorem Proving in Agda.pdf:application/pdf;Snapshot:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/DSUINDTI/11617990_10.html:text/html;Snapshot:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/3EZSKZ9C/11617990_10.html:text/html}
+}
+
+@incollection{danielsson_parsing_2011,
+	address = {Berlin; Heidelberg},
+	series = {Lecture {Notes} in {Computer} {Science}},
+	title = {Parsing {Mixfix} {Operators}},
+	copyright = {©2011 Springer-Verlag GmbH Berlin Heidelberg},
+	isbn = {978-3-642-24451-3 978-3-642-24452-0},
+	url = {http://link.springer.com/chapter/10.1007/978-3-642-24452-0_5},
+	abstract = {A simple grammar scheme for expressions containing mixfix operators is presented. The scheme is parameterised by a precedence relation which is only restricted to be a directed acyclic graph; this makes it possible to build up precedence relations in a modular way. Efficient and simple implementations of parsers for languages with user-defined mixfix operators, based on the grammar scheme, are also discussed. In the future we plan to replace the support for mixfix operators in the language Agda with a grammar scheme and an implementation based on this work.},
+	language = {en},
+	number = {5836},
+	urldate = {2015-05-07},
+	booktitle = {Implementation and {Application} of {Functional} {Languages}},
+	publisher = {Springer},
+	author = {Danielsson, Nils Anders and Norell, Ulf},
+	editor = {Scholz, Sven-Bodo and Chitil, Olaf},
+	year = {2011},
+	keywords = {Artificial Intelligence (incl. Robotics), Logics and Meanings of Programs, Mathematical Logic and Formal Languages, Programming Languages, Compilers, Interpreters, Programming Techniques, Software Engineering},
+	pages = {80--99},
+	file = {Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/NPP8FMZ7/Danielsson and Norell - 2011 - Parsing Mixfix Operators.pdf:application/pdf;Snapshot:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/7E7EEJWR/978-3-642-24452-0_5.html:text/html}
+}
+
+@inproceedings{altenkirch_termination_2010,
+	title = {Termination {Checking} {Nested} {Inductive} and {Coinductive} {Types}},
+	author = {Altenkirch, Thorsten and Danielsson, Nils Anders},
+	year = {2010}
+}
+
+@book{paulson_isabelle:_1994,
+	address = {Berlin; New York},
+	series = {Lecture notes in computer science},
+	title = {Isabelle: a generic theorem prover},
+	isbn = {3-540-58244-4 0-387-58244-4},
+	shorttitle = {Isabelle},
+	number = {828},
+	publisher = {Springer},
+	author = {Paulson, Lawrence C. and Nipkow, Tobias},
+	year = {1994},
+	keywords = {Automatic theorem proving, Isabelle (Computer file)}
+}
+
+@misc{huet_coq_2015,
+	title = {The {Coq} {Proof} {Assistant}: {A} {Tutorial} (version 8.4pl6)},
+	url = {https://coq.inria.fr/distrib/current/files/Tutorial.pdf},
+	urldate = {2015-05-21},
+	publisher = {Coq project, INRIA},
+	author = {Huet, Gérard and Kahn, Gilles and Paulin-Mohring, Christine},
+	month = apr,
+	year = {2015}
+}
+
+@book{paulson_ml_1996,
+	address = {New York, NY, USA},
+	edition = {2nd},
+	title = {{ML} {For} the {Working} {Programmer}},
+	isbn = {0-521-57050-6},
+	abstract = {From the Publisher:In teaching the methods of functional programming--in particular, how to program in Standard ML, a functional language recently developed at Edinburgh University, the author shows how to use such concepts as lists, trees, higher-order functions and infinite data structures.},
+	publisher = {Cambridge University Press},
+	author = {Paulson, Lawrence C.},
+	year = {1996}
+}
+
+@misc{marlow_haskell_2010,
+	title = {Haskell 2010 {Language} {Report}},
+	url = {https://haskell.org/definition/haskell2010.pdf},
+	urldate = {2015-05-21},
+	editor = {Marlow, Simon},
+	year = {2010},
+	file = {haskell2010.pdf:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/S96B7A5X/haskell2010.pdf:application/pdf}
+}
+
+@book{milner_definition_1997,
+	address = {Cambridge, Mass},
+	title = {The definition of {Standard} {ML}, revised edition},
+	isbn = {0-262-63181-4},
+	shorttitle = {The definition of standard {ML}},
+	publisher = {MIT Press},
+	editor = {Milner, Robin},
+	year = {1997},
+	keywords = {ML (Computer program language)}
+}
+
+@phdthesis{norell_towards_2007,
+	type = {Doctoral thesis},
+	title = {Towards a practical programming language based on dependent type theory},
+	url = {http://publications.lib.chalmers.se/publication/46311-towards-a-practical-programming-language-based-on-dependent-type-theory},
+	abstract = {Dependent type theories have a long history of being used for theorem proving. One aspect of type theory which makes it very powerful as a proof language is that it mixes deduction with computation. This also makes type theory a good candidate for programming---the strength of the type system allows properties of programs to be stated and established, and the computational properties provide semantics for the programs. This thesis is concerned with bridging the gap between the theoretical presentations of type theory and the requirements on a practical programming language. Although there are many challenging research problems left to solve before we have an industrial scale programming language based on type theory, this thesis takes us a good step along the way.},
+	language = {English},
+	urldate = {2015-05-22},
+	school = {Chalmers University of Technology},
+	author = {Norell, Ulf},
+	year = {2007},
+	file = {Snapshot:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/JHCEXTAE/46311.html:text/html}
+}
+
+@incollection{hurkens_simplification_1995,
+	series = {Lecture {Notes} in {Computer} {Science}},
+	title = {A simplification of {Girard}'s paradox},
+	copyright = {©1995 Springer-Verlag},
+	isbn = {978-3-540-59048-4 978-3-540-49178-1},
+	url = {http://link.springer.com/chapter/10.1007/BFb0014058},
+	abstract = {In 1972 J.-Y. Girard showed that the Burali-Forti paradox can be formalised in the type system U. In 1991 Th. Coquand formalised another paradox in U−. The corresponding proof terms (that have no normal form) are large. We present a shorter term of type ⊥ in the Pure Type System λU− and analyse its reduction behaviour. The idea is to construct a universe U and two functions such that a certain equality holds. Using this equality, we prove and disprove that a certain object in U is well-founded.},
+	language = {en},
+	number = {902},
+	urldate = {2015-05-25},
+	booktitle = {Typed {Lambda} {Calculi} and {Applications}},
+	publisher = {Springer Berlin Heidelberg},
+	author = {Hurkens, Antonius J. C.},
+	editor = {Dezani-Ciancaglini, Mariangiola and Plotkin, Gordon},
+	year = {1995},
+	keywords = {Logics and Meanings of Programs, Mathematical Logic and Formal Languages, Mathematical Logic and Foundations, Programming Techniques},
+	pages = {266--278},
+	file = {Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/G93ERBBQ/Hurkens - 1995 - A simplification of Girard's paradox.pdf:application/pdf;Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/P54TA4BX/Hurkens - 1995 - A simplification of Girard's paradox.pdf:application/pdf;Snapshot:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/KG43FQM7/BFb0014058.html:text/html;Snapshot:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/5MZUUFJT/10.html:text/html}
+}
+
+@incollection{coquand_logical_2003,
+	series = {Lecture {Notes} in {Computer} {Science}},
+	title = {A {Logical} {Framework} with {Dependently} {Typed} {Records}},
+	copyright = {©2003 Springer-Verlag Berlin Heidelberg},
+	isbn = {978-3-540-40332-6 978-3-540-44904-1},
+	url = {http://link.springer.com/chapter/10.1007/3-540-44904-3_8},
+	language = {en},
+	number = {2701},
+	urldate = {2015-05-22},
+	booktitle = {Typed {Lambda} {Calculi} and {Applications}},
+	publisher = {Springer Berlin Heidelberg},
+	author = {Coquand, Thierry and Pollack, Randy and Takeyama, Makoto},
+	editor = {Hofmann, Martin},
+	year = {2003},
+	keywords = {Logics and Meanings of Programs, Mathematical Logic and Formal Languages, Programming Languages, Compilers, Interpreters, Programming Techniques},
+	pages = {105--119},
+	file = {Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/IFHPTEIE/Coquand et al. - 2003 - A Logical Framework with Dependently Typed Records.pdf:application/pdf;Snapshot:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/G7B3Z9XM/3-540-44904-3_8.html:text/html}
+}
+
+@inproceedings{coquand_structured_1999,
+	address = {Paris, France},
+	title = {Structured type theory},
+	author = {Coquand, Catarina and Coquand, Thierry},
+	year = {1999}
+}
+
+@incollection{bertot_short_2008,
+	series = {Lecture {Notes} in {Computer} {Science}},
+	title = {A {Short} {Presentation} of {Coq}},
+	copyright = {©2008 Springer Berlin Heidelberg},
+	isbn = {978-3-540-71065-3 978-3-540-71067-7},
+	url = {http://link.springer.com/chapter/10.1007/978-3-540-71067-7_3},
+	abstract = {The Coq proof assistant has been developed at INRIA, Ecole Normale Supérieure de Lyon, and University of Paris South for more than twenty years [6]. Its theoretical foundation is known as the “Calculus of Inductive Constructions” [4,5]. Versions of the system were distributed regularly from 1989 (version 4.10). The current revision is 8.1 and a revision 8.2 is about to come out. This 8th generation was started in 2004, at the time when a radical change in syntax was enforced and a textbook [2] was published. A more complete historical overview, provided by G. Huet and C. Paulin-Mohring, is available in the book foreword. The calculus of Inductive constructions is a variant of typed lambda-calculus based on dependent types. Theorems are directly represented by terms of the lambda-calculus, in the same language that is also used to describe formulas and programs. Having all elements of the logic at the same level makes it possible to mix computation and theorem proving in productive ways.},
+	language = {en},
+	number = {5170},
+	urldate = {2015-05-22},
+	booktitle = {Theorem {Proving} in {Higher} {Order} {Logics}},
+	publisher = {Springer Berlin Heidelberg},
+	author = {Bertot, Yves},
+	editor = {Mohamed, Otmane Ait and Muñoz, César and Tahar, Sofiène},
+	year = {2008},
+	keywords = {Artificial Intelligence (incl. Robotics), Logic Design, Logics and Meanings of Programs, Mathematical Logic and Formal Languages, Software Engineering},
+	pages = {12--16},
+	file = {Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/BJ9KN339/Bertot - 2008 - A Short Presentation of Coq.pdf:application/pdf;Snapshot:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/C3ADZ5G6/978-3-540-71067-7_3.html:text/html}
+}
+
+@techreport{dowek_coq_1991,
+	title = {The {Coq} proof assistant user's guide: version 5.6},
+	shorttitle = {The {Coq} proof assistant user's guide},
+	url = {https://hal.inria.fr/inria-00070034/document},
+	abstract = {pas de resume},
+	language = {en},
+	urldate = {2015-05-22},
+	institution = {INRIA},
+	author = {Dowek, Gilles and Felty, Amy and Herbelin, Hugo and Huet, Gérard and Werner, Benjamin and Paulin-Mohring, Christine},
+	year = {1991},
+	pages = {155},
+	file = {Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/47GZC5FK/Dowek et al. - 1991 - The Coq proof assistant user's guide  version 5.6.pdf:application/pdf;Snapshot:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/K662A8XA/inria-00070034.html:text/html}
+}
+
+@article{paulson_foundation_1989,
+	title = {The foundation of a generic theorem prover},
+	volume = {5},
+	issn = {0168-7433, 1573-0670},
+	url = {http://link.springer.com/article/10.1007/BF00248324},
+	doi = {10.1007/BF00248324},
+	abstract = {Isabelle [28, 30] is an interactive theorem prover that supports a variety of logics. It represents rules as propositions (not as functions) and builds proofs by combining rules. These operations constitute a meta-logic (or ‘logical framework’) in which the object-logics are formalized. Isabelle is now based on higher-order logic-a precise and well-understood foundation. Examples illustrate the use of this meta-logic to formalize logics and proofs. Axioms for first-order logic are shown to be sound and complete. Backwards proof is formalized by meta-reasoning about object-level entailment. Higher-order logic has several practical advantages over other meta-logics. Many proof techniques are known, such as Huet's higher-order unification procedure.},
+	language = {en},
+	number = {3},
+	urldate = {2015-05-22},
+	journal = {Journal of Automated Reasoning},
+	author = {Paulson, Lawrence C.},
+	month = sep,
+	year = {1989},
+	keywords = {Artificial Intelligence (incl. Robotics), Higher-order logic, higher-order unification, Isabelle, LCF, Logic, logical frameworks, Mathematical Logic and Foundations, meta-reasoning, Natural deduction, Symbolic and Algebraic Manipulation},
+	pages = {363--397},
+	file = {Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/TQJ9SH76/Paulson - 1989 - The foundation of a generic theorem prover.pdf:application/pdf;Snapshot:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/WM9WBA87/BF00248324.html:text/html}
+}
+
+@incollection{foster_integrating_2011,
+	series = {Lecture {Notes} in {Computer} {Science}},
+	title = {Integrating an {Automated} {Theorem} {Prover} into {Agda}},
+	copyright = {©2011 Springer Berlin Heidelberg},
+	isbn = {978-3-642-20397-8 978-3-642-20398-5},
+	url = {http://link.springer.com/chapter/10.1007/978-3-642-20398-5_10},
+	abstract = {Agda is a dependently typed functional programming language and a proof assistant in which developing programs and proving their correctness is one activity. We show how this process can be enhanced by integrating external automated theorem provers, provide a prototypical integration of the equational theorem prover Waldmeister, and give examples of how this proof automation works in practice.},
+	language = {en},
+	number = {6617},
+	urldate = {2015-05-23},
+	booktitle = {{NASA} {Formal} {Methods}},
+	publisher = {Springer Berlin Heidelberg},
+	author = {Foster, Simon and Struth, Georg},
+	editor = {Bobaru, Mihaela and Havelund, Klaus and Holzmann, Gerard J. and Joshi, Rajeev},
+	year = {2011},
+	keywords = {Logics and Meanings of Programs, Operating Systems, Programming Languages, Compilers, Interpreters, Programming Techniques, Software Engineering, Software Engineering/Programming and Operating Systems},
+	pages = {116--130},
+	file = {Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/SCMNX8ST/Foster and Struth - 2011 - Integrating an Automated Theorem Prover into Agda.pdf:application/pdf;Snapshot:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/JHTM5RKJ/978-3-642-20398-5_10.html:text/html}
+}
+
+@misc{dybjer_what_2006,
+	address = {Göteborg, Sweden},
+	title = {({What} {I} know about) the history of the identity type},
+	author = {Dybjer, Peter},
+	month = nov,
+	year = {2006}
+}
+
+@incollection{meertens_calculate_1996,
+	series = {Lecture {Notes} in {Computer} {Science}},
+	title = {Calculate polytypically!},
+	copyright = {©1996 Springer-Verlag},
+	isbn = {978-3-540-61756-3 978-3-540-70654-0},
+	url = {http://link.springer.com/chapter/10.1007/3-540-61756-6_73},
+	abstract = {A polytypic function definition is a function definition that is parametrised with a datatype. It embraces a class of algorithms. As an example we define a simple polytypic “crush” combinator that can be used to calculate polytypically. The ability to define functions polytypically adds another level of flexibility in the reusability of programming idioms and in the design of libraries of interoperable components.},
+	language = {en},
+	number = {1140},
+	urldate = {2015-05-25},
+	booktitle = {Programming {Languages}: {Implementations}, {Logics}, and {Programs}},
+	publisher = {Springer Berlin Heidelberg},
+	author = {Meertens, Lambert},
+	editor = {Kuchen, Herbert and Swierstra, S. Doaitse},
+	year = {1996},
+	keywords = {Artificial Intelligence (incl. Robotics), Logics and Meanings of Programs, Mathematical Logic and Formal Languages, Programming Languages, Compilers, Interpreters, Programming Techniques},
+	pages = {1--16},
+	file = {Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/CDWC3NEV/Meertens - 1996 - Calculate polytypically!.pdf:application/pdf;Snapshot:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/D8ZBGPG7/3-540-61756-6_73.html:text/html}
+}
+
+@article{gibbons_essence_2009,
+	title = {The essence of the {Iterator} pattern},
+	volume = {19},
+	issn = {0956-7968, 1469-7653},
+	url = {http://www.journals.cambridge.org/abstract_S0956796809007291},
+	doi = {10.1017/S0956796809007291},
+	language = {en},
+	number = {3-4},
+	urldate = {2015-05-26},
+	journal = {Journal of Functional Programming},
+	author = {Gibbons, Jeremy and Oliveira, Bruno C. d. S.},
+	month = jul,
+	year = {2009},
+	pages = {377}
+}
+
+@inproceedings{abel_copatterns:_2013,
+	address = {New York, NY, USA},
+	series = {{POPL} '13},
+	title = {Copatterns: {Programming} {Infinite} {Structures} by {Observations}},
+	isbn = {978-1-4503-1832-7},
+	shorttitle = {Copatterns},
+	url = {http://doi.acm.org/10.1145/2429069.2429075},
+	doi = {10.1145/2429069.2429075},
+	abstract = {Inductive datatypes provide mechanisms to define finite data such as finite lists and trees via constructors and allow programmers to analyze and manipulate finite data via pattern matching. In this paper, we develop a dual approach for working with infinite data structures such as streams. Infinite data inhabits coinductive datatypes which denote greatest fixpoints. Unlike finite data which is defined by constructors we define infinite data by observations. Dual to pattern matching, a tool for analyzing finite data, we develop the concept of copattern matching, which allows us to synthesize infinite data. This leads to a symmetric language design where pattern matching on finite and infinite data can be mixed. We present a core language for programming with infinite structures by observations together with its operational semantics based on (co)pattern matching and describe coverage of copatterns. Our language naturally supports both call-by-name and call-by-value interpretations and can be seamlessly integrated into existing languages like Haskell and ML. We prove type soundness for our language and sketch how copatterns open new directions for solving problems in the interaction of coinductive and dependent types.},
+	urldate = {2015-05-26},
+	booktitle = {Proceedings of the 40th {Annual} {ACM} {SIGPLAN}-{SIGACT} {Symposium} on {Principles} of {Programming} {Languages}},
+	publisher = {ACM},
+	author = {Abel, Andreas and Pientka, Brigitte and Thibodeau, David and Setzer, Anton},
+	year = {2013},
+	keywords = {coinduction, Functional programming, introduction vs. elimination, message passing, pattern matching},
+	pages = {27--38},
+	file = {ACM Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/8IZBE9M5/Abel et al. - 2013 - Copatterns Programming Infinite Structures by Obs.pdf:application/pdf;ACM Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/ZM6E7WRX/Abel et al. - 2013 - Copatterns Programming Infinite Structures by Obs.pdf:application/pdf}
+}
+
+@inproceedings{dynerowicz_forwarding_2013,
+	title = {On the forwarding paths produced by {Internet} routing algorithms},
+	doi = {10.1109/ICNP.2013.6733608},
+	abstract = {Most Internet routing protocols have one of two algorithms lurking at their core - either Dijkstra's algorithm in the case of link-state protocols or a distributed Bellman-Ford algorithm in the case of distance-vector or path-vector protocols. When computing simple shortest paths these protocols can be modified to utilize all best paths with a combination of next-hop sets and Equal Cost Multi-Path (ECMP) forwarding. We show that this picture breaks down even for simple modifications to the shortest path metric. This is illustrated with widest-shortest paths where among all shortest paths only those with greatest bandwidth are considered best. In this case Bellman-Ford and Dijkstra may compute different sets of paths and neither can compute all best paths. In addition, some paths computed by Dijkstra's algorithm cannot be implemented with next-hop forwarding. We provide a general algebraic model that helps to clarify such anomalies. This is accomplished by computing paths within the route metric rather than with specialized algorithmic extensions. Our results depend on the distinction between global and local optima that has hitherto been applied almost exclusively to more exotic routing protocols such as BGP.},
+	author = {Dynerowicz, S. and Griffin, T.G.},
+	month = oct,
+	year = {2013},
+	keywords = {BGP routing protocols, Dijkstra algorithm, distance-vector protocols, distributed Bellman-Ford algorithm, ECMP forwarding, equal cost multipath forwarding, Equations, forwarding paths, global optima, Internet, Internet routing protocols, link-state protocols, local optima, Mathematical model, Measurement, multipath channels, next-hop forwarding, next-hop sets, optimisation, path-vector protocols, Routing, routing protocols, shortest path metric, widest-shortest paths},
+	pages = {1--10},
+	file = {IEEE Xplore Abstract Record:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/F2HIKHVD/articleDetails.html:text/html;IEEE Xplore Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/7QTFZAEW/Dynerowicz and Griffin - 2013 - On the forwarding paths produced by Internet routi.pdf:application/pdf}
+}
+
+@incollection{wenzel_isar_1999,
+	series = {Lecture {Notes} in {Computer} {Science}},
+	title = {Isar — {A} {Generic} {Interpretative} {Approach} to {Readable} {Formal} {Proof} {Documents}},
+	copyright = {©1999 Springer-Verlag Berlin Heidelberg},
+	isbn = {978-3-540-66463-5 978-3-540-48256-7},
+	url = {http://link.springer.com/chapter/10.1007/3-540-48256-3_12},
+	abstract = {We present a generic approach to readable formal proof documents, called Intelligible semi-automated reasoning (Isar). It addresses the major problem of existing interactive theorem proving systems that there is no appropriate notion of proof available that is suitable for human communication, or even just maintenance. Isar’s main aspect is its formal language for natural deduction proofs, which sets out to bridge the semantic gap between internal notions of proof given by state-of-the-art interactive theorem proving systems and an appropriate level of abstraction for user-level work. The Isar language is both human readable and machine-checkable, by virtue of the Isar/VM interpreter. Compared to existing declarative theorem proving systems, Isar avoids several shortcomings: it is based on a few basic principles only, it is quite independent of the underlying logic, and supports a broad range of automated proof methods. Interactive proof development is supported as well. Most of the Isar concepts have already been implemented within Isabelle. The resulting system already accommodates simple applications.},
+	language = {en},
+	number = {1690},
+	urldate = {2015-05-30},
+	booktitle = {Theorem {Proving} in {Higher} {Order} {Logics}},
+	publisher = {Springer Berlin Heidelberg},
+	author = {Wenzel, Markus},
+	editor = {Bertot, Yves and Dowek, Gilles and Théry, Laurent and Hirschowitz, André and Paulin, Christine},
+	year = {1999},
+	keywords = {Applications of Mathematics, Artificial Intelligence (incl. Robotics), Logics and Meanings of Programs, Mathematical Logic and Formal Languages, Mathematical Software, Software Engineering},
+	pages = {167--183},
+	file = {Snapshot:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/KC6UFMV2/3-540-48256-3_12.html:text/html}
+}
+
+@article{dybjer_inductive_1994,
+	title = {Inductive families},
+	volume = {6},
+	issn = {0934-5043, 1433-299X},
+	url = {http://link.springer.com/article/10.1007/BF01211308},
+	doi = {10.1007/BF01211308},
+	abstract = {A general formulation of inductive and recursive definitions in Martin-Löf's type theory is presented. It extends Backhouse's ‘Do-It-Yourself Type Theory’ to include inductive definitions of families of sets and definitions of functions by recursion on the way elements of such sets are generated. The formulation is in natural deduction and is intended to be a natural generalisation to type theory of Martin-Löf's theory of iterated inductive definitions in predicate logic. Formal criteria are given for correct formation and introduction rules of a new set former capturing definition by strictly positive, iterated, generalised induction. Moreover, there is an inversion principle for deriving elimination and equality rules from the formation and introduction rules. Finally, there is an alternative schematic presentation of definition by recursion. The resulting theory is a flexible and powerful language for programming and constructive mathematics. We hint at the wealth of possible applications by showing several basic examples: predicate logic, generalised induction, and a formalisation of the untyped lambda calculus.},
+	language = {en},
+	number = {4},
+	urldate = {2015-05-07},
+	journal = {Formal Aspects of Computing},
+	author = {Dybjer, Peter},
+	month = jul,
+	year = {1994},
+	keywords = {Computational Mathematics and Numerical Analysis, Inductive definitions, Intuitionistic type theory, Math Applications in Computer Science, Natural deduction, Theory of Computation},
+	pages = {440--465},
+	file = {Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/V9WIJ2ZE/Dybjer - 1994 - Inductive families.pdf:application/pdf;Snapshot:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/BITTV84A/BF01211308.html:text/html}
+}
+
+@book{nordstrom_programming_1990,
+	address = {Oxford : New York},
+	series = {International series of monographs on computer science},
+	title = {Programming in {Martin}-{Löf}'s type theory: an introduction},
+	isbn = {0-19-853814-6},
+	shorttitle = {Programming in {Martin}-{Löf}'s type theory},
+	number = {7},
+	publisher = {Clarendon Press ; Oxford University Press},
+	author = {Nordström, Bengt and Petersson, Kent and Smith, Jan M.},
+	year = {1990},
+	keywords = {Computer programming, set theory}
+}
+
+@incollection{bove_brief_2009,
+	series = {Lecture {Notes} in {Computer} {Science}},
+	title = {A {Brief} {Overview} of {Agda} – {A} {Functional} {Language} with {Dependent} {Types}},
+	copyright = {©2009 Springer Berlin Heidelberg},
+	isbn = {978-3-642-03358-2 978-3-642-03359-9},
+	url = {http://link.springer.com/chapter/10.1007/978-3-642-03359-9_6},
+	abstract = {We give an overview of Agda, the latest in a series of dependently typed programming languages developed in Gothenburg. Agda is based on Martin-Löf’s intuitionistic type theory but extends it with numerous programming language features. It supports a wide range of inductive data types, including inductive families and inductive-recursive types, with associated flexible pattern-matching. Unlike other proof assistants, Agda is not tactic-based. Instead it has an Emacs-based interface which allows programming by gradual refinement of incomplete type-correct terms.},
+	language = {en},
+	number = {5674},
+	urldate = {2015-05-07},
+	booktitle = {Theorem {Proving} in {Higher} {Order} {Logics}},
+	publisher = {Springer Berlin Heidelberg},
+	author = {Bove, Ana and Dybjer, Peter and Norell, Ulf},
+	editor = {Berghofer, Stefan and Nipkow, Tobias and Urban, Christian and Wenzel, Makarius},
+	year = {2009},
+	keywords = {Algorithm Analysis and Problem Complexity, Discrete Mathematics in Computer Science, Logics and Meanings of Programs, Mathematical Logic and Formal Languages, Mathematics of Computing, Models and Principles},
+	pages = {73--78},
+	file = {Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/KJ7ZK4XW/Bove et al. - 2009 - A Brief Overview of Agda – A Functional Language w.pdf:application/pdf;Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/I5JPC8TF/Bove et al. - 2009 - A Brief Overview of Agda – A Functional Language w.pdf:application/pdf;Snapshot:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/PKPGUBUZ/978-3-642-03359-9_6.html:text/html;Snapshot:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/RGCU5GZG/978-3-642-03359-9_6.html:text/html}
+}
+
+@inproceedings{coquand_pattern_1992,
+	address = {Båstad},
+	title = {Pattern matching with dependent types},
+	booktitle = {Proceedings of the 1992 {Workshop} on {Types} for {Proofs} and {Programs}},
+	author = {Coquand, Thierry},
+	year = {1992}
+}
+
+@incollection{walt_engineering_2013,
+	address = {Berlin; Heidelberg},
+	series = {Lecture {Notes} in {Computer} {Science}},
+	title = {Engineering {Proof} by {Reflection} in {Agda}},
+	copyright = {©2013 Springer-Verlag Berlin Heidelberg},
+	isbn = {978-3-642-41581-4 978-3-642-41582-1},
+	url = {http://link.springer.com/chapter/10.1007/978-3-642-41582-1_10},
+	abstract = {This paper explores the recent addition to Agda enabling reflection, in the style of Lisp and Template Haskell. It gives a brief introduction to using reflection, and details the complexities encountered when automating certain proofs with proof by reflection. It presents a library that can be used for automatically quoting a class of concrete Agda terms to a non-dependent, user-defined inductive data type, alleviating some of the burden a programmer faces when using reflection in a practical setting.},
+	language = {en},
+	number = {8241},
+	urldate = {2015-05-01},
+	booktitle = {Implementation and {Application} of {Functional} {Languages}},
+	publisher = {Springer},
+	author = {Walt, Paul van der and Swierstra, Wouter},
+	editor = {Hinze, Ralf},
+	year = {2013},
+	keywords = {Agda, Dependently-typed programming, Information Systems Applications (incl. Internet), Logics and Meanings of Programs, Mathematical Logic and Formal Languages, Metaprogramming, Programming Languages, Compilers, Interpreters, Programming Techniques, Proof by reflection, reflection, Software Engineering},
+	pages = {157--173},
+	file = {Full Text PDF:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/H954N2KH/Walt and Swierstra - 2013 - Engineering Proof by Reflection in Agda.pdf:application/pdf;Snapshot:/home/leo/.mozilla/firefox/348spvxc.default/zotero/storage/GZUWWQ85/978-3-642-41582-1_10.html:text/html}
+}
