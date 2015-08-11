@@ -2,6 +2,8 @@
 pub/itp16.tex
 pub/agda.sty
 pub/llncs.cls
+pub/splncs03.bst
+pub/llncs2e.zip
 src/Everything.agda
 
 # Emacs
