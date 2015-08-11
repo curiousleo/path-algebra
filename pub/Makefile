@@ -1,11 +1,11 @@
 include ../agda.mk
+include ../llncs.mk
 
 AFLAGS += --latex --latex-dir=.
 LATEX = latexmk
 LFLAGS = -pdf -silent
 
 LLNCSZIP = llncs2e.zip
-LLNCSFILES = llncs.cls splncs03.bst
 
 itp16.pdf: itp16.tex $(LLNCSFILES)
 	$(LATEX) $(LFLAGS) $<
