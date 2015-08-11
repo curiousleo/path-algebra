@@ -1,6 +1,7 @@
 \documentclass{llncs}
 
 \usepackage{agda}
+\usepackage{cite}
 
 \begin{document}
 
@@ -262,7 +263,7 @@ This would contradict (\ref{eq:five}), and thus cannot happen.\qed
 %
 \paragraph{Notes and Comments.}
 The results in this section are a
-refined version of \cite{clar:eke};
+refined version of \cite{abel_wellfounded_2013};
 the minimality result of Proposition
 14 was the first of its kind.
 
@@ -393,14 +394,14 @@ Note that, if $k<0$, it is not convex.
 
 \paragraph{Notes and Comments.}
 The first results on subharmonics were
-obtained by Rabinowitz in \cite{rab}, who showed the existence of
+obtained by Rabinowitz in \cite{graham_concrete_1994}, who showed the existence of
 infinitely many subharmonics both in the subquadratic and superquadratic
 case, with suitable growth conditions on $H'$. Again the duality
-approach enabled Clarke and Ekeland in \cite{clar:eke:2} to treat the
+approach enabled Clarke and Ekeland in \cite{hinze_unifying_2013} to treat the
 same problem in the convex-subquadratic case, with growth conditions on
 $H$ only.
 
-Recently, Michalek and Tarantello (see \cite{mich:tar} and \cite{tar})
+Recently, Michalek and Tarantello (see \cite{howard_formulae-as-types_1980} and \cite{bertot_interactive_2004})
 have obtained lower bound on the number of subharmonics of period $kT$,
 based on symmetry considerations and on pinching estimates, as in
 Sect.~5.2 of this article.
@@ -408,37 +409,40 @@ Sect.~5.2 of this article.
 %
 % ---- Bibliography ----
 %
-\begin{thebibliography}{5}
-%
-\bibitem {clar:eke}
-Clarke, F., Ekeland, I.:
-Nonlinear oscillations and
-boundary-value problems for Hamiltonian systems.
-Arch. Rat. Mech. Anal. 78, 315--333 (1982)
+\bibliography{path-algebra}{}
+\bibliographystyle{splncs03}
 
-\bibitem {clar:eke:2}
-Clarke, F., Ekeland, I.:
-Solutions p\'{e}riodiques, du
-p\'{e}riode donn\'{e}e, des \'{e}quations hamiltoniennes.
-Note CRAS Paris 287, 1013--1015 (1978)
+%\begin{thebibliography}
 
-\bibitem {mich:tar}
-Michalek, R., Tarantello, G.:
-Subharmonic solutions with prescribed minimal
-period for nonautonomous Hamiltonian systems.
-J. Diff. Eq. 72, 28--55 (1988)
+%\bibitem {clar:eke}
+%Clarke, F., Ekeland, I.:
+%Nonlinear oscillations and
+%boundary-value problems for Hamiltonian systems.
+%Arch. Rat. Mech. Anal. 78, 315--333 (1982)
 
-\bibitem {tar}
-Tarantello, G.:
-Subharmonic solutions for Hamiltonian
-systems via a $\bbbz_{p}$ pseudoindex theory.
-Annali di Matematica Pura (to appear)
+%\bibitem {clar:eke:2}
+%Clarke, F., Ekeland, I.:
+%Solutions p\'{e}riodiques, du
+%p\'{e}riode donn\'{e}e, des \'{e}quations hamiltoniennes.
+%Note CRAS Paris 287, 1013--1015 (1978)
 
-\bibitem {rab}
-Rabinowitz, P.:
-On subharmonic solutions of a Hamiltonian system.
-Comm. Pure Appl. Math. 33, 609--633 (1980)
+%\bibitem {mich:tar}
+%Michalek, R., Tarantello, G.:
+%Subharmonic solutions with prescribed minimal
+%period for nonautonomous Hamiltonian systems.
+%J. Diff. Eq. 72, 28--55 (1988)
 
-\end{thebibliography}
+%\bibitem {tar}
+%Tarantello, G.:
+%Subharmonic solutions for Hamiltonian
+%systems via a $\bbbz_{p}$ pseudoindex theory.
+%Annali di Matematica Pura (to appear)
+
+%\bibitem {rab}
+%Rabinowitz, P.:
+%On subharmonic solutions of a Hamiltonian system.
+%Comm. Pure Appl. Math. 33, 609--633 (1980)
+
+%\end{thebibliography}
 
 \end{document}
