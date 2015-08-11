@@ -1,5 +1,4 @@
-AGDA=agda
-AFLAGS=-i../lib/agda-stdlib/src -i. -v 0
+include ../agda.mk
 
 check: Everything.agda
 	$(AGDA) $(AFLAGS) Everything.agda
