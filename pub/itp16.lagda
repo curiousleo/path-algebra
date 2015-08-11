@@ -3,7 +3,10 @@
 \usepackage{agda}
 \usepackage[british]{babel}
 \usepackage{cite}
+\usepackage[colorlinks]{hyperref}
 \usepackage{microtype}
+
+\bibliographystyle{alpha}
 
 \begin{document}
 
@@ -39,6 +42,8 @@ There will be two blank lines before and after the Abstract. \dots
 
 \subsection{Agda}
 \label{subsect.agda}
+
+Agda~\cite{norell_dependently_2009}
 
 \subsection{Map of Paper}
 \label{subsect.map.of.paper}
@@ -78,6 +83,6 @@ data Test : Set where
 \subsection{Future Work}
 \label{subsect.future.work}
 
-%\bibliography{path-algebra}
+\bibliography{path-algebra}
 
 \end{document}
