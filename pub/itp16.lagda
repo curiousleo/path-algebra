@@ -10,6 +10,12 @@
 
 \begin{document}
 
+\AgdaHide{
+\begin{code}
+module itp16 where
+\end{code}
+}
+
 \title{Dijkstra's Algorithm: Verified}
 \titlerunning{Dijkstra's Algorithm}
 \author{Leonhard Markert \and Timothy Griffin \and Dominic P.~Mulligan}
