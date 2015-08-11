@@ -8,8 +8,8 @@
 open import Algebra.Path.Structure
 import Data.Matrix.Adjacency as Adj
 
-open import Data.Fin using (Fin; zero; suc)
-open import Data.Nat using (ℕ; zero; suc)
+open import Data.Fin using (Fin; zero; suc; inject₁)
+open import Data.Nat using (ℕ; zero; suc) renaming (_≤_ to _N≤_)
 
 module BellmanFord.Correctness
     {c ℓ} (alg : PathAlgebra c ℓ)
@@ -20,20 +20,28 @@ open import Algebra.Path.Properties
 open import BellmanFord.Algorithm alg adj
 
 import Data.Fin.Properties as F
-open import Data.Fin.Subset using (⊤)
+open import Data.Fin.Subset
+import Data.Fin.Subset.Extra as Sub
+open import Data.Nat.MoreProperties using (≤-step′)
 open import Data.Matrix
-open import Data.Product using (proj₁)
+open import Data.Product using (∃; _×_; _,_; proj₁)
+open import Data.Vec using ([]; _∷_; here; there)
+
+open import Function using (_∘_)
 
 open import Relation.Nullary using (yes; no)
 open import Relation.Unary using (Pred)
+open import Relation.Binary using (module DecTotalOrder)
 import Relation.Binary.EqReasoning as EqR
 import Relation.Binary.PropositionalEquality as P
+open P using (_≡_)
 
 open Adj alg
 
 -- Bring the algebra's operators, constants and properties into scope
 open PathAlgebra alg renaming (Carrier to Weight)
-open RequiresPathAlgebra alg
+open RequiresPathAlgebra alg using (+-idempotent; decTotalOrderᴸ)
+open DecTotalOrder decTotalOrderᴸ using (_≤_)
 open import Dijkstra.Bigop +-commutativeMonoid
 open EqR setoid
 
@@ -49,6 +57,46 @@ estimate (suc ctd) j = l j + (⨁[ k ← ⊤ ] (A[ i , k ] * l k))
 LLS : ℕ → Fin (suc n) → Fin (suc n) → Set _
 LLS ctd i j = let l = estimate ctd in
   l i j ≈ I[ i , j ] + (⨁[ q ← ⊤ ] (A[ i , q ] * l q j))
+
+argmin : ∀ {n} → (xs : Subset n) → (sz : ℕ) → suc sz ≡ Sub.size xs → (f : Fin n → Weight) → ∃ λ i → i ∈ xs × f i ≈ (⨁[ j ← xs ] f j)
+argmin [] sz () f
+argmin (inside ∷ xs) zero eq f = zero , (here , {!!})
+argmin (outside ∷ xs) zero eq f = let i , i∈xs , eq≈ = argmin xs zero eq (f ∘ suc ) in (suc i) , ({!!} , {!!})
+argmin (inside ∷ xs) (suc sz) eq f = {!+-selective (f zero) (f (suc (proj₁ (argmin xs sz ? ?))))!}
+argmin (outside ∷ []) (suc sz) () f
+argmin (outside ∷ inside ∷ xs) (suc sz) eq f = let i , i∈xs , eq≈ = argmin xs sz {!eq!} (f ∘ Fin.suc ∘ suc) in
+  {!!}
+argmin (outside ∷ outside ∷ xs) (suc sz) eq f = {!!}
+
+find-min : (ctd : ℕ) → ∀ i j →
+           let l = estimate ctd in
+           ∃ λ q → ∀ q′ → A[ i , q ] * l q j ≤ A[ i , q′ ] * l q′ j
+find-min zero i j = i , λ q′ → 0# ,
+  (begin
+    A[ i , i ] * A[ i , j ]
+     ≈⟨ {!!} ⟩
+    A[ i , q′ ] * A[ q′ , j ] + 0#
+  ∎)
+find-min (suc ctd) i j = {!!}
+
+path-relax : (ctd : ℕ) → {lt : ctd N≤ n} → ∀ i j →
+             let l = estimate ctd in
+             ∃ λ qs → (Sub.size qs ≡ suc ctd) × (⨁[ q ← qs ] (A[ i , q ] * l q j)) ≈
+                                                (⨁[ q ← ⊤ ] (A[ i , q ] * l q j))
+path-relax zero i j = ⁅ i ⁆ , Sub.size⁅i⁆≡1 i ,
+  (begin
+    (⨁[ q ← ⁅ i ⁆ ] (A[ i , q ] * A[ q , j ]))
+      ≈⟨ {!!} ⟩
+    A[ i , i ] * A[ i , j ]
+      ≈⟨ {!!} ⟩
+    1# * A[ i , j ]
+      ≈⟨ {!Adj.diag!} ⟩
+    A[ i , j ]
+      ≈⟨ {!!} ⟩
+    (⨁[ q ← ⊤ ] (A[ i , q ] * A[ q , j ]))
+  ∎)
+path-relax (suc ctd) {lt} i j = let qs , eq≡ , eq≈ = path-relax ctd {≤-step′ lt} i j in
+  ⁅ {!!} ⁆ ∪ qs , ({!!} , {!!})
 
 correct : ∀ n i j → LLS n i j
 correct zero i j with i F.≟ j
