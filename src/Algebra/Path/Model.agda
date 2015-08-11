@@ -18,9 +18,9 @@ open import Relation.Binary
 open import Relation.Binary.PropositionalEquality
   hiding (cong)
 
--- Naturals extended with a point at infinity form a model of a DijkstraAlgebra.
-ℕ∞-dijkstra-algebra : DijkstraAlgebra _ _
-ℕ∞-dijkstra-algebra =
+-- Naturals extended with a point at infinity form a model of a PathAlgebra.
+ℕ∞-path-algebra : PathAlgebra _ _
+ℕ∞-path-algebra =
   record
   { Carrier = ℕ∞
   ; _≈_ = _≡_
@@ -29,7 +29,7 @@ open import Relation.Binary.PropositionalEquality
   ; _*_ = _+_
   ; 0# = ∞
   ; 1# = ↑ 0
-  ; isDijkstraAlgebra =
+  ; isPathAlgebra =
       record
       { +-isCommutativeMonoid =
           record
@@ -51,9 +51,9 @@ open import Relation.Binary.PropositionalEquality
   }
 
 -- The unit type equipped with degenerate _+_ and _*_ operations also satisfies the
--- axioms for a Dijkstra algebra:
-unit-dijkstra-algebra : DijkstraAlgebra _ _
-unit-dijkstra-algebra =
+-- axioms for a Path algebra:
+unit-path-algebra : PathAlgebra _ _
+unit-path-algebra =
   record
   { Carrier = ⊤
   ; _≈_ = _≡_
@@ -62,7 +62,7 @@ unit-dijkstra-algebra =
   ; _*_ = _+ᵤ_
   ; 0# = tt
   ; 1# = tt
-  ; isDijkstraAlgebra =
+  ; isPathAlgebra =
     record
     { +-isCommutativeMonoid =
       record

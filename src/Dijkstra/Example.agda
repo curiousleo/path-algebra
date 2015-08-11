@@ -6,10 +6,10 @@
 
 module Dijkstra.Example where
 
-import Dijkstra.Adjacency as Adj
-open import Dijkstra.Algebra
-open import Dijkstra.Algebra.Model
-  renaming (ℕ∞-dijkstra-algebra to alg)
+import Data.Matrix.Adjacency as Adj
+open import Algebra.Path.Structure
+open import Algebra.Path.Model
+  renaming (ℕ∞-path-algebra to alg)
 import Dijkstra.Algorithm as Algo
 
 open import Data.Fin using (zero; suc)
@@ -22,7 +22,7 @@ open import Relation.Binary
 open import Relation.Binary.PropositionalEquality as P using (_≡_)
 
 open Adj alg
-open DijkstraAlgebra alg renaming (Carrier to Weight)
+open PathAlgebra alg renaming (Carrier to Weight)
 open DecTotalOrder Nat.decTotalOrder using () renaming (refl to ≤-refl)
 
 rls : ∀ {n} → Adj (suc n) → Matrix Weight (suc n) (suc n)
