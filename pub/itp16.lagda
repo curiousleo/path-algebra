@@ -7,8 +7,8 @@
 
 \begin{document}
 
-\title{Dijkstra's algorithm: verified}
-\titlerunning{Dijkstra's algorithm}
+\title{Dijkstra's Algorithm: Verified}
+\titlerunning{Dijkstra's Algorithm}
 \author{Leonhard Markert \and Timothy Griffin \and Dominic P.~Mulligan}
 %\authorrunning{Leonhard Markert et al.}
 \institute{%
@@ -31,7 +31,7 @@ There will be two blank lines before and after the Abstract. \dots
 \section{Introduction}
 \label{sect.introduction}
 
-\subsection{Shortest paths and equilibrium routing}
+\subsection{Shortest Paths and Equilibrium Routing}
 \label{subsect.shortest.paths.and.equilibrium.routing}
 
 \subsection{Contributions}
@@ -40,16 +40,16 @@ There will be two blank lines before and after the Abstract. \dots
 \subsection{Agda}
 \label{subsect.agda}
 
-\subsection{Map of paper}
+\subsection{Map of Paper}
 \label{subsect.map.of.paper}
 
-\section{Formalising Dijkstra's algorithm}
+\section{Formalising Dijkstra's Algorithm}
 \label{sect.formalising.dijkstra.algorithm}
 
-\subsection{Basic definitions}
+\subsection{Basic Definitions}
 \label{subsect.basic.definitions}
 
-\subsection{Sorted vectors}
+\subsection{Sorted Vectors}
 \label{subsect.sorted.vectors}
 
 \begin{code}
@@ -57,19 +57,19 @@ data Test : Set where
   test : Test
 \end{code}
 
-\subsection{Dijkstra algebras and their models}
+\subsection{Dijkstra Algebras and Their Models}
 \label{subsect.dijkstra.algebras.and.their.models}
 
-\subsection{Towards correctness}
+\subsection{Towards Correctness}
 \label{subsect.towards.correctness}
 
 \section{Conclusions}
 \label{sect.conclusions}
 
-\subsection{Related work}
+\subsection{Related Work}
 \label{subsect.related.work}
 
-\subsection{Future work}
+\subsection{Future Work}
 \label{subsect.future.work}
 
 %\bibliography{path-algebra}
