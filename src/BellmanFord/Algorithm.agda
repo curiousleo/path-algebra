@@ -4,14 +4,14 @@
 -- Definition of an abstract version of the Bellman-Ford algorithm
 ------------------------------------------------------------------------
 
-open import Dijkstra.Algebra
-open import Dijkstra.Adjacency
+open import Algebra.Path.Structure
+open import Data.Matrix.Adjacency
 
 open import Data.Fin using (Fin; zero; suc)
 open import Data.Nat using (ℕ; zero; suc)
 
 module BellmanFord.Algorithm
-    {c ℓ} (alg : DijkstraAlgebra c ℓ)
+    {c ℓ} (alg : PathAlgebra c ℓ)
     {n} (adj : Adj alg (suc n))
     where
 
@@ -19,7 +19,7 @@ open import Data.Fin.Subset using (⊤)
 open import Data.Matrix using (_[_,_])
 
 -- Bring the algebra's operators, constants and properties into scope
-open DijkstraAlgebra alg renaming (Carrier to Weight)
+open PathAlgebra alg renaming (Carrier to Weight)
 open import Dijkstra.Bigop +-commutativeMonoid using (⨁-syntax)
 
 -- Shorthand for adjacency matrix lookup

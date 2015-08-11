@@ -5,18 +5,18 @@
 -- algorithm
 ------------------------------------------------------------------------
 
-open import Dijkstra.Algebra
-import Dijkstra.Adjacency as Adj
+open import Algebra.Path.Structure
+import Data.Matrix.Adjacency as Adj
 
 open import Data.Fin using (Fin; zero; suc)
 open import Data.Nat using (ℕ; zero; suc)
 
 module BellmanFord.Correctness
-    {c ℓ} (alg : DijkstraAlgebra c ℓ)
+    {c ℓ} (alg : PathAlgebra c ℓ)
     {n} (adj : Adj.Adj alg (suc n))
     where
 
-open import Dijkstra.Algebra.Properties
+open import Algebra.Path.Properties
 open import BellmanFord.Algorithm alg adj
 
 import Data.Fin.Properties as F
@@ -32,8 +32,8 @@ import Relation.Binary.PropositionalEquality as P
 open Adj alg
 
 -- Bring the algebra's operators, constants and properties into scope
-open DijkstraAlgebra alg renaming (Carrier to Weight)
-open RequiresDijkstraAlgebra alg
+open PathAlgebra alg renaming (Carrier to Weight)
+open RequiresPathAlgebra alg
 open import Dijkstra.Bigop +-commutativeMonoid
 open EqR setoid
 
