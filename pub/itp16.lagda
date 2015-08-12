@@ -3,9 +3,13 @@
 \usepackage{agda}
 \usepackage{amsmath}
 \usepackage[british]{babel}
+\usepackage{booktabs}
 \usepackage{cite}
+\usepackage{csquotes}
 \usepackage[colorlinks]{hyperref}
 \usepackage{microtype}
+
+\setlength{\tabcolsep}{6pt}
 
 \bibliographystyle{splncs03}
 
@@ -67,11 +71,13 @@ Agda~\cite{norell_dependently_2009}
 \subsection{Basic Definitions}
 \label{subsect.basic.definitions}
 
-\begin{description}
-\item[Adjacency matrices.] Agda's standard library defines \AgdaDatatype{Vec}~\AgdaBound{A}~\AgdaBound{n}, the type of lists of fixed length \(n\) and elements of type \AgdaBound{A}. We represent an \(m × n\) matrix as a vector containing \(m\) row vectors of length \(n\). As for vectors, the dimensions of a matrix are used as type-level indices: \AgdaDatatype{Matrix}~\AgdaBound{A}~\AgdaBound{m}~\AgdaBound{n} is the type of \(m × n\) matrices with element type \AgdaBound{A}.
+\subsubsection{Adjacency matrices.}
+Agda's standard library defines \AgdaDatatype{Vec}~\AgdaBound{A}~\AgdaBound{n}, the type of lists of fixed length \(n\) and elements of type \AgdaBound{A}. We represent an \(m × n\) matrix as a vector containing \(m\) row vectors of length \(n\). As for vectors, the dimensions of a matrix are used as type-level indices: \AgdaDatatype{Matrix}~\AgdaBound{A}~\AgdaBound{m}~\AgdaBound{n} is the type of \(m × n\) matrices with element type \AgdaBound{A}.
 
 An adjacency matrix is a square matrix of edge weights whose diagonal elements are equivalent to the identity of the edge weight operator, \AgdaFunction{\_*\_}. A~square matrix is simply a matrix whose row and column indices are equal. An adjacency matrix is thus represented as a matrix of type \AgdaDatatype{Matrix}~\AgdaField{Weight}~\AgdaBound{n}~\AgdaBound{n} paired with a proof that the result of looking up any element on its diagonal evaluates to a value that is equivalent to \AgdaField{1\#}.
-\item[Nodes.] The type of finite sets of size \(n\) is called \AgdaDatatype{Fin}~\AgdaBound{n} in the standard library. Given a graph with \(n\) nodes (represented by an \(n × n\) adjacency matrix), we give its nodes the type \AgdaDatatype{Fin}~\AgdaBound{n}. This results in a number of desirable properties:
+
+\subsubsection{Nodes.}
+The type of finite sets of size \(n\) is called \AgdaDatatype{Fin}~\AgdaBound{n} in the standard library. Given a graph with \(n\) nodes (represented by an \(n × n\) adjacency matrix), we give its nodes the type \AgdaDatatype{Fin}~\AgdaBound{n}. This results in a number of desirable properties:
 
 \begin{enumerate}
   \item \AgdaDatatype{Fin}~\AgdaBound{n} has exactly \(n\) inhabitants, which allows us to quantify over all nodes by abstracting over an argument of this type.
@@ -79,7 +85,12 @@ An adjacency matrix is a square matrix of edge weights whose diagonal elements a
   \item Nodes have a decidable equality.
 \end{enumerate}
 
-\end{description}
+\subsubsection{Sets of nodes.} Since nodes are represented as values of type \AgdaDatatype{Fin}~\AgdaBound{n}, we can re-use the definition of \AgdaDatatype{Subset}~\AgdaBound{n} included in the standard library to represent sets of nodes.
+
+\subsection{Path weight sums}
+\label{subsect.path.weight.sums}
+
+\enquote{Sum} here refers to an iteration of an operator over some collection of indices like \(\bigoplus_{x ∈ X} f(x)\) \cite{bertot_canonical_2008}. The properties of the path weight operator \AgdaFunction{\_+\_} include associativity, commutative and idempotence. In combination, these properties allow us to make strong claims about the behaviour of edge weight sums.
 
 % Representation of algebraic structures as records
 % Setoid, Equivalence
@@ -88,6 +99,8 @@ An adjacency matrix is a square matrix of edge weights whose diagonal elements a
 
 \subsection{Sorted Vectors}
 \label{subsect.sorted.vectors}
+
+% Need to mention AVL trees in standard library
 
 \begin{code}
 open import Relation.Binary
@@ -125,8 +138,34 @@ module Sorted
     renaming (trans to ≤-trans; refl to ≤-refl)
 \end{code}
 
-\subsection{Dijkstra Algebras and Their Models}
-\label{subsect.dijkstra.algebras.and.their.models}
+\subsection{Path Algebras and Their Models}
+\label{subsect.path.algebras.and.their.models}
+
+We refer to the weakest algebraic structure for which we could prove the correctness of Dijkstra's algorithm as a \emph{path algebra}. For clarity, we introduce it here by comparing it to a \emph{semiring}.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{c l l}
+& \emph{Semiring} & \emph{Path algebra} \\
+\midrule
+\AgdaFunction{+} & associative & associative \\
+                 & commutative & commutative \\
+                 & identity \AgdaField{0\#} & identity \AgdaField{0\#} \\
+                 & ---                      & selective \\
+                 & ---                      & zero \AgdaField{1\#} \\
+\midrule
+\AgdaFunction{*} & associative & --- \\
+                 & identity \AgdaField{1\#} & left-identity \AgdaField{1\#} \\
+                 & zero \AgdaField{0\#}     & --- \\
+\midrule
+                 & \AgdaFunction{*} distributes over \AgdaFunction{+} &
+                   \AgdaFunction{+} absorbs \AgdaFunction{*} \\
+\bottomrule
+\end{tabular}
+\label{tab.path.algebra}
+\vspace{6pt}
+\caption{Comparing the algebraic properties of a semiring and a path algebra.}
+\end{table}
 
 \subsection{Towards Correctness}
 \label{subsect.towards.correctness}
