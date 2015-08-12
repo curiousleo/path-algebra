@@ -89,6 +89,9 @@ An adjacency matrix is a square matrix of edge weights whose diagonal elements a
 \subsection{Sorted Vectors}
 \label{subsect.sorted.vectors}
 
+A key consideration in Dijkstra's algorithm is: `which node do we consider next'?
+We now define a type of sorted vectors that will be used later in Subsection~\ref{subsect.towards.correctness} to maintain a priority queue of yet-unseen graph nodes.
+
 Throughout this Section we fix and open a decidable total order, \AgdaRecord{DecTotalOrder}.
 We write \AgdaField{Carrier} for the carrier set of the ordering, write \AgdaField{≤} for the ordering relation and write \AgdaField{≤?} for the proof that the ordering relation is decidable.
 Assuming this, we define a type of sorted vectors, or lists indexed by their length:
@@ -142,9 +145,10 @@ module Sorted
     x ≼ (y ∷ ys ⟨ prf ⟩) = (x ≤ y) × (x ≼ ys)
 \end{code}
 
-When compared to a standard vector type, our `cons' constructor, \AgdaInductiveConstructor{\_∷\_⟨\_⟩}, takes an additional proof that the head element \emph{dominates} the tail of the list.
-The domination relation, \AgdaFunction{\_≼\_}, is defined mutually with the declaration of our sorted vector type, by induction-recursion~\cite{dybjer_general_2000}.
-The relation is decidable and quasi-transitive in the sense that if $x$ dominates $xs$ and $y$ is less than $x$ according to our total order then $y$ also dominates $xs$:
+Compared to a standard length-indexed list, our `cons' constructor, \AgdaInductiveConstructor{\_∷\_⟨\_⟩}, takes an additional proof that the head element \emph{dominates} the tail of the list.
+The domination relation, \AgdaFunction{\_≼\_}, is defined mutually with the declaration of our sorted vector type, by induction-recursion~\cite{dybjer_general_2000}, making it impossible to construct a vector that is not sorted.
+The relation is decidable and also quasi-transitive in the sense that if $x$ dominates $xs$ and $y$ is less than $x$ according to our total order then $y$ also dominates $xs$.
+We state the lemma here but omit the trivial proof by induction for brevity:
 
 \begin{code}
   ≼-trans : ∀ {n y x} → (xs : SortedVec n) → x ≼ xs → y ≤ x → y ≼ xs
@@ -166,9 +170,8 @@ The relation is decidable and quasi-transitive in the sense that if $x$ dominate
   head (x ∷ xs ⟨ prf ⟩) = x
 \end{code}}
 
-The insertion of an element into an existing sorted vector is defined by mutual recursion.
-\AgdaFunction{insert} places the inserted element in the correct position in the vector, according to our total order, and `bumps up' the length index by one.
-The \AgdaFunction{≼-insert}, mutually defined with \AgdaFunction{insert}, constructs the required proof:
+The insertion of an element into an existing sorted vector is defined by mutual recursion between two functions \AgdaFunction{insert} and \AgdaFunction{≼-insert}.
+The function \AgdaFunction{insert} places the inserted element in the correct position in the vector, `bumping up' the length index, whilst \AgdaFunction{≼-insert} constructs the required domination proof for the new element:
 
 \begin{code}
   mutual
@@ -187,7 +190,7 @@ The \AgdaFunction{≼-insert}, mutually defined with \AgdaFunction{insert}, cons
 \end{code}
 
 Here, \AgdaFunction{¬x≤y→y≤x} is a proof that $x \not\le y$ implies $y \le x$ in a total order.
-Appending two sorted vectors, $\AgdaFunction{_++_}$, can be defined by repeatedly inserting elements from the first vector into the second.
+Appending two sorted vectors, \AgdaFunction{\_++\_}, can be defined easily by repeatedly inserting elements from the first vector into the second.
 
 Membership of sorted vectors, \AgdaDataType{\_∈\_}, is defined using the usual two constructor inductive relation, complicated slightly by the need to quantify over domination proofs:
 
@@ -198,7 +201,9 @@ Membership of sorted vectors, \AgdaDataType{\_∈\_}, is defined using the usual
       ∀ prf → x ∈ ys → x ∈ (y ∷ ys ⟨ prf ⟩)
 \end{code}
 
-Using this definition, we may show that the head of the vector is indeed the smallest element contained therein, that is, any other element in a sorted vector is ordered less than the head:
+Using this definition, we may show that the head of a vector is indeed the smallest element contained therein.
+That is, the head of a vector is ordered less than any other element in that same sorted vector.
+The proof proceeds by analysing the cases under which $x \in xs$:
 
 \begin{code}
   head-≤ : ∀ {m} {x} {xs : SortedVec (ℕ.suc m)} → x ∈ xs → head xs ≤ x
@@ -208,8 +213,6 @@ Using this definition, we may show that the head of the vector is indeed the sma
   head-≤ (there z (y ∷ ys ⟨ _ ⟩) (z≤y , _) x∈y∷ys) =
     ≤-trans z≤y (head-≤ x∈y∷ys)
 \end{code}
-The proof proceeds by analysing the cases under which $x \in xs$.
-
 
 \subsection{Dijkstra Algebras and Their Models}
 \label{subsect.dijkstra.algebras.and.their.models}
