@@ -37,7 +37,7 @@ The abstract should summarize the contents of the paper
 using at least 70 and at most 150 words. It will be set in 9-point
 font size and be inset 1.0 cm from the right and left margins.
 There will be two blank lines before and after the Abstract. \dots
-\keywords{Dijkstra's algorithm, shortest paths, internet routing, interactive theorem proving}
+\keywords{Dijkstra's algorithm, shortest paths, internet routing, interactive theorem proving, Agda}
 \end{abstract}
 
 \section{Introduction}
