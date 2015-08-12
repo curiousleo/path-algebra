@@ -73,7 +73,7 @@ Universe polymorphism is used extensively throughout this development, with expl
 
 In Section~\ref{sect.basic.definitions} we cover some definitions needed to define Dijkstra's algorithm and its correctness proof.
 In Section~\ref{sect.sorted.vectors} we discuss a type of sorted vectors used to maintain a priority queue of yet-unseen graph nodes in the algorithm.
-In Section~\ref{sect.path.algebras.and.their.models} we discuss `path algebras', a variety of algebraic structure central to our proof of correctness, also providing two models of path algebras to demonstrate that models exist and that path algebras are not categorical.
+In Section~\ref{sect.path.algebras.their.properties.and.models} we discuss `path algebras', a variety of algebraic structure central to our proof of correctness, also providing two models of path algebras to demonstrate that models exist and that path algebras are not categorical.
 In Section~\ref{sect.correctness} we discuss the main body of the correctness proof leading up to our main theorem: Dijkstra's algorithm computes a right-local solution.
 In Section~\ref{sect.conclusions} we conclude.
 
@@ -227,8 +227,8 @@ The proof proceeds by analysing the cases under which $x \in xs$:
     ≤-trans z≤y (head-≤ x∈y∷ys)
 \end{code}
 
-\section{Path Algebras and Their Models}
-\label{sect.path.algebras.and.their.models}
+\section{Path Algebras, Their Properties And Models}
+\label{sect.path.algebras.their.properties.and.models}
 
 Algebraic structures called path algebras are at the heart of our formalisation of Dijkstra's algorithm.
 We introduce path algebras here, prove various lemmas about them, and later provide two models proving their non-triviality and non-categoricity in Subsection~\ref{subsect.models}.
@@ -252,6 +252,9 @@ We start by defining a \emph{selective} binary operation as follows:
   Selective : Op₂ A → Set _
   Selective _∙_ = ∀ x y → ((x ∙ y) ≈ x) ⊎ ((x ∙ y) ≈ y)
 \end{code}
+
+\subsection{Properties}
+\label{subsect.properties}
 
 \subsection{Models}
 \label{subsect.models}
