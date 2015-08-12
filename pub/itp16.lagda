@@ -1,12 +1,16 @@
 \documentclass{llncs}
 
 \usepackage{agda}
+\usepackage{amsmath}
 \usepackage[british]{babel}
 \usepackage{cite}
 \usepackage[colorlinks]{hyperref}
 \usepackage{microtype}
 
 \bibliographystyle{splncs03}
+
+\DeclareUnicodeCharacter{8799}{\ensuremath{\overset{?}{\vphantom{o}\smash{=}}}}
+\DeclareUnicodeCharacter{8759}{\ensuremath{::}}
 
 \begin{document}
 
