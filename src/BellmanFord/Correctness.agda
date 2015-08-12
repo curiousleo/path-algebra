@@ -58,54 +58,16 @@ LLS : ℕ → Fin (suc n) → Fin (suc n) → Set _
 LLS ctd i j = let l = estimate ctd in
   l i j ≈ I[ i , j ] + (⨁[ q ← ⊤ ] (A[ i , q ] * l q j))
 
-argmin : ∀ {n} → (xs : Subset n) → (sz : ℕ) → suc sz ≡ Sub.size xs → (f : Fin n → Weight) → ∃ λ i → i ∈ xs × f i ≈ (⨁[ j ← xs ] f j)
-argmin [] sz () f
-argmin (inside ∷ xs) zero eq f = zero , (here , {!!})
-argmin (outside ∷ xs) zero eq f = let i , i∈xs , eq≈ = argmin xs zero eq (f ∘ suc ) in (suc i) , ({!!} , {!!})
-argmin (inside ∷ xs) (suc sz) eq f = {!+-selective (f zero) (f (suc (proj₁ (argmin xs sz ? ?))))!}
-argmin (outside ∷ []) (suc sz) () f
-argmin (outside ∷ inside ∷ xs) (suc sz) eq f = let i , i∈xs , eq≈ = argmin xs sz {!eq!} (f ∘ Fin.suc ∘ suc) in
-  {!!}
-argmin (outside ∷ outside ∷ xs) (suc sz) eq f = {!!}
-
-find-min : (ctd : ℕ) → ∀ i j →
-           let l = estimate ctd in
-           ∃ λ q → ∀ q′ → A[ i , q ] * l q j ≤ A[ i , q′ ] * l q′ j
-find-min zero i j = i , λ q′ → 0# ,
-  (begin
-    A[ i , i ] * A[ i , j ]
-     ≈⟨ {!!} ⟩
-    A[ i , q′ ] * A[ q′ , j ] + 0#
-  ∎)
-find-min (suc ctd) i j = {!!}
-
-path-relax : (ctd : ℕ) → {lt : ctd N≤ n} → ∀ i j →
-             let l = estimate ctd in
-             ∃ λ qs → (Sub.size qs ≡ suc ctd) × (⨁[ q ← qs ] (A[ i , q ] * l q j)) ≈
-                                                (⨁[ q ← ⊤ ] (A[ i , q ] * l q j))
-path-relax zero i j = ⁅ i ⁆ , Sub.size⁅i⁆≡1 i ,
-  (begin
-    (⨁[ q ← ⁅ i ⁆ ] (A[ i , q ] * A[ q , j ]))
-      ≈⟨ {!!} ⟩
-    A[ i , i ] * A[ i , j ]
-      ≈⟨ {!!} ⟩
-    1# * A[ i , j ]
-      ≈⟨ {!Adj.diag!} ⟩
-    A[ i , j ]
-      ≈⟨ {!!} ⟩
-    (⨁[ q ← ⊤ ] (A[ i , q ] * A[ q , j ]))
-  ∎)
-path-relax (suc ctd) {lt} i j = let qs , eq≡ , eq≈ = path-relax ctd {≤-step′ lt} i j in
-  ⁅ {!!} ⁆ ∪ qs , ({!!} , {!!})
-
-correct : ∀ n i j → LLS n i j
+correct : ∀ n i j → LLS (suc n) i j
 correct zero i j with i F.≟ j
-... | yes i≡j = let l = estimate zero in
+... | yes i≡j = let l = estimate 1 in
   begin
-    A[ i , j ]
-      ≡⟨ P.cong₂ A[_,_] (P.refl {x = i}) (P.sym i≡j) ⟩
-    A[ i , i ]
-      ≈⟨ Adj.diag adj i ⟩
+    A[ i , j ] + _
+      ≡⟨ P.cong₂ _+_ (P.cong₂ A[_,_] (P.refl {x = i}) (P.sym i≡j)) P.refl ⟩
+    A[ i , i ] + _
+      ≈⟨ +-cong (Adj.diag adj i) refl ⟩
+    1# + _
+      ≈⟨ proj₁ +-zero _ ⟩
     1#
       ≈⟨ sym (proj₁ +-zero _) ⟩
     1# + _
@@ -116,17 +78,17 @@ correct zero i j with i F.≟ j
       ≡⟨ P.cong₂ _+_ (P.cong₂ I[_,_] (P.refl {x = i}) i≡j) P.refl ⟩
     I[ i , j ] + (⨁[ q ← ⊤ ] (A[ i , q ] * l q j))
   ∎
-... | no ¬i≡j = let l = estimate zero in
+... | no ¬i≡j = let l = estimate 1 in
   begin
-    A[ i , j ]
-      ≈⟨ sym (proj₁ +-identity _) ⟩
-    0# + A[ i , j ]
-      ≡⟨ P.cong₂ _+_ (P.sym (diagonal-nondiag i j ¬i≡j)) P.refl ⟩
-    diagonal 0# 1# i j + A[ i , j ]
-      ≡⟨ P.cong₂ _+_ (P.sym (lookup∘tabulate {f = diagonal 0# 1#} i j)) P.refl ⟩
-    I[ i , j ] + A[ i , j ]
-      ≈⟨ +-cong refl {!!} ⟩
-    I[ i , j ] + (⨁[ q ← ⊤ ] (A[ i , q ] * A[ q , j ]))
+    A[ i , j ] + (⨁[ q ← ⊤ ] (A[ i , q ] * A[ q , j ]))
+      ≈⟨ +-cong (sym (proj₁ +-identity _)) refl ⟩
+    (0# + A[ i , j ]) + (⨁[ q ← ⊤ ] (A[ i , q ] * A[ q , j ]))
+      ≡⟨ P.cong₂ _+_ (P.cong₂ _+_ (P.sym (diagonal-nondiag i j ¬i≡j)) P.refl) P.refl ⟩
+    (diagonal 0# 1# i j + A[ i , j ]) + (⨁[ q ← ⊤ ] (A[ i , q ] * A[ q , j ]))
+      ≡⟨ P.cong₂ _+_ (P.cong₂ _+_ (P.sym (lookup∘tabulate {f = diagonal 0# 1#} i j)) P.refl) P.refl ⟩
+    (I[ i , j ] + A[ i , j ]) + (⨁[ q ← ⊤ ] (A[ i , q ] * A[ q , j ]))
+      ≈⟨ {!!} ⟩
+    I[ i , j ] + (⨁[ q ← ⊤ ] (A[ i , q ] * l q j))
   ∎
       
 correct (suc n) i j =
@@ -142,8 +104,8 @@ correct (suc n) i j =
     I[ i , j ] + (⨁[ q ← ⊤ ] (A[ i , q ] * l′ q j))
   ∎
   where
-    l′ = estimate (suc n)
-    l  = estimate n
+    l′ = estimate (suc (suc n))
+    l  = estimate (suc n)
 
     lemma = λ q →
       begin
