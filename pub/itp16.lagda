@@ -162,13 +162,13 @@ module Sorted
 \begin{code}
   mutual
     data SortedVec : ℕ → Set (ℓ₂ ⊔ a) where
-      []     : SortedVec 0
-      _∷_⟨_⟩ : ∀ {n} → (y : Carrier) → (ys : SortedVec n) →
-        (y≼ys : y ≼ ys) → SortedVec (ℕ.suc n)
+      []      : SortedVec 0
+      _∷_⟨_⟩  : ∀ {n} →  (y : Carrier) → (ys : SortedVec n) →
+                         (y≼ys : y ≼ ys) → SortedVec (ℕ.suc n)
 
     _≼_ : ∀ {n} → Carrier → SortedVec n → Set ℓ₂
-    x ≼ []               = Lift ⊤
-    x ≼ (y ∷ ys ⟨ prf ⟩) = (x ≤ y) × (x ≼ ys)
+    x ≼ []                = Lift ⊤
+    x ≼ (y ∷ ys ⟨ prf ⟩)  = (x ≤ y) × (x ≼ ys)
 \end{code}
 
 Compared to a standard length-indexed list, our `cons' constructor, \AgdaInductiveConstructor{\_∷\_⟨\_⟩}, takes an additional proof that the head element \emph{dominates} the tail of the list.
@@ -204,15 +204,15 @@ The function \AgdaFunction{insert} places the inserted element in the correct po
     insert : ∀ {n} → Carrier → SortedVec n → SortedVec (ℕ.suc n)
     insert x []               = x ∷ [] ⟨ lift tt ⟩
     insert x (y ∷ ys ⟨ prf ⟩) with x ≤? y
-    ... | yes lt = x ∷ y ∷ ys ⟨ prf ⟩ ⟨ lt , ≼-trans ys prf lt ⟩
-    ... | no ¬lt = y ∷ insert x ys ⟨ ≼-insert ys (¬x≤y→y≤x ¬lt) prf ⟩
+    ... | yes lt  = x ∷ y ∷ ys ⟨ prf ⟩ ⟨ lt , ≼-trans ys prf lt ⟩
+    ... | no ¬lt  = y ∷ insert x ys ⟨ ≼-insert ys (¬x≤y→y≤x ¬lt) prf ⟩
 
-    ≼-insert : ∀ {n x y} → (ys : SortedVec n) → y ≤ x →
-      y ≼ ys → y ≼ (insert x ys)
-    ≼-insert {zero} {x} []                y≤x dom = y≤x , lift tt
-    ≼-insert {suc n} {x} (z ∷ zs ⟨ prf ⟩) y≤x (y≤z , zsDomy) with x ≤? z
-    ... | yes lt = y≤x , y≤z , zsDomy
-    ... | no ¬lt = y≤z , ≼-insert zs y≤x zsDomy
+    ≼-insert :  ∀ {n x y} → (ys : SortedVec n) → y ≤ x →
+                y ≼ ys → y ≼ (insert x ys)
+    ≼-insert {zero}   {x}  []                y≤x  dom = y≤x , lift tt
+    ≼-insert {suc n}  {x}  (z ∷ zs ⟨ prf ⟩)  y≤x  (y≤z , zsDomy) with x ≤? z
+    ... | yes lt  = y≤x , y≤z , zsDomy
+    ... | no ¬lt  = y≤z , ≼-insert zs y≤x zsDomy
 \end{code}
 
 Here, \AgdaFunction{¬x≤y→y≤x} is a proof that $x \not\le y$ implies $y \le x$ in a total order.
@@ -222,9 +222,9 @@ Membership of sorted vectors, \AgdaDatatype{\_∈\_}, is defined using the usual
 
 \begin{code}
   data _∈_ (x : Carrier) : ∀ {n} → SortedVec n → Set (ℓ₁ ⊔ a ⊔ ℓ₂) where
-    here  : ∀ {n} → (xs : SortedVec n) → ∀ prf → x ∈ (x ∷ xs ⟨ prf ⟩)
-    there : ∀ {n} → (y : Carrier) → (ys : SortedVec n) →
-      ∀ prf → x ∈ ys → x ∈ (y ∷ ys ⟨ prf ⟩)
+    here   : ∀ {n} →  (xs : SortedVec n) → ∀ prf → x ∈ (x ∷ xs ⟨ prf ⟩)
+    there  : ∀ {n} →  (y : Carrier) → (ys : SortedVec n) →
+                      ∀ prf → x ∈ ys → x ∈ (y ∷ ys ⟨ prf ⟩)
 \end{code}
 
 Using this definition, we may show that the head of a vector is indeed the smallest element contained therein.
@@ -233,10 +233,10 @@ The proof proceeds by analysing the cases under which $x \in xs$:
 
 \begin{code}
   head-≤ : ∀ {m} {x} {xs : SortedVec (ℕ.suc m)} → x ∈ xs → head xs ≤ x
-  head-≤ (here    []             y≼ys) = ≤-refl
-  head-≤ (here    (y ∷ ys ⟨ _ ⟩) _   ) = ≤-refl
-  head-≤ (there z []             _         ()    )
-  head-≤ (there z (y ∷ ys ⟨ _ ⟩) (z≤y , _) x∈y∷ys) =
+  head-≤ (here     []             _  )                  = ≤-refl
+  head-≤ (here     (_ ∷ _ ⟨ _ ⟩)  _  )                  = ≤-refl
+  head-≤ (there _  []             _          ()      )
+  head-≤ (there _  (_ ∷ _ ⟨ _ ⟩)  (z≤y , _)  x∈y∷ys  )  =
     ≤-trans z≤y (head-≤ x∈y∷ys)
 \end{code}
 
