@@ -28,11 +28,7 @@ open import Data.Matrix  -- project set up correctly?
 \author{Leonhard Markert \and Timothy Griffin \and Dominic P.~Mulligan}
 %\authorrunning{Leonhard Markert et al.}
 \institute{%
-Computer Laboratory, University of Cambridge,\\
-15 JJ Thomson Avenue, Cambridge CB3 0FD, UK,\\
-\email{leo.markert@cantab.net}\\
-\email{timothy.griffin@cl.cam.ac.uk}\\
-\email{dominic.p.mulligan@googlemail.com}}
+Computer Laboratory, University of Cambridge}
 
 \maketitle
 
@@ -56,16 +52,34 @@ There will be two blank lines before and after the Abstract. \dots
 \subsection{Agda}
 \label{subsect.agda}
 
-Agda~\cite{norell_dependently_2009}
+Agda~\cite{norell_dependently_2009} is a dependently-typed programming language \emph{cum} proof assistant for higher-order intuitionistic logic.
+In contrast to similar systems, such as Coq~\cite{bertot_short_2008} and Matita~\cite{asperti_matita_2011}, proof terms are constructed by hand via a process of type-directed refinement, rather than construction through tactic-oriented meta-programming.
+
+Agda has a uniform syntax that should be familiar to Haskell programmers and users of other dependently-typed proof assistants.
+One syntactic novelty is a flexible system of user-declared Unicode mixfix identifiers~\cite{danielsson_parsing_2011} with `holes' in identifiers being denoted by underscores in the identifier.
+
+We write $(x : \phi) \rightarrow \psi$ for the dependent function space where $x$ may occur in $\psi$, and write $\phi \rightarrow \psi$ when $x$ does not occur in $\psi$ as is usual.
+We enclose arguments to be inferred by unification in braces, as in $\{ x : \phi \} \rightarrow \psi$, sometimes making use of the shorthand $\forall\; x.\; \phi$ for $\{ x \} \rightarrow \phi$.
+We write $\Sigma\; \phi\; P$ for the dependent sum type whose first projection has type $\phi$, and write $\phi \times \psi$ when the second project does not depend on the first as is usual.
+Dependent sums are constructed using the comma constructor: $x\; ,\; y$.
+We sometimes write $\exists\; x.\; P$ for the dependent sum type when the type of the first projection can be inferred.
+Lastly, we write $\phi \uplus \psi$ for the disjoint union type with constructors $inj_1$ and $inj_2$.
+
+Agda is a predicative type theory with an infinite universe hierarchy, $Set_i$, with $Set$---the type of small types---being identified with $Set_0$.
+Universe polymorphism is used extensively throughout this development, with explicit quantification over universe levels.
 
 \subsection{Map of Paper}
 \label{subsect.map.of.paper}
 
-\section{Formalising Dijkstra's Algorithm}
-\label{sect.formalising.dijkstra.algorithm}
+In Section~\ref{sect.basic.definitions} we cover some basic definitions needed to define Dijkstra's algorithm and prove it correct.
+In Section~\ref{sect.sorted.vectors} we discuss an inductive-recursive type of sorted vectors used to maintain a priority queue of yet-unseen graph nodes in the algorithm.
+In Section~\ref{sect.dijkstra.algebras.and.their.models} we discuss algebraic structures we have coined `Dijkstra algebras'.
+Here we also provide two models of Dijkstra algebras to demonstrate that they both exist and are not identified uniquely.
+In Section~\ref{sect.correctness} we discuss the main body of the correctness proof leading up to our main theorem that Dijkstra's algorithm computes a right-local solution.
+In Section~\ref{sect.conclusions} we conclude.
 
-\subsection{Basic Definitions}
-\label{subsect.basic.definitions}
+\section{Basic Definitions}
+\label{sect.basic.definitions}
 
 \begin{description}
 \item[Adjacency matrices.] Agda's standard library defines \AgdaDatatype{Vec}~\AgdaBound{A}~\AgdaBound{n}, the type of lists of fixed length \(n\) and elements of type \AgdaBound{A}. We represent an \(m × n\) matrix as a vector containing \(m\) row vectors of length \(n\). As for vectors, the dimensions of a matrix are used as type-level indices: \AgdaDatatype{Matrix}~\AgdaBound{A}~\AgdaBound{m}~\AgdaBound{n} is the type of \(m × n\) matrices with element type \AgdaBound{A}.
@@ -86,8 +100,8 @@ An adjacency matrix is a square matrix of edge weights whose diagonal elements a
 
 % Subset, Bigop, EstimateOrder
 
-\subsection{Sorted Vectors}
-\label{subsect.sorted.vectors}
+\section{Sorted Vectors}
+\label{sect.sorted.vectors}
 
 A key consideration in Dijkstra's algorithm is: `which node do we consider next'?
 We now define a type of sorted vectors that will be used later in Subsection~\ref{subsect.towards.correctness} to maintain a priority queue of yet-unseen graph nodes.
@@ -146,9 +160,9 @@ module Sorted
 \end{code}
 
 Compared to a standard length-indexed list, our `cons' constructor, \AgdaInductiveConstructor{\_∷\_⟨\_⟩}, takes an additional proof that the head element \emph{dominates} the tail of the list.
-The domination relation, \AgdaFunction{\_≼\_}, is defined mutually with the declaration of our sorted vector type, by induction-recursion~\cite{dybjer_general_2000}, making it impossible to construct a vector that is not sorted.
+The domination relation, \AgdaFunction{\_≼\_}, is defined mutually with the declaration of our sorted vector type via induction-recursion~\cite{dybjer_general_2000} making it impossible to construct a vector that is not sorted.
 The relation is decidable and also quasi-transitive in the sense that if $x$ dominates $xs$ and $y$ is less than $x$ according to our total order then $y$ also dominates $xs$.
-We state the lemma here but omit the trivial proof by induction for brevity:
+We state the lemma here, but omit the trivial proof by induction on $xs$, for brevity:
 
 \begin{code}
   ≼-trans : ∀ {n y x} → (xs : SortedVec n) → x ≼ xs → y ≤ x → y ≼ xs
@@ -214,11 +228,11 @@ The proof proceeds by analysing the cases under which $x \in xs$:
     ≤-trans z≤y (head-≤ x∈y∷ys)
 \end{code}
 
-\subsection{Dijkstra Algebras and Their Models}
-\label{subsect.dijkstra.algebras.and.their.models}
+\section{Dijkstra Algebras and Their Models}
+\label{sect.dijkstra.algebras.and.their.models}
 
-\subsection{Towards Correctness}
-\label{subsect.towards.correctness}
+\section{Correctness}
+\label{sect.correctness}
 
 \section{Conclusions}
 \label{sect.conclusions}
