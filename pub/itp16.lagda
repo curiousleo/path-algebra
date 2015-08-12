@@ -56,16 +56,16 @@ Agda~\cite{norell_dependently_2009} is a dependently-typed programming language 
 In contrast to similar systems, such as Coq~\cite{bertot_short_2008} and Matita~\cite{asperti_matita_2011}, proof terms are constructed by hand via a process of type-directed refinement, rather than construction through tactic-oriented meta-programming.
 
 Agda has a uniform syntax that should be familiar to Haskell programmers and users of other dependently-typed proof assistants.
-One syntactic novelty is a flexible system of user-declared Unicode mixfix identifiers~\cite{danielsson_parsing_2011} with `holes' in identifiers being denoted by underscores in the identifier.
+One syntactic novelty is a flexible system of user-declared Unicode mixfix identifiers~\cite{danielsson_parsing_2011} with `holes' in an identifier being denoted by underscores.
 
 We write $(x : \phi) \rightarrow \psi$ for the dependent function space where $x$ may occur in $\psi$, and write $\phi \rightarrow \psi$ when $x$ does not occur in $\psi$ as is usual.
 We enclose arguments to be inferred by unification in braces, as in $\{ x : \phi \} \rightarrow \psi$, sometimes making use of the shorthand $\forall\; x.\; \phi$ for $\{ x \} \rightarrow \phi$.
-We write $\Sigma\; \phi\; P$ for the dependent sum type whose first projection has type $\phi$, and write $\phi \times \psi$ when the second project does not depend on the first as is usual.
+We write $\Sigma\; \phi\; P$ for the dependent sum type whose first projection has type $\phi$, and write $\phi \times \psi$ when the second projection does not depend on the first, as is usual.
 Dependent sums are constructed using the comma constructor: $x\; ,\; y$.
 We sometimes write $\exists\; x.\; P$ for the dependent sum type when the type of the first projection can be inferred.
 Lastly, we write $\phi \uplus \psi$ for the disjoint union type with constructors $inj_1$ and $inj_2$.
 
-Agda is a predicative type theory with an infinite universe hierarchy, $Set_i$, with $Set$---the type of small types---being identified with $Set_0$.
+Agda is a predicative type theory with an infinite universe hierarchy, $Set_i$, with $Set$---the type of small types---being identified with $Set_0$, the base universe in Agda's hierarchy.
 Universe polymorphism is used extensively throughout this development, with explicit quantification over universe levels.
 
 \subsection{Map of Paper}
@@ -106,7 +106,7 @@ A key consideration in Dijkstra's algorithm is: `which node do we consider next'
 We now define a type of sorted vectors that will be used later in Section~\ref{sect.correctness} to maintain a priority queue of yet-unseen graph nodes.
 
 Throughout this Section we fix and open a decidable total order, \AgdaRecord{DecTotalOrder}.
-We write \AgdaField{Carrier} for the carrier set of the ordering, write \AgdaField{≤} for the ordering relation and write \AgdaField{≤?} for the proof that the ordering relation is decidable.
+We write \AgdaField{Carrier} for the carrier set of the ordering, write \AgdaField{≤} for the ordering relation, write \AgdaField{≤?} for the proof that the ordering relation is decidable, and write \AgdaField{≤-trans} for the proof that the ordering relation is transitive.
 Assuming this, we define a type of sorted vectors, or lists indexed by their length:
 
 \AgdaHide{
@@ -229,6 +229,32 @@ The proof proceeds by analysing the cases under which $x \in xs$:
 
 \section{Path Algebras and Their Models}
 \label{sect.path.algebras.and.their.models}
+
+Algebraic structures called path algebras are at the heart of our formalisation of Dijkstra's algorithm.
+We introduce path algebras here, prove various lemmas about them, and later provide two models proving their non-triviality and non-categoricity in Subsection~\ref{subsect.models}.
+
+\AgdaHide{
+\begin{code}
+open import Level
+open import Relation.Binary
+
+module MoreFunctionProperties {a ℓ} {A : Set a} (_≈_ : Rel A ℓ) where
+
+  open import Algebra.FunctionProperties _≈_
+
+  open import Data.Sum
+\end{code}}
+
+\noindent
+We start by defining a \emph{selective} binary operation as follows:
+
+\begin{code}
+  Selective : Op₂ A → Set _
+  Selective _∙_ = ∀ x y → ((x ∙ y) ≈ x) ⊎ ((x ∙ y) ≈ y)
+\end{code}
+
+\subsection{Models}
+\label{subsect.models}
 
 \section{Correctness}
 \label{sect.correctness}
