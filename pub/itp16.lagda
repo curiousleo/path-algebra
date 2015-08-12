@@ -104,7 +104,7 @@ An adjacency matrix is a square matrix of edge weights whose diagonal elements a
 \label{sect.sorted.vectors}
 
 A key consideration in Dijkstra's algorithm is: `which node do we consider next'?
-We now define a type of sorted vectors that will be used later in Subsection~\ref{subsect.towards.correctness} to maintain a priority queue of yet-unseen graph nodes.
+We now define a type of sorted vectors that will be used later in Section~\ref{sect.correctness} to maintain a priority queue of yet-unseen graph nodes.
 
 Throughout this Section we fix and open a decidable total order, \AgdaRecord{DecTotalOrder}.
 We write \AgdaField{Carrier} for the carrier set of the ordering, write \AgdaField{≤} for the ordering relation and write \AgdaField{≤?} for the proof that the ordering relation is decidable.
