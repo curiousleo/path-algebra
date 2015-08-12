@@ -240,7 +240,6 @@ The proof proceeds by analysing the cases under which $x \in xs$:
     ≤-trans z≤y (head-≤ x∈y∷ys)
 \end{code}
 
-<<<<<<< HEAD
 \subsection{Path Algebras and Their Models}
 \label{subsect.path.algebras.and.their.models}
 
@@ -269,7 +268,7 @@ We refer to the weakest algebraic structure for which we could prove the correct
 \vspace{6pt}
 \caption{Comparing the algebraic properties of a semiring and a path algebra.}
 \end{table}
-=======
+
 \section{Path Algebras, Their Properties And Models}
 \label{sect.path.algebras.their.properties.and.models}
 
