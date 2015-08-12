@@ -71,11 +71,10 @@ Universe polymorphism is used extensively throughout this development, with expl
 \subsection{Map of Paper}
 \label{subsect.map.of.paper}
 
-In Section~\ref{sect.basic.definitions} we cover some basic definitions needed to define Dijkstra's algorithm and prove it correct.
-In Section~\ref{sect.sorted.vectors} we discuss an inductive-recursive type of sorted vectors used to maintain a priority queue of yet-unseen graph nodes in the algorithm.
-In Section~\ref{sect.dijkstra.algebras.and.their.models} we discuss algebraic structures we have coined `Dijkstra algebras'.
-Here we also provide two models of Dijkstra algebras to demonstrate that they both exist and are not identified uniquely.
-In Section~\ref{sect.correctness} we discuss the main body of the correctness proof leading up to our main theorem that Dijkstra's algorithm computes a right-local solution.
+In Section~\ref{sect.basic.definitions} we cover some definitions needed to define Dijkstra's algorithm and its correctness proof.
+In Section~\ref{sect.sorted.vectors} we discuss a type of sorted vectors used to maintain a priority queue of yet-unseen graph nodes in the algorithm.
+In Section~\ref{sect.path.algebras.and.their.models} we discuss `path algebras', a variety of algebraic structure central to our proof of correctness, also providing two models of path algebras to demonstrate that models exist and that path algebras are not categorical.
+In Section~\ref{sect.correctness} we discuss the main body of the correctness proof leading up to our main theorem: Dijkstra's algorithm computes a right-local solution.
 In Section~\ref{sect.conclusions} we conclude.
 
 \section{Basic Definitions}
@@ -228,8 +227,8 @@ The proof proceeds by analysing the cases under which $x \in xs$:
     ≤-trans z≤y (head-≤ x∈y∷ys)
 \end{code}
 
-\section{Dijkstra Algebras and Their Models}
-\label{sect.dijkstra.algebras.and.their.models}
+\section{Path Algebras and Their Models}
+\label{sect.path.algebras.and.their.models}
 
 \section{Correctness}
 \label{sect.correctness}
