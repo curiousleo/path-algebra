@@ -48,91 +48,91 @@ A[ i , j ] = Adj.matrix adj [ i , j ]
 mutual
 
   -- Compares vertices by their current estimates
-  order : (ctd : ℕ) {lt : ctd ≤ n} → DecTotalOrder _ _ _
-  order ctd {lt} = estimateOrder $ estimate ctd {lt}
+  order : (step : ℕ) {s≤n : step ≤ n} → DecTotalOrder _ _ _
+  order step {s≤n} = estimateOrder $ estimate step {s≤n}
 
   -- Computes the estimated distance of j from i (the start vertex)
-  estimate : (ctd : ℕ) {lt : ctd ≤ n} → Fin (suc n) → Weight
-  estimate zero              j = A[ i , j ]
-  estimate (suc ctd) {ctd≤n} j = r j + r q * A[ q , j ]
+  estimate : (step : ℕ) {s≤n : step ≤ n} → Fin (suc n) → Weight
+  estimate zero             j = A[ i , j ]
+  estimate (suc step) {s≤n} j = r j + r q * A[ q , j ]
     where
-      q = Sorted.head (order ctd {≤-step′ ctd≤n}) (queue ctd {ctd≤n})
-      r = estimate ctd {≤-step′ ctd≤n}
+      q = Sorted.head (order step {≤-step′ s≤n}) (queue step {s≤n})
+      r = estimate step {≤-step′ s≤n}
 
   -- The set of visited vertices
-  seen : (ctd : ℕ) {lt : ctd ≤ n} → Subset (suc n)
-  seen zero              = ⁅ i ⁆
-  seen (suc ctd) {ctd≤n} =
-    seen ctd {≤-step′ ctd≤n} ∪
-    ⁅ Sorted.head (order ctd {≤-step′ ctd≤n}) (queue ctd {ctd≤n}) ⁆
+  seen : (step : ℕ) {s≤n : step ≤ n} → Subset (suc n)
+  seen zero             = ⁅ i ⁆
+  seen (suc step) {s≤n} =
+    seen step {≤-step′ s≤n} ∪
+    ⁅ Sorted.head (order step {≤-step′ s≤n}) (queue step {s≤n}) ⁆
 
   -- The priority queue of yet unseen vertices. Its head has the lowest
   -- current distance estimate from the start vertex of all unseen vertices
-  queue′ : (ctd : ℕ) {lt : ctd ≤ n} → Sorted.SortedVec _ (Sub.size $ ∁ $ seen ctd {lt})
-  queue′ ctd {lt} = Sorted.fromVec (order ctd {lt}) $ Sub.toVec $ ∁ $ seen ctd
+  queue′ : (step : ℕ) {s≤n : step ≤ n} → Sorted.SortedVec _ (Sub.size $ ∁ $ seen step {s≤n})
+  queue′ step {s≤n} = Sorted.fromVec (order step {s≤n}) $ Sub.toVec $ ∁ $ seen step
 
   -- Same queue, only the length index is rewritten to make it obvious that
   -- the queue contains at least one element (i.e. we can take the head)
-  queue : (ctd : ℕ) {lt : suc ctd ≤ n} → Sorted.SortedVec _ (suc (n ∸ (suc ctd)))
-  queue ctd {ctd<n} = P.subst (Sorted.SortedVec (order ctd {≤-step′ ctd<n})) (queue-size ctd {ctd<n}) (queue′ ctd)
+  queue : (step : ℕ) {s≤n : suc step ≤ n} → Sorted.SortedVec _ (suc (n ∸ (suc step)))
+  queue step {step<n} = P.subst (Sorted.SortedVec (order step {≤-step′ step<n})) (queue-size step {step<n}) (queue′ step)
 
-  -- Any property of (queue ctd) is a property of (queue′ ctd)
-  queue⇒queue′ : (ctd : ℕ) {lt : suc ctd ≤ n} → ∀ {p} (P : ∀ {n} →
-                 Sorted.SortedVec _ n → Set p) → P (queue′ ctd) → P (queue ctd {lt})
-  queue⇒queue′ ctd {lt} P Pqueue = super-subst P (≡-to-≅ (queue-size ctd {lt})) (H.sym H-lemma) Pqueue
+  -- Any property of (queue step) is a property of (queue′ step)
+  queue⇒queue′ : (step : ℕ) {s≤n : suc step ≤ n} → ∀ {p} (P : ∀ {n} →
+                 Sorted.SortedVec _ n → Set p) → P (queue′ step) → P (queue step {s≤n})
+  queue⇒queue′ step {s≤n} P Pqueue = super-subst P (≡-to-≅ (queue-size step {s≤n})) (H.sym H-lemma) Pqueue
     where
       open import Relation.Binary.HeterogeneousEquality as H
-      open Sorted (order ctd {≤-step′ lt})
+      open Sorted (order step {≤-step′ s≤n})
 
-      super-subst : ∀ {m n p} → {xs : SortedVec m} → {ys : SortedVec n} → (P : ∀ {n} → SortedVec n → Set p) →
-                    m H.≅ n → xs H.≅ ys → P xs → P ys
+      super-subst : ∀ {m n p} → {xs : SortedVec m} → {ys : SortedVec n} →
+                    (P : ∀ {n} → SortedVec n → Set p) → m H.≅ n → xs H.≅ ys → P xs → P ys
       super-subst P H.refl H.refl Pxs = Pxs
 
-      H-lemma : queue ctd ≅ queue′ ctd
-      H-lemma = ≡-subst-removable SortedVec (queue-size ctd {lt}) (queue′ ctd)
+      H-lemma : queue step ≅ queue′ step
+      H-lemma = ≡-subst-removable SortedVec (queue-size step {s≤n}) (queue′ step)
 
-  -- In step ctd, (suc ctd) vertices have been visited
-  seen-size : (ctd : ℕ) {lt : ctd ≤ n} → Sub.size (seen ctd {lt}) ≡ suc ctd
-  seen-size zero           = Sub.size⁅i⁆≡1 i
-  seen-size (suc ctd) {lt} =
+  -- In step step, (suc step) vertices have been visited
+  seen-size : (step : ℕ) {s≤n : step ≤ n} → Sub.size (seen step {s≤n}) ≡ suc step
+  seen-size zero             = Sub.size⁅i⁆≡1 i
+  seen-size (suc step) {s≤n} =
     begin
-      Sub.size (seen ctd ∪ ⁅ q ⁆)  ≡⟨ P.cong Sub.size (∪-comm (seen ctd) ⁅ q ⁆) ⟩
-      Sub.size (⁅ q ⁆ ∪ seen ctd)  ≡⟨ Sub.size-suc q (seen ctd) (q∉seen ctd) ⟩
-      suc (Sub.size (seen ctd))    ≡⟨ P.cong suc (seen-size ctd) ⟩
-      suc (suc ctd)
+      Sub.size (seen step ∪ ⁅ q ⁆)  ≡⟨ P.cong Sub.size (∪-comm (seen step) ⁅ q ⁆) ⟩
+      Sub.size (⁅ q ⁆ ∪ seen step)  ≡⟨ Sub.size-suc q (seen step) (q∉seen step) ⟩
+      suc (Sub.size (seen step))    ≡⟨ P.cong suc (seen-size step) ⟩
+      suc (suc step)
     ∎
     where
       open P.≡-Reasoning
       open Sub.Properties (suc n)
-      q = Sorted.head (order ctd {≤-step′ lt}) (queue ctd {lt})
+      q = Sorted.head (order step {≤-step′ s≤n}) (queue step {s≤n})
 
-  -- In step ctd, the size of the queue is (n ∸ ctd)
-  queue-size : (ctd : ℕ) {lt : suc ctd ≤ n} → Sub.size (∁ (seen ctd {≤-step′ lt})) ≡ suc (n ∸ suc ctd)
-  queue-size ctd {lt} =
+  -- In step step, the size of the queue is (n ∸ step)
+  queue-size : (step : ℕ) {s≤n : suc step ≤ n} → Sub.size (∁ (seen step {≤-step′ s≤n})) ≡ suc (n ∸ suc step)
+  queue-size step {s≤n} =
     begin
-      Sub.size (∁ (seen ctd))      ≡⟨ Sub.∁-size (seen ctd) ⟩
-      suc n ∸ Sub.size (seen ctd)  ≡⟨ P.cong₂ _∸_ P.refl (seen-size ctd) ⟩
-      suc n ∸ suc ctd              ≡⟨ sm∸n n (suc ctd) lt ⟩
-      suc (n ∸ suc ctd)
+      Sub.size (∁ (seen step))      ≡⟨ Sub.∁-size (seen step) ⟩
+      suc n ∸ Sub.size (seen step)  ≡⟨ P.cong₂ _∸_ P.refl (seen-size step) ⟩
+      suc n ∸ suc step              ≡⟨ sm∸n n (suc step) s≤n ⟩
+      suc (n ∸ suc step)
     ∎
     where
       open P.≡-Reasoning
 
   -- The head of the queue has not yet been visited
-  q∉seen : (ctd : ℕ) {lt : suc ctd ≤ n} → Sorted.head _ (queue ctd {lt}) ∉ seen ctd {≤-step′ lt}
-  q∉seen ctd {lt} q∈vs = q∉q∷qs (S.here qs q≼qs)
+  q∉seen : (step : ℕ) {s≤n : suc step ≤ n} → Sorted.head _ (queue step {s≤n}) ∉ seen step {≤-step′ s≤n}
+  q∉seen step {s≤n} q∈vs = q∉q∷qs (S.here qs q≼qs)
     where
-      module S = Sorted (order ctd {≤-step′ lt})
+      module S = Sorted (order step {≤-step′ s≤n})
 
-      q = S.head (queue ctd {lt})
-      qs = S.tail (queue ctd {lt})
-      q≼qs = S.≼-proof (queue ctd {lt})
+      q = S.head (queue step {s≤n})
+      qs = S.tail (queue step {s≤n})
+      q≼qs = S.≼-proof (queue step {s≤n})
 
-      q∉queue′ : ¬ (q S.∈ (queue′ ctd))
+      q∉queue′ : ¬ (q S.∈ (queue′ step))
       q∉queue′ = S.fromVec-∉¹ (Sub.toVec-∉¹ (Sub.∁-∈ q∈vs))
 
-      q∉queue : ¬ (q S.∈ (queue ctd {lt}))
-      q∉queue = queue⇒queue′ ctd {lt} (λ qs → ¬ (q S.∈ qs)) q∉queue′
+      q∉queue : ¬ (q S.∈ (queue step {s≤n}))
+      q∉queue = queue⇒queue′ step {s≤n} (λ qs → ¬ (q S.∈ qs)) q∉queue′
 
       q∉q∷qs : ¬ (q S.∈ (q S.∷ qs ⟨ q≼qs ⟩))
       q∉q∷qs = P.subst (λ qs → ¬ (q S.∈ qs)) S.destruct q∉queue

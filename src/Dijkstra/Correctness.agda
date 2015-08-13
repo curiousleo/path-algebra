@@ -55,19 +55,19 @@ open EqR setoid
 
 -- Partial right-local solution. This definition is suited for an
 -- inductive proof (step by step)
-pRLS : (ctd : ℕ) {lt : ctd N≤ n} → Pred (Fin (suc n)) _
-pRLS ctd {lt} j = let r = estimate ctd {lt} in
-  r j ≈ I[ i , j ] + (⨁[ k ← seen ctd {lt} ] (r k * A[ k , j ]))
+pRLS : (step : ℕ) {s≤n : step N≤ n} → Pred (Fin (suc n)) _
+pRLS step {s≤n} j = let r = estimate step {s≤n} in
+  r j ≈ I[ i , j ] + (⨁[ k ← seen step {s≤n} ] (r k * A[ k , j ]))
 
--- Right-local solution. The aim is to prove that this holds for ctd = n
-RLS : (ctd : ℕ) {lt : ctd N≤ n} → Pred (Fin (suc n)) _
-RLS ctd {lt} j = let r = estimate ctd {lt} in
+-- Right-local solution. The aim is to prove that this holds for step = n
+RLS : (step : ℕ) {s≤n : step N≤ n} → Pred (Fin (suc n)) _
+RLS step {s≤n} j = let r = estimate step {s≤n} in
   r j ≈ I[ i , j ] + (⨁[ k ← ⊤ ] (r k * A[ k , j ]))
 
 -- Inductive proof that Dijkstra's algorithm computes the partial
 -- right-local solution
-pcorrect : (ctd : ℕ) {lt : ctd N≤ n} → ∀ j → pRLS ctd {lt} j
-pcorrect zero      {lt} j with i FP.≟ j
+pcorrect : (step : ℕ) {s≤n : step N≤ n} → ∀ j → pRLS step {s≤n} j
+pcorrect zero {s≤n} j with i FP.≟ j
 ... | yes i≡j =
   begin
     r j             ≡⟨⟩
@@ -95,12 +95,12 @@ pcorrect zero      {lt} j with i FP.≟ j
   where
     r = estimate zero {z≤n}
 
-pcorrect (suc ctd) {lt} j =
+pcorrect (suc step) {s≤n} j =
   begin
     r′ j
       ≡⟨⟩
     r j + r q * A[ q , j ]
-      ≈⟨ +-cong (pcorrect ctd {≤-step′ lt} j) refl ⟩
+      ≈⟨ +-cong (pcorrect step {≤-step′ s≤n} j) refl ⟩
     (I[ i , j ] + (⨁[ k ← vs ] (r k * A[ k , j ]))) + r q * A[ q , j ]
       ≈⟨ +-assoc _ _ _ ⟩
     I[ i , j ] + ((⨁[ k ← vs ] (r k * A[ k , j ])) + r q * A[ q , j ])
@@ -108,20 +108,20 @@ pcorrect (suc ctd) {lt} j =
     I[ i , j ] + ((⨁[ k ← vs ] (r′ k * A[ k , j ])) + r′ q * A[ q , j ])
       ≈⟨ +-cong refl (+-cong refl (sym (fold-⁅i⁆ f′ q))) ⟩
     I[ i , j ] + ((⨁[ k ← vs ] (r′ k * A[ k , j ])) + (⨁[ k ← ⁅ q ⁆ ] (r′ k * A[ k , j ])))
-      ≈⟨ +-cong refl (sym (fold-∪ +-idempotent f′ (seen ctd) ⁅ q ⁆)) ⟩
+      ≈⟨ +-cong refl (sym (fold-∪ +-idempotent f′ (seen step) ⁅ q ⁆)) ⟩
     I[ i , j ] + (⨁[ k ← vs ∪ ⁅ q ⁆ ] (r′ k * A[ k , j ]))
       ≡⟨⟩
-    I[ i , j ] + (⨁[ k ← seen (suc ctd) {lt} ] (r′ k * A[ k , j ]))
+    I[ i , j ] + (⨁[ k ← seen (suc step) {s≤n} ] (r′ k * A[ k , j ]))
   ∎
   where
-    r′ = estimate (suc ctd) {lt}
-    r  = estimate ctd {≤-step′ lt}
-    q  = Sorted.head _ (queue ctd {lt})
+    r′ = estimate (suc step) {s≤n}
+    r  = estimate step {≤-step′ s≤n}
+    q  = Sorted.head _ (queue step {s≤n})
     f  = λ k → r k * A[ k , j ]
     f′ = λ k → r′ k * A[ k , j ]
-    vs = seen ctd {≤-step′ lt}
+    vs = seen step {≤-step′ s≤n}
     lemma : ∀ k → k ∈ vs → f k ≈ f′ k
-    lemma k k∈vs = *-cong (sym (estimate-lemma ctd k k∈vs)) refl
+    lemma k k∈vs = *-cong (sym (estimate-lemma step k k∈vs)) refl
 
 -- Dijkstra's algorithm computes the right-local solution. This follows
 -- directly from the inductive partial correctness proof above (pcorrect).
