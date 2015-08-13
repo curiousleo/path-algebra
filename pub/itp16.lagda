@@ -19,6 +19,7 @@
 \DeclareUnicodeCharacter{8799}{\ensuremath{\overset{?}{\vphantom{o}\smash{=}}}}
 \DeclareUnicodeCharacter{8759}{\ensuremath{::}}
 \DeclareUnicodeCharacter{7522}{\ensuremath{{}_{i}}}
+\DeclareUnicodeCharacter{7524}{\ensuremath{{}_{u}}}
 
 \begin{document}
 
@@ -63,14 +64,14 @@ There will be two blank lines before and after the Abstract. \dots
 \subsection{Agda}
 \label{subsect.agda}
 
-Agda~\cite{norell_dependently_2009} is a dependently-typed programming language \emph{cum} proof assistant for higher-order intuitionistic logic.
+Agda~\cite{norell_dependently_2009} is a dependently-typed functional programming language \emph{cum} proof assistant for higher-order intuitionistic logic.
 In contrast to similar systems, such as Coq~\cite{bertot_short_2008} and Matita~\cite{asperti_matita_2011}, proof terms are constructed by hand via a process of type-directed refinement, rather than construction through tactic-oriented meta-programming.
 
 Agda has a uniform syntax that should be familiar to Haskell programmers and users of other dependently-typed proof assistants.
 One syntactic novelty is a flexible system of user-declared Unicode mixfix identifiers~\cite{danielsson_parsing_2011} with `holes' in an identifier being denoted by underscores.
 
 We write \AgdaSymbol{(}\AgdaBound{x}~\AgdaSymbol{:}~\AgdaBound{A}\AgdaSymbol{)}~\AgdaSymbol{→}~\AgdaBound{B} for the dependent function space where \AgdaBound{x} may occur in \AgdaBound{B}, and write \AgdaBound{A}~\AgdaSymbol{→}~\AgdaBound{B} when \AgdaBound{x} does not occur in \AgdaBound{B} as is usual.
-We enclose arguments to be inferred by unification in braces, as in \AgdaSymbol{\{}\AgdaBound{x}~\AgdaSymbol{:}~\AgdaBound{A}\AgdaSymbol{\}}~\AgdaSymbol{→}~\AgdaBound{B}, sometimes making use of the shorthand \AgdaSymbol{∀}~\AgdaBound{x}~\AgdaSymbol{→}~\AgdaBound{A} for \AgdaSymbol{\{}\AgdaBound{x}\AgdaSymbol{\}}~\AgdaSymbol{→}~\AgdaBound{A}.
+We enclose arguments to be inferred by unification in braces, as in \AgdaSymbol{\{}\AgdaBound{x}~\AgdaSymbol{:}~\AgdaBound{A}\AgdaSymbol{\}}~\AgdaSymbol{→}~\AgdaBound{B}, sometimes making use of the shorthand \AgdaSymbol{∀}~\AgdaBound{x}~\AgdaSymbol{→}~\AgdaBound{B} where types can be inferred.
 We write \AgdaDatatype{Σ}~\AgdaBound{A}~\AgdaBound{B} for the dependent sum type whose first projection has type \AgdaBound{A}, and write \AgdaBound{A}~\AgdaDatatype{×}~\AgdaBound{B} when the second projection does not depend on the first, as is usual.
 Dependent sums are constructed using the comma constructor: \AgdaBound{x}~\AgdaInductiveConstructor{,}~\AgdaBound{y}.
 We sometimes write \AgdaFunction{∃}~\AgdaBound{x}~\AgdaSymbol{→}~\AgdaBound{P} for the dependent sum type when the type of the first projection can be inferred.
@@ -124,12 +125,12 @@ The type of finite sets of size \(n\) is called \AgdaDatatype{Fin}~\AgdaBound{n}
 
 A key consideration in Dijkstra's algorithm is: `which node do we consider next'?
 We now define a type of sorted vectors that will be used later in Section~\ref{sect.correctness} to maintain a simple priority queue of yet-unseen graph nodes.
-We prefer working with a linear sorted data structure, compared to a balanced binary tree such as Agda's existing implementation of AVL trees in \AgdaModule{Data.AVL}, to simplify proofs.
+We prefer working with a linear sorted data structure, compared to a balanced binary tree such as Agda's existing implementation of \textsc{avl} trees in \AgdaModule{Data.AVL}, to simplify proofs.
 Using a length-indexed data structure also allows us to assert statically the non-emptiness of our priority queue.
 
 Throughout this Section we fix and open a decidable total order, \AgdaRecord{DecTotalOrder}.
 We write \AgdaField{Carrier}, \AgdaField{≤} and \AgdaField{≤?} for the ordering's carrier set, ordering relation, and proof that the ordering relation is decidable, respectively.
-Assuming this, we define a type of sorted vectors, or lists indexed by their length:
+Assuming this, we define a type of sorted vectors, or sorted lists indexed by their length:
 
 \AgdaHide{
 \begin{code}
@@ -317,9 +318,6 @@ We start by defining a \emph{selective} binary operation as follows:
 \caption{Comparing the algebraic properties of a semiring and a path algebra.}
 \end{table}
 
-\subsection{Models}
-\label{subsect.models}
-
 \section{Dijkstra's Algorithm}
 \label{sect.dijkstras.algorithm}
 
@@ -463,6 +461,50 @@ The base case for the \AgdaFunction{estimate} function is a lookup in the adjace
 \caption{Imperative generalised Dijkstra's algorithm \cite[p.~9]{dynerowicz_forwarding_2013}}
 \label{fig.algorithm}
 \end{figure}
+
+\subsection{Models}
+\label{subsect.models}
+
+Trivially, the axioms of a \AgdaRecord{PathAlgebra} are satisfied by the unit type, \AgdaDatatype{⊤}.
+Defining a degenerate `addition' operation on the unit type:
+
+\AgdaHide{
+\begin{code}
+module Models where
+  open import Data.Unit
+  open import Relation.Binary.PropositionalEquality
+  open import Algebra.FunctionProperties (_≡_ {A = ⊤})
+\end{code}}
+
+\begin{code}
+  _+ᵤ_ : Op₂ ⊤
+  u +ᵤ v = tt
+\end{code}
+
+We can inhabit \AgdaRecord{PathAlgebra} by taking the algebra's addition and multiplication operations to be \AgdaFunction{\_+ᵤ\_} and its two unit elements to be \AgdaInductiveConstructor{tt}, the inhabitant of \AgdaDatatype{⊤}.
+A more useful model for \AgdaRecord{PathAlgebra} can be obtained by considering the natural numbers extended with a `point at infinity'.
+Define \AgdaDatatype{ℕ∞} as follows:
+
+\AgdaHide{
+\begin{code}
+module InfinityExtension where
+
+  open import Data.Nat
+    using (ℕ; zero; suc)
+  import Data.Nat as Nat
+  open import Data.Sum
+
+  open import Relation.Binary.PropositionalEquality
+\end{code}}
+
+\begin{code}
+  data ℕ∞ : Set where
+    ↑ : ℕ → ℕ∞
+    ∞ : ℕ∞
+\end{code}
+
+The natural numbers, \AgdaDatatype{ℕ}, can be embedded into \AgdaDatatype{ℕ∞} in the obvious way, using the constructor \AgdaInductiveConstructor{↑}.
+Define addition and minimum functions, \AgdaFunction{\_+\_} and \AgdaFunction{\_⊓\_} respectively, that interprets \AgdaInductiveConstructor{∞} as the largest element of \AgdaDatatype{ℕ∞}, and in the case of addition considers the addition of \AgdaInductiveConstructor{∞} to any other element of \AgdaDatatype{ℕ∞} to be equal to \AgdaInductiveConstructor{∞}.
 
 \section{Correctness}
 \label{sect.correctness}

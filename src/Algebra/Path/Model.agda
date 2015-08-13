@@ -8,6 +8,8 @@ module Algebra.Path.Model where
 
 open import Algebra.Path.Structure
 
+import Data.Nat as Nat
+import Data.Nat.MoreProperties as MP
 open import Data.Nat.InfinityExtension
 open import Data.Nat.InfinityExtension.Properties
 open import Data.Product
@@ -19,8 +21,9 @@ open import Relation.Binary.PropositionalEquality
   hiding (cong)
 
 -- Naturals extended with a point at infinity form a model of a PathAlgebra.
-ℕ∞-path-algebra : PathAlgebra _ _
-ℕ∞-path-algebra =
+-- When using _⊓_ and _+_ we get an algebra that computes shortest paths.
+ℕ∞-shortest-path-algebra : PathAlgebra _ _
+ℕ∞-shortest-path-algebra =
   record
   { Carrier = ℕ∞
   ; _≈_ = _≡_
@@ -50,8 +53,40 @@ open import Relation.Binary.PropositionalEquality
       }
   }
 
+-- When using _⊓_ and _⊔_ we get an algebra that computes widest paths.
+ℕ-widest-path-algebra : PathAlgebra _ _
+ℕ-widest-path-algebra =
+  record
+  { Carrier = ℕ∞
+  ; _≈_ = _≡_
+  ; _≟_ = _≟∞_
+  ; _+_ = _⊓_
+  ; _*_ = _⊔_
+  ; 0# = ∞
+  ; 1# = ↑ 0
+  ; isPathAlgebra =
+    record
+    { +-isCommutativeMonoid =
+      record
+      { isSemigroup =
+        record
+        { isEquivalence = isEquivalence
+        ; assoc         = ⊓-assoc
+        ; ∙-cong        = cong₂ _⊓_
+        }
+      ; identityˡ   = ⊓-identityˡ
+      ; comm        = ⊓-comm
+      }
+    ; +-selective = ⊓-selective
+    ; +-zero      = ⊓-zero
+    ; *-identityˡ = ⊔-identityˡ
+    ; *-cong      = cong₂ _⊔_
+    ; +-absorbs-* = ⊓-absorbs-⊔
+    }
+  }
+
 -- The unit type equipped with degenerate _+_ and _*_ operations also satisfies the
--- axioms for a Path algebra:
+-- axioms for a Path algebra trivially.
 unit-path-algebra : PathAlgebra _ _
 unit-path-algebra =
   record
