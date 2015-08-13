@@ -240,35 +240,6 @@ The proof proceeds by analysing the cases under which $x \in xs$:
     ≤-trans z≤y (head-≤ x∈y∷ys)
 \end{code}
 
-\subsection{Path Algebras and Their Models}
-\label{subsect.path.algebras.and.their.models}
-
-We refer to the weakest algebraic structure for which we could prove the correctness of Dijkstra's algorithm as a \emph{path algebra}. For clarity, we introduce it here by comparing it to a \emph{semiring}.
-
-\begin{table}[h]
-\centering
-\begin{tabular}{c l l}
-& \emph{Semiring} & \emph{Path algebra} \\
-\midrule
-\AgdaFunction{+} & associative & associative \\
-                 & commutative & commutative \\
-                 & identity \AgdaField{0\#} & identity \AgdaField{0\#} \\
-                 & ---                      & selective \\
-                 & ---                      & zero \AgdaField{1\#} \\
-\midrule
-\AgdaFunction{*} & associative & --- \\
-                 & identity \AgdaField{1\#} & left-identity \AgdaField{1\#} \\
-                 & zero \AgdaField{0\#}     & --- \\
-\midrule
-                 & \AgdaFunction{*} distributes over \AgdaFunction{+} &
-                   \AgdaFunction{+} absorbs \AgdaFunction{*} \\
-\bottomrule
-\end{tabular}
-\label{tab.path.algebra}
-\vspace{6pt}
-\caption{Comparing the algebraic properties of a semiring and a path algebra.}
-\end{table}
-
 \section{Path Algebras, Their Properties And Models}
 \label{sect.path.algebras.their.properties.and.models}
 
@@ -297,6 +268,30 @@ We start by defining a \emph{selective} binary operation as follows:
 
 \subsection{Properties}
 \label{subsect.properties}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{c l l}
+& \emph{Semiring} & \emph{Path algebra} \\
+\midrule
+\AgdaFunction{+} & associative & associative \\
+                 & commutative & commutative \\
+                 & identity \AgdaField{0\#} & identity \AgdaField{0\#} \\
+                 & ---                      & selective \\
+                 & ---                      & zero \AgdaField{1\#} \\
+\midrule
+\AgdaFunction{*} & associative & --- \\
+                 & identity \AgdaField{1\#} & left-identity \AgdaField{1\#} \\
+                 & zero \AgdaField{0\#}     & --- \\
+\midrule
+                 & \AgdaFunction{*} distributes over \AgdaFunction{+} &
+                   \AgdaFunction{+} absorbs \AgdaFunction{*} \\
+\bottomrule
+\end{tabular}
+\label{tab.path.algebra}
+\vspace{6pt}
+\caption{Comparing the algebraic properties of a semiring and a path algebra.}
+\end{table}
 
 \subsection{Models}
 \label{subsect.models}
