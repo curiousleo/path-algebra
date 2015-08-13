@@ -8,6 +8,7 @@
 \usepackage{csquotes}
 \usepackage[colorlinks]{hyperref}
 \usepackage{microtype}
+\usepackage{textgreek}
 
 \setlength{\tabcolsep}{6pt}
 
@@ -15,6 +16,7 @@
 
 \DeclareUnicodeCharacter{8799}{\ensuremath{\overset{?}{\vphantom{o}\smash{=}}}}
 \DeclareUnicodeCharacter{8759}{\ensuremath{::}}
+\DeclareUnicodeCharacter{7522}{\ensuremath{{}_{i}}}
 
 \begin{document}
 
@@ -29,7 +31,7 @@ open import Data.Matrix  -- project set up correctly?
 
 \title{Dijkstra's Algorithm: Verified}
 \titlerunning{Dijkstra's Algorithm}
-\author{Leonhard Markert \and Timothy Griffin \and Dominic P.~Mulligan}
+\author{Leonhard Markert \and Timothy G.~Griffin \and Dominic P.~Mulligan}
 %\authorrunning{Leonhard Markert et al.}
 \institute{%
 Computer Laboratory, University of Cambridge}
@@ -62,14 +64,14 @@ In contrast to similar systems, such as Coq~\cite{bertot_short_2008} and Matita~
 Agda has a uniform syntax that should be familiar to Haskell programmers and users of other dependently-typed proof assistants.
 One syntactic novelty is a flexible system of user-declared Unicode mixfix identifiers~\cite{danielsson_parsing_2011} with `holes' in an identifier being denoted by underscores.
 
-We write $(x : \phi) \rightarrow \psi$ for the dependent function space where $x$ may occur in $\psi$, and write $\phi \rightarrow \psi$ when $x$ does not occur in $\psi$ as is usual.
-We enclose arguments to be inferred by unification in braces, as in $\{ x : \phi \} \rightarrow \psi$, sometimes making use of the shorthand $\forall\; x.\; \phi$ for $\{ x \} \rightarrow \phi$.
-We write $\Sigma\; \phi\; P$ for the dependent sum type whose first projection has type $\phi$, and write $\phi \times \psi$ when the second projection does not depend on the first, as is usual.
-Dependent sums are constructed using the comma constructor: $x\; ,\; y$.
-We sometimes write $\exists\; x.\; P$ for the dependent sum type when the type of the first projection can be inferred.
-Lastly, we write $\phi \uplus \psi$ for the disjoint union type with constructors $inj_1$ and $inj_2$.
+We write \AgdaSymbol{(}\AgdaBound{x}~\AgdaSymbol{:}~\AgdaBound{A}\AgdaSymbol{)}~\AgdaSymbol{→}~\AgdaBound{B} for the dependent function space where \AgdaBound{x} may occur in \AgdaBound{B}, and write \AgdaBound{A}~\AgdaSymbol{→}~\AgdaBound{B} when \AgdaBound{x} does not occur in \AgdaBound{B} as is usual.
+We enclose arguments to be inferred by unification in braces, as in \AgdaSymbol{\{}\AgdaBound{x}~\AgdaSymbol{:}~\AgdaBound{A}\AgdaSymbol{\}}~\AgdaSymbol{→}~\AgdaBound{B}, sometimes making use of the shorthand \AgdaSymbol{∀}~\AgdaBound{x}~\AgdaSymbol{→}~\AgdaBound{A} for \AgdaSymbol{\{}\AgdaBound{x}\AgdaSymbol{\}}~\AgdaSymbol{→}~\AgdaBound{A}.
+We write \AgdaDatatype{Σ}~\AgdaBound{A}~\AgdaBound{B} for the dependent sum type whose first projection has type \AgdaBound{A}, and write \AgdaBound{A}~\AgdaDatatype{×}~\AgdaBound{B} when the second projection does not depend on the first, as is usual.
+Dependent sums are constructed using the comma constructor: \AgdaBound{x}~\AgdaInductiveConstructor{,}~\AgdaBound{y}.
+We sometimes write \AgdaFunction{∃}~\AgdaBound{x}~\AgdaSymbol{→}~\AgdaBound{P} for the dependent sum type when the type of the first projection can be inferred.
+Lastly, we write \AgdaBound{A}~\AgdaDatatype{⊎}~\AgdaBound{B} for the disjoint union type with constructors \AgdaInductiveConstructor{inj₁} and \AgdaInductiveConstructor{inj₂}.
 
-Agda is a predicative type theory with an infinite universe hierarchy, $Set_i$, with $Set$---the type of small types---being identified with $Set_0$, the base universe in Agda's hierarchy.
+Agda is a predicative type theory with an infinite universe hierarchy, \AgdaPrimitiveType{Setᵢ}, with \AgdaPrimitiveType{Set}---the type of small types---being identified with \AgdaPrimitiveType{Set₀}, the base universe in Agda's hierarchy.
 Universe polymorphism is used extensively throughout this development, with explicit quantification over universe levels.
 
 \subsection{Map of Paper}
@@ -116,10 +118,12 @@ The type of finite sets of size \(n\) is called \AgdaDatatype{Fin}~\AgdaBound{n}
 % Need to mention AVL trees in standard library
 
 A key consideration in Dijkstra's algorithm is: `which node do we consider next'?
-We now define a type of sorted vectors that will be used later in Section~\ref{sect.correctness} to maintain a priority queue of yet-unseen graph nodes.
+We now define a type of sorted vectors that will be used later in Section~\ref{sect.correctness} to maintain a simple priority queue of yet-unseen graph nodes.
+We prefer working with a linear sorted data structure, compared to a balanced binary tree such as Agda's existing implementation of AVL trees in \AgdaModule{Data.AVL}, to simplify proofs.
+Using a length-indexed data structure also allows us to assert statically the non-emptiness of our priority queue.
 
 Throughout this Section we fix and open a decidable total order, \AgdaRecord{DecTotalOrder}.
-We write \AgdaField{Carrier} for the carrier set of the ordering, write \AgdaField{≤} for the ordering relation, write \AgdaField{≤?} for the proof that the ordering relation is decidable, and write \AgdaField{≤-trans} for the proof that the ordering relation is transitive.
+We write \AgdaField{Carrier}, \AgdaField{≤} and \AgdaField{≤?} for the ordering's carrier set, ordering relation, and proof that the ordering relation is decidable, respectively.
 Assuming this, we define a type of sorted vectors, or lists indexed by their length:
 
 \AgdaHide{
@@ -171,7 +175,7 @@ module Sorted
     x ≼ (y ∷ ys ⟨ prf ⟩)  = (x ≤ y) × (x ≼ ys)
 \end{code}
 
-Compared to a standard length-indexed list, our `cons' constructor, \AgdaInductiveConstructor{\_∷\_⟨\_⟩}, takes an additional proof that the head element \emph{dominates} the tail of the list.
+Compared to a standard vector, our `cons' constructor, \AgdaInductiveConstructor{\_∷\_⟨\_⟩}, takes an additional proof that the head element \emph{dominates} the tail of the list.
 The domination relation, \AgdaFunction{\_≼\_}, is defined mutually with the declaration of our sorted vector type via induction-recursion~\cite{dybjer_general_2000} making it impossible to construct a vector that is not sorted.
 The relation is decidable and also quasi-transitive in the sense that if $x$ dominates $xs$ and $y$ is less than $x$ according to our total order then $y$ also dominates $xs$.
 We state the lemma here, but omit the trivial proof by induction on $xs$, for brevity:
@@ -216,9 +220,22 @@ The function \AgdaFunction{insert} places the inserted element in the correct po
 \end{code}
 
 Here, \AgdaFunction{¬x≤y→y≤x} is a proof that $x \not\le y$ implies $y \le x$ in a total order.
-Appending two sorted vectors, \AgdaFunction{\_++\_}, can be defined easily by repeatedly inserting elements from the first vector into the second.
+We use \AgdaFunction{≼-trans} to construct the domination proof in the `cons' case of \AgdaFunction{insert}.
 
-Membership of sorted vectors, \AgdaDatatype{\_∈\_}, is defined using the usual two constructor inductive relation, complicated slightly by the need to quantify over domination proofs:
+Appending two vectors, \AgdaFunction{\_++\_}, can be defined easily by repeatedly inserting elements from the first vector into the second.
+Append is given the usual precise type signature:
+
+\begin{code}
+  _++_ : ∀ {m n} → SortedVec m → SortedVec n → SortedVec (m + n)
+\end{code}
+
+\AgdaHide{
+\begin{code}
+  []                ++ ys = ys
+  (x ∷ xs ⟨ x≼xs ⟩) ++ ys = insert x (xs ++ ys)
+\end{code}}
+
+Vector membership, \AgdaDatatype{\_∈\_}, is defined using an inductive relation, only complicated slightly by the need to quantify over explicit domination proofs:
 
 \begin{code}
   data _∈_ (x : Carrier) : ∀ {n} → SortedVec n → Set (ℓ₁ ⊔ a ⊔ ℓ₂) where
@@ -227,18 +244,22 @@ Membership of sorted vectors, \AgdaDatatype{\_∈\_}, is defined using the usual
                       ∀ prf → x ∈ ys → x ∈ (y ∷ ys ⟨ prf ⟩)
 \end{code}
 
-Using this definition, we may show that the head of a vector is indeed the smallest element contained therein.
-That is, the head of a vector is ordered less than any other element in that same sorted vector.
-The proof proceeds by analysing the cases under which $x \in xs$:
+Using this definition, we may show that the head of a vector is indeed the smallest element contained therein:
 
 \begin{code}
   head-≤ : ∀ {m} {x} {xs : SortedVec (ℕ.suc m)} → x ∈ xs → head xs ≤ x
+\end{code}
+
+\AgdaHide{
+\begin{code}
   head-≤ (here     []             _  )                  = ≤-refl
   head-≤ (here     (_ ∷ _ ⟨ _ ⟩)  _  )                  = ≤-refl
   head-≤ (there _  []             _          ()      )
   head-≤ (there _  (_ ∷ _ ⟨ _ ⟩)  (z≤y , _)  x∈y∷ys  )  =
     ≤-trans z≤y (head-≤ x∈y∷ys)
-\end{code}
+\end{code}}
+
+The proof proceeds by analysing the cases under which $x \in xs$, and affirms the suitability of \AgdaDatatype{SortedVec} as a priority queue implementation.
 
 \section{Path Algebras, Their Properties And Models}
 \label{sect.path.algebras.their.properties.and.models}
@@ -305,11 +326,15 @@ We start by defining a \emph{selective} binary operation as follows:
 \section{Conclusions}
 \label{sect.conclusions}
 
-\subsection{Related Work}
-\label{subsect.related.work}
+\paragraph{Related Work}
 
-\subsection{Future Work}
-\label{subsect.future.work}
+\paragraph{Future Work}
+
+\paragraph{Resources}
+
+The Dijkstra formalisation and all supporting files are available anonymously from a public \texttt{git} repository~\cite{markert_dijkstra_2015}.
+Documentation for type checking the formalisation is available in the repository.
+The formalisation consists of approximately 2,400 lines of Agda and was developed using Agda~2.4.2.1 and~2.4.2.2 and Standard Library version~0.9.
 
 \bibliography{path-algebra}
 
