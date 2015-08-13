@@ -118,10 +118,12 @@ The type of finite sets of size \(n\) is called \AgdaDatatype{Fin}~\AgdaBound{n}
 % Need to mention AVL trees in standard library
 
 A key consideration in Dijkstra's algorithm is: `which node do we consider next'?
-We now define a type of sorted vectors that will be used later in Section~\ref{sect.correctness} to maintain a priority queue of yet-unseen graph nodes.
+We now define a type of sorted vectors that will be used later in Section~\ref{sect.correctness} to maintain a simple priority queue of yet-unseen graph nodes.
+We prefer working with a linear sorted data structure, compared to a balanced binary tree such as Agda's existing implementation of AVL trees in \AgdaModule{Data.AVL}, to simplify proofs.
+Using a length-indexed data structure also allows us to assert statically the non-emptiness of our priority queue.
 
 Throughout this Section we fix and open a decidable total order, \AgdaRecord{DecTotalOrder}.
-We write \AgdaField{Carrier} for the carrier set of the ordering, write \AgdaField{≤} for the ordering relation, write \AgdaField{≤?} for the proof that the ordering relation is decidable, and write \AgdaField{≤-trans} for the proof that the ordering relation is transitive.
+We write \AgdaField{Carrier}, \AgdaField{≤} and \AgdaField{≤?} for the ordering's carrier set, ordering relation, and proof that the ordering relation is decidable, respectively.
 Assuming this, we define a type of sorted vectors, or lists indexed by their length:
 
 \AgdaHide{
@@ -173,7 +175,7 @@ module Sorted
     x ≼ (y ∷ ys ⟨ prf ⟩)  = (x ≤ y) × (x ≼ ys)
 \end{code}
 
-Compared to a standard length-indexed list, our `cons' constructor, \AgdaInductiveConstructor{\_∷\_⟨\_⟩}, takes an additional proof that the head element \emph{dominates} the tail of the list.
+Compared to a standard vector, our `cons' constructor, \AgdaInductiveConstructor{\_∷\_⟨\_⟩}, takes an additional proof that the head element \emph{dominates} the tail of the list.
 The domination relation, \AgdaFunction{\_≼\_}, is defined mutually with the declaration of our sorted vector type via induction-recursion~\cite{dybjer_general_2000} making it impossible to construct a vector that is not sorted.
 The relation is decidable and also quasi-transitive in the sense that if $x$ dominates $xs$ and $y$ is less than $x$ according to our total order then $y$ also dominates $xs$.
 We state the lemma here, but omit the trivial proof by induction on $xs$, for brevity:
@@ -218,9 +220,22 @@ The function \AgdaFunction{insert} places the inserted element in the correct po
 \end{code}
 
 Here, \AgdaFunction{¬x≤y→y≤x} is a proof that $x \not\le y$ implies $y \le x$ in a total order.
-Appending two sorted vectors, \AgdaFunction{\_++\_}, can be defined easily by repeatedly inserting elements from the first vector into the second.
+We use \AgdaFunction{≼-trans} to construct the domination proof in the `cons' case of \AgdaFunction{insert}.
 
-Membership of sorted vectors, \AgdaDatatype{\_∈\_}, is defined using the usual two constructor inductive relation, complicated slightly by the need to quantify over domination proofs:
+Appending two vectors, \AgdaFunction{\_++\_}, can be defined easily by repeatedly inserting elements from the first vector into the second.
+Append is given the usual precise type signature:
+
+\begin{code}
+  _++_ : ∀ {m n} → SortedVec m → SortedVec n → SortedVec (m + n)
+\end{code}
+
+\AgdaHide{
+\begin{code}
+  []                ++ ys = ys
+  (x ∷ xs ⟨ x≼xs ⟩) ++ ys = insert x (xs ++ ys)
+\end{code}}
+
+Vector membership, \AgdaDatatype{\_∈\_}, is defined using an inductive relation, only complicated slightly by the need to quantify over explicit domination proofs:
 
 \begin{code}
   data _∈_ (x : Carrier) : ∀ {n} → SortedVec n → Set (ℓ₁ ⊔ a ⊔ ℓ₂) where
@@ -229,18 +244,23 @@ Membership of sorted vectors, \AgdaDatatype{\_∈\_}, is defined using the usual
                       ∀ prf → x ∈ ys → x ∈ (y ∷ ys ⟨ prf ⟩)
 \end{code}
 
-Using this definition, we may show that the head of a vector is indeed the smallest element contained therein.
-That is, the head of a vector is ordered less than any other element in that same sorted vector.
-The proof proceeds by analysing the cases under which $x \in xs$:
+Using this definition, we may show that the head of a vector is indeed the smallest element contained therein:
 
 \begin{code}
   head-≤ : ∀ {m} {x} {xs : SortedVec (ℕ.suc m)} → x ∈ xs → head xs ≤ x
+\end{code}
+
+\AgdaHide{
+\begin{code}
   head-≤ (here     []             _  )                  = ≤-refl
   head-≤ (here     (_ ∷ _ ⟨ _ ⟩)  _  )                  = ≤-refl
   head-≤ (there _  []             _          ()      )
   head-≤ (there _  (_ ∷ _ ⟨ _ ⟩)  (z≤y , _)  x∈y∷ys  )  =
     ≤-trans z≤y (head-≤ x∈y∷ys)
-\end{code}
+\end{code}}
+
+That is, the head of a \AgdaDatatype{SortedVec} is ordered less than any other element in that same vector.
+The proof proceeds by analysing the cases under which $x \in xs$, and confirms the suitability of \AgdaDatatype{SortedVec} as a priority queue implementation.
 
 \section{Path Algebras, Their Properties And Models}
 \label{sect.path.algebras.their.properties.and.models}
