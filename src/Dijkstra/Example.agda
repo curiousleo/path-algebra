@@ -9,7 +9,7 @@ module Dijkstra.Example where
 import Data.Matrix.Adjacency as Adj
 open import Algebra.Path.Structure
 open import Algebra.Path.Model
-  renaming (ℕ∞-path-algebra to alg)
+  renaming (ℕ∞-shortest-path-algebra to alg)
 import Dijkstra.Algorithm as Algo
 
 open import Data.Fin using (zero; suc)
