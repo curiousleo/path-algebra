@@ -51,11 +51,21 @@ _≟∞_ : Decidable (_≡_ {A = ℕ∞})
 ⊓-identityˡ (↑ m) = refl
 ⊓-identityˡ ∞     = refl
 
+⊔-identityˡ : LeftIdentity (↑ 0) _⊔_
+⊔-identityˡ (↑ m) = refl
+⊔-identityˡ ∞     = refl
+
 ⊓-comm : Commutative _⊓_
 ⊓-comm (↑ m) (↑ n) rewrite NP.⊓-comm m n = refl
 ⊓-comm (↑ m) ∞     = refl
 ⊓-comm ∞     (↑ n) = refl
 ⊓-comm ∞     ∞     = refl
+
+⊔-comm : Commutative _⊔_
+⊔-comm (↑ m) (↑ n) rewrite NP.⊔-comm m n = refl
+⊔-comm (↑ m) ∞     = refl
+⊔-comm ∞     (↑ n) = refl
+⊔-comm ∞     ∞     = refl
 
 ⊓-selective : Selective _⊓_
 ⊓-selective (↑ m) (↑ n) with NP.⊓-selective m n
@@ -75,7 +85,23 @@ _≟∞_ : Decidable (_≡_ {A = ℕ∞})
 ⊓-assoc ∞     ∞     (↑ o) = refl
 ⊓-assoc ∞     ∞     ∞     = refl
 
+⊔-assoc : Associative _⊔_
+⊔-assoc (↑ m) (↑ n) (↑ o) rewrite NP.⊔-assoc m n o = refl
+⊔-assoc (↑ m) (↑ n) ∞     = refl
+⊔-assoc (↑ m) ∞     (↑ o) = refl
+⊔-assoc (↑ m) ∞     ∞     = refl
+⊔-assoc ∞     (↑ n) (↑ o) = refl
+⊔-assoc ∞     (↑ n) ∞     = refl
+⊔-assoc ∞     ∞     (↑ o) = refl
+⊔-assoc ∞     ∞     ∞     = refl
+
 ⊓-absorbs-+ : _⊓_ Absorbs _+_
 ⊓-absorbs-+ (↑ m) (↑ n) rewrite NP.⊓-absorbs-+ m n = cong ↑ refl
 ⊓-absorbs-+ (↑ m) ∞     = refl
 ⊓-absorbs-+ ∞     n     = refl
+
+⊓-absorbs-⊔ : _⊓_ Absorbs _⊔_
+⊓-absorbs-⊔ (↑ m) (↑ n) rewrite NP.⊓-absorbs-⊔ m n = cong ↑ refl
+⊓-absorbs-⊔ (↑ m) ∞     = refl
+⊓-absorbs-⊔ ∞     (↑ n) = refl
+⊓-absorbs-⊔ ∞     ∞     = refl
