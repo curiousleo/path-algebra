@@ -367,12 +367,14 @@ Dijkstra's algorithm in its standard form finds the shortest distance from some 
 
 Our implementation of this algorithm in Agda consists of nine mutually recursive definitions, the most important of which are \AgdaFunction{order}, \AgdaFunction{estimate}, \AgdaFunction{seen} and \AgdaFunction{queue}.
 
-\subsubsection{\AgdaFunction{order}} Lala.
+\AgdaFunction{estimateOrder} takes a weight function to a decidable total order on nodes, comparing them by their weight. \AgdaFunction{order} takes the current step to the estimate order based on the current estimate.
 
 \begin{code}
     order : (step : ℕ) {s≤n : step ≤ n} → DecTotalOrder _ _ _
     order step {s≤n} = estimateOrder $ estimate step {s≤n}
 \end{code}
+
+The base case for the \AgdaFunction{estimate} function is a lookup in the adjacency matrix.\footnote{Note that in \cref{fig.algorithm} the base case is equivalent to a lookup in the identity matrix instead of the adjacency matrix. Our base case really corresponds to the second iteration of the imperative algorithm.}
 
 \begin{code}
     estimate : (step : ℕ) {s≤n : step ≤ n} → Fin (suc n) → Weight
