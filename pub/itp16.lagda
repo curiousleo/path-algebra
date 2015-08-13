@@ -5,7 +5,9 @@
 \usepackage[british]{babel}
 \usepackage{booktabs}
 \usepackage{cite}
+\usepackage{cleveref}
 \usepackage{csquotes}
+\usepackage{graphics}
 \usepackage[colorlinks]{hyperref}
 \usepackage{microtype}
 \usepackage{textgreek}
@@ -24,8 +26,11 @@
 \begin{code}
 module itp16 where
 
-open import Function     -- stdlib configured?
-open import Data.Matrix  -- project set up correctly?
+open import Algebra.Path.Structure
+open import Data.Matrix.Adjacency
+
+open import Data.Fin using (Fin; zero; suc)
+open import Data.Nat using (ℕ; zero; suc; _∸_)
 \end{code}
 }
 
@@ -130,7 +135,7 @@ Assuming this, we define a type of sorted vectors, or lists indexed by their len
 \begin{code}
 open import Relation.Binary
 
-module Sorted
+module it16-Sorted
   {a ℓ₁ ℓ₂}
   (totalOrder : DecTotalOrder a ℓ₁ ℓ₂)
   where
@@ -138,10 +143,7 @@ module Sorted
   open import Level
 
   open import Data.Empty
-  open import Data.Fin
-    using (Fin; zero; suc)
-  open import Data.Nat
-    using (ℕ; zero; suc; _+_)
+  open import Data.Nat using (_+_)
   open import Data.Nat.Properties.Simple
   open import Data.Product
   open import Data.Sum
@@ -199,6 +201,7 @@ We state the lemma here, but omit the trivial proof by induction on $xs$, for br
   head : ∀ {n} → SortedVec (ℕ.suc n) → Carrier
   head (x ∷ xs ⟨ prf ⟩) = x
 \end{code}}
+% $
 
 The insertion of an element into an existing sorted vector is defined by mutual recursion between two functions \AgdaFunction{insert} and \AgdaFunction{≼-insert}.
 The function \AgdaFunction{insert} places the inserted element in the correct position in the vector, `bumping up' the length index, whilst \AgdaFunction{≼-insert} constructs the required domination proof for the new element:
@@ -269,7 +272,7 @@ We introduce path algebras here, prove various lemmas about them, and later prov
 
 \AgdaHide{
 \begin{code}
-open import Level
+open import Level using (_⊔_)
 open import Relation.Binary
 
 module MoreFunctionProperties {a ℓ} {A : Set a} (_≈_ : Rel A ℓ) where
@@ -316,6 +319,148 @@ We start by defining a \emph{selective} binary operation as follows:
 
 \subsection{Models}
 \label{subsect.models}
+
+\section{Dijkstra's Algorithm}
+\label{sect.dijkstras.algorithm}
+
+\AgdaHide{
+\begin{code}
+module itp16-Algorithm
+    {c ℓ} (alg : PathAlgebra c ℓ)
+    {n} (i : Fin (suc n)) (adj : Adj alg (suc n))
+    where
+
+  open import Algebra.Path.Properties
+
+  open import Data.Fin.Subset
+  import Data.Fin.Subset.Extra as Sub
+  open import Data.Nat using (_≤_)
+  open import Data.Nat.MoreProperties using (≤-step′; sm∸n)
+  open import Data.Nat.Properties using (≤-step)
+  open import Data.Matrix
+  import Data.Vec as V
+  import Data.Vec.Sorted as Sorted
+
+  open import Function using (_$_)
+
+  open import Relation.Nullary using (¬_)
+  open import Relation.Unary using (Pred)
+  open import Relation.Binary using (DecTotalOrder)
+  import Relation.Binary.PropositionalEquality as P
+  open P using (_≡_)
+
+  open PathAlgebra alg renaming (Carrier to Weight)
+  open RequiresPathAlgebra alg using (decTotalOrderᴸ)
+
+  open import Dijkstra.EstimateOrder decTotalOrderᴸ using (estimateOrder)
+
+  A[_,_] : Fin (suc n) → Fin (suc n) → Weight
+  A[ i , j ] = Adj.matrix adj [ i , j ]
+
+  mutual
+\end{code}
+}
+
+In this section, we introduce a generalised variant of Dijkstra's algorithm and its implementation in Agda.
+
+Dijkstra's algorithm in its standard form finds the shortest distance from some start node \(i\) to each other node \(j\) in a graph given that no edge has a negative weight. Dynerowicz and Griffin found that a more general variant of Dijkstra's algorithm finds one row of the matrix \(R\) solving the the fixpoint equation \[R = I ⊕ (R ⊗ A)\] for some adjacency matrix \(A\) \cite{dynerowicz_forwarding_2013}. \Cref{fig.algorithm} shows the algorithm as it is presented in \cite{dynerowicz_forwarding_2013}.
+
+Our implementation of this algorithm in Agda consists of nine mutually recursive definitions, the most important of which are \AgdaFunction{order}, \AgdaFunction{estimate}, \AgdaFunction{seen} and \AgdaFunction{queue}.
+
+\subsubsection{\AgdaFunction{order}} Lala.
+
+\begin{code}
+    order : (ctd : ℕ) {lt : ctd ≤ n} → DecTotalOrder _ _ _
+    order ctd {lt} = estimateOrder $ estimate ctd {lt}
+\end{code}
+
+\begin{code}
+    estimate : (ctd : ℕ) {lt : ctd ≤ n} → Fin (suc n) → Weight
+    estimate zero              j = A[ i , j ]
+    estimate (suc ctd) {ctd≤n} j = r j + r q * A[ q , j ]
+      where
+        q = Sorted.head (order ctd {≤-step′ ctd≤n}) (queue ctd {ctd≤n})
+        r = estimate ctd {≤-step′ ctd≤n}
+\end{code}
+
+\AgdaHide{
+\begin{code}
+    seen : (ctd : ℕ) {lt : ctd ≤ n} → Subset (suc n)
+    seen zero              = ⁅ i ⁆
+    seen (suc ctd) {ctd≤n} =
+      seen ctd {≤-step′ ctd≤n} ∪
+      ⁅ Sorted.head (order ctd {≤-step′ ctd≤n}) (queue ctd {ctd≤n}) ⁆
+
+    queue′ : (ctd : ℕ) {lt : ctd ≤ n} → Sorted.SortedVec _ (Sub.size $ ∁ $ seen ctd {lt})
+    queue′ ctd {lt} = Sorted.fromVec (order ctd {lt}) $ Sub.toVec $ ∁ $ seen ctd
+
+    queue : (ctd : ℕ) {lt : suc ctd ≤ n} → Sorted.SortedVec _ (suc (n ∸ (suc ctd)))
+    queue ctd {ctd<n} = P.subst (Sorted.SortedVec (order ctd {≤-step′ ctd<n})) (queue-size ctd {ctd<n}) (queue′ ctd)
+
+    queue⇒queue′ : (ctd : ℕ) {lt : suc ctd ≤ n} → ∀ {p} (P : ∀ {n} →
+                   Sorted.SortedVec _ n → Set p) → P (queue′ ctd) → P (queue ctd {lt})
+    queue⇒queue′ ctd {lt} P Pqueue = super-subst P (≡-to-≅ (queue-size ctd {lt})) (H.sym H-lemma) Pqueue
+      where
+        open import Relation.Binary.HeterogeneousEquality as H
+        open Sorted (order ctd {≤-step′ lt})
+
+        super-subst : ∀ {m n p} → {xs : SortedVec m} → {ys : SortedVec n} → (P : ∀ {n} → SortedVec n → Set p) →
+                      m H.≅ n → xs H.≅ ys → P xs → P ys
+        super-subst P H.refl H.refl Pxs = Pxs
+
+        H-lemma : queue ctd ≅ queue′ ctd
+        H-lemma = ≡-subst-removable SortedVec (queue-size ctd {lt}) (queue′ ctd)
+
+    seen-size : (ctd : ℕ) {lt : ctd ≤ n} → Sub.size (seen ctd {lt}) ≡ suc ctd
+    seen-size zero           = Sub.size⁅i⁆≡1 i
+    seen-size (suc ctd) {lt} =
+      begin
+        Sub.size (seen ctd ∪ ⁅ q ⁆)  ≡⟨ P.cong Sub.size (∪-comm (seen ctd) ⁅ q ⁆) ⟩
+        Sub.size (⁅ q ⁆ ∪ seen ctd)  ≡⟨ Sub.size-suc q (seen ctd) (q∉seen ctd) ⟩
+        suc (Sub.size (seen ctd))    ≡⟨ P.cong suc (seen-size ctd) ⟩
+        suc (suc ctd)
+      ∎
+      where
+        open P.≡-Reasoning
+        open Sub.Properties (suc n)
+        q = Sorted.head (order ctd {≤-step′ lt}) (queue ctd {lt})
+
+    queue-size : (ctd : ℕ) {lt : suc ctd ≤ n} → Sub.size (∁ (seen ctd {≤-step′ lt})) ≡ suc (n ∸ suc ctd)
+    queue-size ctd {lt} =
+      begin
+        Sub.size (∁ (seen ctd))      ≡⟨ Sub.∁-size (seen ctd) ⟩
+        suc n ∸ Sub.size (seen ctd)  ≡⟨ P.cong₂ _∸_ P.refl (seen-size ctd) ⟩
+        suc n ∸ suc ctd              ≡⟨ sm∸n n (suc ctd) lt ⟩
+        suc (n ∸ suc ctd)
+      ∎
+      where
+        open P.≡-Reasoning
+
+    q∉seen : (ctd : ℕ) {lt : suc ctd ≤ n} → Sorted.head _ (queue ctd {lt}) ∉ seen ctd {≤-step′ lt}
+    q∉seen ctd {lt} q∈vs = q∉q∷qs (S.here qs q≼qs)
+      where
+        module S = Sorted (order ctd {≤-step′ lt})
+
+        q = S.head (queue ctd {lt})
+        qs = S.tail (queue ctd {lt})
+        q≼qs = S.≼-proof (queue ctd {lt})
+
+        q∉queue′ : ¬ (q S.∈ (queue′ ctd))
+        q∉queue′ = S.fromVec-∉¹ (Sub.toVec-∉¹ (Sub.∁-∈ q∈vs))
+
+        q∉queue : ¬ (q S.∈ (queue ctd {lt}))
+        q∉queue = queue⇒queue′ ctd {lt} (λ qs → ¬ (q S.∈ qs)) q∉queue′
+
+        q∉q∷qs : ¬ (q S.∈ (q S.∷ qs ⟨ q≼qs ⟩))
+        q∉q∷qs = P.subst (λ qs → ¬ (q S.∈ qs)) S.destruct q∉queue
+\end{code}
+}
+
+\begin{figure}[h]
+\includegraphics{algorithm.pdf}
+\caption{Imperative generalised Dijkstra's algorithm \cite[p.~9]{dynerowicz_forwarding_2013}}
+\label{fig.algorithm}
+\end{figure}
 
 \section{Correctness}
 \label{sect.correctness}
