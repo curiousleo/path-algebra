@@ -296,6 +296,9 @@ We start by defining a \emph{selective} binary operation as follows:
 \subsection{Models}
 \label{subsect.models}
 
+\section{Dijkstra's Algorithm}
+\label{sect.dijkstras.algorithm}
+
 \section{Correctness}
 \label{sect.correctness}
 
