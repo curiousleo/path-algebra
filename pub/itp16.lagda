@@ -31,7 +31,7 @@ open import Data.Matrix  -- project set up correctly?
 
 \title{Dijkstra's Algorithm: Verified}
 \titlerunning{Dijkstra's Algorithm}
-\author{Leonhard Markert \and Timothy Griffin \and Dominic P.~Mulligan}
+\author{Leonhard Markert \and Timothy G.~Griffin \and Dominic P.~Mulligan}
 %\authorrunning{Leonhard Markert et al.}
 \institute{%
 Computer Laboratory, University of Cambridge}
@@ -259,8 +259,7 @@ Using this definition, we may show that the head of a vector is indeed the small
     ≤-trans z≤y (head-≤ x∈y∷ys)
 \end{code}}
 
-That is, the head of a \AgdaDatatype{SortedVec} is ordered less than any other element in that same vector.
-The proof proceeds by analysing the cases under which $x \in xs$, and confirms the suitability of \AgdaDatatype{SortedVec} as a priority queue implementation.
+The proof proceeds by analysing the cases under which $x \in xs$, and affirms the suitability of \AgdaDatatype{SortedVec} as a priority queue implementation.
 
 \section{Path Algebras, Their Properties And Models}
 \label{sect.path.algebras.their.properties.and.models}
@@ -324,11 +323,15 @@ We start by defining a \emph{selective} binary operation as follows:
 \section{Conclusions}
 \label{sect.conclusions}
 
-\subsection{Related Work}
-\label{subsect.related.work}
+\paragraph{Related Work}
 
-\subsection{Future Work}
-\label{subsect.future.work}
+\paragraph{Future Work}
+
+\paragraph{Resources}
+
+The Dijkstra formalisation and all supporting files are available anonymously from a public \texttt{git} repository~\cite{markert_dijkstra_2015}.
+Documentation for type checking the formalisation is available in the repository.
+The formalisation consists of approximately 2,400 lines of Agda and was developed using Agda~2.4.2.1 and~2.4.2.2 and Standard Library version~0.9.
 
 \bibliography{path-algebra}
 
