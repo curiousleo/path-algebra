@@ -5,17 +5,21 @@
 \usepackage[british]{babel}
 \usepackage{booktabs}
 \usepackage{cite}
-\usepackage{cleveref}
 \usepackage{csquotes}
 \usepackage{graphics}
 \usepackage[colorlinks]{hyperref}
+\usepackage[noabbrev,capitalise]{cleveref}
 \usepackage{microtype}
+\usepackage{stmaryrd}
 \usepackage{textgreek}
 
 \setlength{\tabcolsep}{6pt}
 
 \bibliographystyle{splncs03}
 
+\DeclareUnicodeCharacter{8261}{\ensuremath{\llbracket}} % FIXME
+\DeclareUnicodeCharacter{8262}{\ensuremath{\rrbracket}} % FIXME
+\DeclareUnicodeCharacter{8760}{\ensuremath{\overset{\cdot}{\vphantom{.}\smash{-}}}} % -}
 \DeclareUnicodeCharacter{8799}{\ensuremath{\overset{?}{\vphantom{o}\smash{=}}}}
 \DeclareUnicodeCharacter{8759}{\ensuremath{::}}
 \DeclareUnicodeCharacter{7522}{\ensuremath{{}_{i}}}
@@ -392,12 +396,14 @@ module itp16-Algorithm
 
   open import Data.Fin.Subset
   import Data.Fin.Subset.Extra as Sub
+  open Sub using (size; toVec)
   open import Data.Nat using (_≤_)
   open import Data.Nat.MoreProperties using (≤-step′; sm∸n)
   open import Data.Nat.Properties using (≤-step)
   open import Data.Matrix
   import Data.Vec as V
-  import Data.Vec.Sorted as Sorted
+  import Data.Vec.Sorted as Sorted renaming (SortedVec to Vec)
+  open Sorted using () renaming (Vec to SortedVec)
 
   open import Function using (_$_)
 
@@ -421,7 +427,7 @@ module itp16-Algorithm
 
 In this section, we introduce a generalised variant of Dijkstra's algorithm and its implementation in Agda.
 
-Dijkstra's algorithm in its standard form finds the shortest distance from some start node \(i\) to each other node \(j\) in a graph given that no edge has a negative weight. Dynerowicz and Griffin found that a more general variant of Dijkstra's algorithm finds one row of the matrix \(R\) solving the the fixpoint equation \[R = I ⊕ (R ⊗ A)\] for some adjacency matrix \(A\) \cite{dynerowicz_forwarding_2013}. \Cref{fig.algorithm} shows the algorithm as it is presented in \cite{dynerowicz_forwarding_2013}.
+Dijkstra's algorithm in its standard form finds the shortest distance from some start node \(i\) to each other node \(j\) in a graph given that no edge has a negative weight. Dynerowicz and Griffin found that a more general variant of Dijkstra's algorithm finds one row of the matrix \(R\) solving the fixpoint equation \[R = I ⊕ (R ⊗ A)\] for some adjacency matrix \(A\) \cite{dynerowicz_forwarding_2013} in a path algebra (see XXX). \Cref{fig.algorithm} shows the algorithm as it is presented in \cite{dynerowicz_forwarding_2013}.
 
 Our implementation of this algorithm in Agda consists of nine mutually recursive definitions, the most important of which are \AgdaFunction{order}, \AgdaFunction{estimate}, \AgdaFunction{seen} and \AgdaFunction{queue}.
 
@@ -429,7 +435,6 @@ Our implementation of this algorithm in Agda consists of nine mutually recursive
     order : (step : ℕ) {s≤n : step ≤ n} → DecTotalOrder _ _ _
     order step {s≤n} = estimateOrder $ estimate step {s≤n}
 \end{code}
-
 The function \AgdaFunction{estimateOrder} takes a weight function to a decidable total order on nodes, comparing them by their weight. \AgdaFunction{order} takes the current step to the estimate order based on the current estimate.
 
 \begin{code}
@@ -440,44 +445,73 @@ The function \AgdaFunction{estimateOrder} takes a weight function to a decidable
         q  = Sorted.head (order step {≤-step′ step≤n}) (queue step {step≤n})
         r  = estimate step {≤-step′ step≤n}
 \end{code}
-
 The base case for the \AgdaFunction{estimate} function is a lookup in the adjacency matrix.\footnote{Note that in \cref{fig.algorithm} the base case is equivalent to a lookup in the identity matrix instead of the adjacency matrix. Our base case really corresponds to the second iteration of the imperative algorithm.}
+Since \AgdaFunction{+} is selective (see XXX), the inductive case encodes a \emph{choice} between \AgdaFunction{r}~\AgdaBound{j} and \AgdaFunction{r}~\AgdaFunction{q}~\AgdaFunction{*}~\AgdaFunction{A[}~\AgdaFunction{q}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}. The former is simply the previous distance estimate to \(j\). The latter represents the option of going from the start node to \AgdaFunction{q} via the best known path from the previous step, and then directly from \AgdaFunction{q} to \(j\) (where \AgdaFunction{q} is the head of the queue of nodes that have not yet been visited, see XXX).
 
-\AgdaHide{
 \begin{code}
     seen : (step : ℕ) {s≤n : step ≤ n} → Subset (suc n)
     seen zero                 = ⁅ i ⁆
     seen (suc step) {step≤n}  =
       seen step {≤-step′ step≤n} ∪
       ⁅ Sorted.head (order step {≤-step′ step≤n}) (queue step {step≤n}) ⁆
+\end{code}
+The set of nodes that have been visited in step \AgdaBound{step} are represented by \AgdaFunction{seen}~\AgdaBound{step}. Once a node has been visited, its distance estimate stays constant -- this important fact will be proved and used later on (see XXX).
 
-    queue′ : (step : ℕ) {s≤n : step ≤ n} → Sorted.SortedVec _ (Sub.size $ ∁ $ seen step {s≤n})
-    queue′ step {s≤n} = Sorted.fromVec (order step {s≤n}) $ Sub.toVec $ ∁ $ seen step
+\begin{code}
+    queue′ : (step : ℕ) {s≤n : step ≤ n} → Sorted.Vec _ (size $ ∁ $ seen step {s≤n})
+    queue′ step {s≤n} = Sorted.fromVec (order step {s≤n}) $ toVec $ ∁ $ seen step
+\end{code}
+This is the direct definition of what the queue at this step is: a sorted vector of the nodes that have not yet been visited -- \AgdaFunction{∁} is the set complement -- ordered by their current estimate using \AgdaFunction{order}.
 
-    queue : (step : ℕ) {s≤n : suc step ≤ n} → Sorted.SortedVec _ (suc (n ∸ (suc step)))
-    queue step {step<n} = P.subst (Sorted.SortedVec (order step {≤-step′ step<n})) (queue-size step {step<n}) (queue′ step)
+Unfortunately, this definition is not sufficient in practice: the queue's only use is to provide the node with the smallest estimate that has not yet been visited, which is always at the head of the queue. But to extract the head of a queue, its type must guarantee that it contains at least one element: the index must of of the form \AgdaInductiveConstructor{suc}~\AgdaBound{n} for some \AgdaBound{n}.
 
-    queue⇒queue′ : (step : ℕ) {s≤n : suc step ≤ n} → ∀ {p} (P : ∀ {n} →
-                   Sorted.SortedVec _ n → Set p) → P (queue′ step) → P (queue step {s≤n})
-    queue⇒queue′ step {s≤n} P Pqueue = super-subst P (≡-to-≅ (queue-size step {s≤n})) (H.sym H-lemma) Pqueue
+In order to provide a queue with a strictly positive length index, we prove the following equality:
+
+\begin{code}
+    queue-size :  (step : ℕ) {s≤n : suc step ≤ n} →
+                  size (∁ $ seen step {≤-step′ s≤n}) ≡ suc (n ∸ suc step)
+\end{code}
+Substituting the length index from \AgdaFunction{queue′} using \AgdaFunction{queue-size}, we then define the more convenient \AgdaFunction{queue} (definition omitted):
+
+\begin{code}
+    queue : (step : ℕ) {s<n : suc step ≤ n} → Sorted.Vec _ (suc (n ∸ (suc step)))
+\end{code}
+\AgdaHide{
+\begin{code}
+    queue step {s<n} = P.subst (Sorted.Vec (order step {≤-step′ s<n})) (queue-size step {s<n}) (queue′ step)
+\end{code}
+}
+The types of the remaining mutually inductive functions are as follows (we omit the definitions here for brevity):
+
+\begin{code}
+    queue′⇒queue  :  (step : ℕ) {s≤n : suc step ≤ n} → ∀ {p}
+                     (P : ∀ {n} → Sorted.Vec _ n → Set p) →
+                     P (queue′ step) → P (queue step {s≤n})
+    seen-size     :  (step : ℕ) {s≤n : step ≤ n} → size (seen step {s≤n}) ≡ suc step
+    q∉seen        :  (step : ℕ) {s≤n : suc step ≤ n} →
+                     Sorted.head _ (queue step {s≤n}) ∉ seen step {≤-step′ s≤n}
+\end{code}
+
+\AgdaHide{
+\begin{code}
+    queue′⇒queue step {s≤n} P Pqueue = super-subst P (≡-to-≅ (queue-size step {s≤n})) (H.sym H-lemma) Pqueue
       where
         open import Relation.Binary.HeterogeneousEquality as H
         open Sorted (order step {≤-step′ s≤n})
 
-        super-subst : ∀ {m n p} → {xs : SortedVec m} → {ys : SortedVec n} → (P : ∀ {n} → SortedVec n → Set p) →
+        super-subst : ∀ {m n p} → {xs : Vec m} → {ys : Vec n} → (P : ∀ {n} → Vec n → Set p) →
                       m H.≅ n → xs H.≅ ys → P xs → P ys
         super-subst P H.refl H.refl Pxs = Pxs
 
         H-lemma : queue step ≅ queue′ step
-        H-lemma = ≡-subst-removable SortedVec (queue-size step {s≤n}) (queue′ step)
+        H-lemma = ≡-subst-removable Vec (queue-size step {s≤n}) (queue′ step)
 
-    seen-size : (step : ℕ) {s≤n : step ≤ n} → Sub.size (seen step {s≤n}) ≡ suc step
     seen-size zero           = Sub.size⁅i⁆≡1 i
     seen-size (suc step) {s≤n} =
       begin
-        Sub.size (seen step ∪ ⁅ q ⁆)  ≡⟨ P.cong Sub.size (∪-comm (seen step) ⁅ q ⁆) ⟩
-        Sub.size (⁅ q ⁆ ∪ seen step)  ≡⟨ Sub.size-suc q (seen step) (q∉seen step) ⟩
-        suc (Sub.size (seen step))    ≡⟨ P.cong suc (seen-size step) ⟩
+        size (seen step ∪ ⁅ q ⁆)  ≡⟨ P.cong size (∪-comm (seen step) ⁅ q ⁆) ⟩
+        size (⁅ q ⁆ ∪ seen step)  ≡⟨ Sub.size-suc q (seen step) (q∉seen step) ⟩
+        suc (size (seen step))    ≡⟨ P.cong suc (seen-size step) ⟩
         suc (suc step)
       ∎
       where
@@ -485,18 +519,16 @@ The base case for the \AgdaFunction{estimate} function is a lookup in the adjace
         open Sub.Properties (suc n)
         q = Sorted.head (order step {≤-step′ s≤n}) (queue step {s≤n})
 
-    queue-size : (step : ℕ) {s≤n : suc step ≤ n} → Sub.size (∁ (seen step {≤-step′ s≤n})) ≡ suc (n ∸ suc step)
     queue-size step {s≤n} =
       begin
-        Sub.size (∁ (seen step))      ≡⟨ Sub.∁-size (seen step) ⟩
-        suc n ∸ Sub.size (seen step)  ≡⟨ P.cong₂ _∸_ P.refl (seen-size step) ⟩
-        suc n ∸ suc step              ≡⟨ sm∸n n (suc step) s≤n ⟩
+        size (∁ (seen step))      ≡⟨ Sub.∁-size (seen step) ⟩
+        suc n ∸ size (seen step)  ≡⟨ P.cong₂ _∸_ P.refl (seen-size step) ⟩
+        suc n ∸ suc step          ≡⟨ sm∸n n (suc step) s≤n ⟩
         suc (n ∸ suc step)
       ∎
       where
         open P.≡-Reasoning
 
-    q∉seen : (step : ℕ) {s≤n : suc step ≤ n} → Sorted.head _ (queue step {s≤n}) ∉ seen step {≤-step′ s≤n}
     q∉seen step {s≤n} q∈vs = q∉q∷qs (S.here qs q≼qs)
       where
         module S = Sorted (order step {≤-step′ s≤n})
@@ -509,7 +541,7 @@ The base case for the \AgdaFunction{estimate} function is a lookup in the adjace
         q∉queue′ = S.fromVec-∉¹ (Sub.toVec-∉¹ (Sub.∁-∈ q∈vs))
 
         q∉queue : ¬ (q S.∈ (queue step {s≤n}))
-        q∉queue = queue⇒queue′ step {s≤n} (λ qs → ¬ (q S.∈ qs)) q∉queue′
+        q∉queue = queue′⇒queue step {s≤n} (λ qs → ¬ (q S.∈ qs)) q∉queue′
 
         q∉q∷qs : ¬ (q S.∈ (q S.∷ qs ⟨ q≼qs ⟩))
         q∉q∷qs = P.subst (λ qs → ¬ (q S.∈ qs)) S.destruct q∉queue
