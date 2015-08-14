@@ -71,7 +71,7 @@ Agda has a uniform syntax that should be familiar to Haskell programmers and use
 One syntactic novelty is a flexible system of user-declared Unicode mixfix identifiers~\cite{danielsson_parsing_2011} with `holes' in an identifier being denoted by underscores.
 
 We write \AgdaSymbol{(}\AgdaBound{x}~\AgdaSymbol{:}~\AgdaBound{A}\AgdaSymbol{)}~\AgdaSymbol{→}~\AgdaBound{B} for the dependent function space where \AgdaBound{x} may occur in \AgdaBound{B}, and write \AgdaBound{A}~\AgdaSymbol{→}~\AgdaBound{B} when \AgdaBound{x} does not occur in \AgdaBound{B} as is usual.
-We enclose arguments to be inferred by unification in braces, as in \AgdaSymbol{\{}\AgdaBound{x}~\AgdaSymbol{:}~\AgdaBound{A}\AgdaSymbol{\}}~\AgdaSymbol{→}~\AgdaBound{B}, sometimes making use of the shorthand \AgdaSymbol{∀}~\AgdaBound{x}~\AgdaSymbol{→}~\AgdaBound{B} where types can be inferred.
+We enclose arguments to be inferred by unification in braces, as in \AgdaSymbol{\{}\AgdaBound{x}~\AgdaSymbol{:}~\AgdaBound{A}\AgdaSymbol{\}}~\AgdaSymbol{→}~\AgdaBound{B}, sometimes making use of the shorthand \AgdaSymbol{∀}~\AgdaBound{x}~\AgdaSymbol{→}~\AgdaBound{B} when types can be inferred.
 We write \AgdaDatatype{Σ}~\AgdaBound{A}~\AgdaBound{B} for the dependent sum type whose first projection has type \AgdaBound{A}, and write \AgdaBound{A}~\AgdaDatatype{×}~\AgdaBound{B} when the second projection does not depend on the first, as is usual.
 Dependent sums are constructed using the comma constructor: \AgdaBound{x}~\AgdaInductiveConstructor{,}~\AgdaBound{y}.
 We sometimes write \AgdaFunction{∃}~\AgdaBound{x}~\AgdaSymbol{→}~\AgdaBound{P} for the dependent sum type when the type of the first projection can be inferred.
@@ -85,8 +85,9 @@ Universe polymorphism is used extensively throughout this development, with expl
 
 In Section~\ref{sect.basic.definitions} we cover some definitions needed to define Dijkstra's algorithm and its correctness proof.
 In Section~\ref{sect.sorted.vectors} we discuss a type of sorted vectors used to maintain a priority queue of yet-unseen graph nodes in the algorithm.
-In Section~\ref{sect.path.algebras.their.properties.and.models} we discuss `path algebras', a variety of algebraic structure central to our proof of correctness, also providing two models of path algebras to demonstrate that models exist and that path algebras are not categorical.
+In Section~\ref{sect.path.algebras.their.properties.and.models} we discuss `path algebras', a variety of algebraic structure central to our proof of correctness, also providing three models of path algebras to demonstrate that models exist and that path algebras are not categorical.
 In Section~\ref{sect.correctness} we discuss the main body of the correctness proof leading up to our main theorem: Dijkstra's algorithm computes a right-local solution.
+In Section~\ref{sect.example} we demonstrate the algorithm in action with an example execution inside Agda.
 In Section~\ref{sect.conclusions} we conclude.
 
 \section{Basic Definitions}
@@ -454,17 +455,21 @@ Our implementation of this algorithm in Agda consists of nine mutually recursive
 \end{code}
 }
 
-\begin{figure}[h]
-\includegraphics{algorithm.pdf}
-\caption{Imperative generalised Dijkstra's algorithm \cite[p.~9]{dynerowicz_forwarding_2013}}
-\label{fig.algorithm}
-\end{figure}
+% dpm: temporarily removed as it was messing up formatting
+%\begin{figure}[h]
+%\includegraphics{algorithm.pdf}
+%\caption{Imperative generalised Dijkstra's algorithm \cite[p.~9]{dynerowicz_forwarding_2013}}
+%\label{fig.algorithm}
+%\end{figure}
 
 \subsection{Models}
 \label{subsect.models}
 
+We now discuss three models (or inhabitants) of the \AgdaRecord{PathAlgebra} record to demonstrate that they exist, that path algebras are not canonical (i.e. are not inhabitable by only one structure up to isomorphism), and to use later in Section~\ref{sect.example} where we provide an example execution of our algorithm.
+
 Trivially, the axioms of a \AgdaRecord{PathAlgebra} are satisfied by the unit type, \AgdaDatatype{⊤}.
-Defining a degenerate `addition' operation on the unit type:
+Defining a degenerate `addition' operation on the unit type, we inhabit \AgdaRecord{PathAlgebra} by taking the algebra's addition and multiplication to be this degenerate addition operation, and its two unit elements to be \AgdaInductiveConstructor{tt}, the inhabitant of \AgdaDatatype{⊤}.
+The axioms of the \AgdaRecord{PathAlgebra} are easily satisfied.
 
 \AgdaHide{
 \begin{code}
@@ -474,13 +479,8 @@ module Models where
   open import Algebra.FunctionProperties (_≡_ {A = ⊤})
 \end{code}}
 
-\begin{code}
-  _+ᵤ_ : Op₂ ⊤
-  u +ᵤ v = tt
-\end{code}
-
-We can inhabit \AgdaRecord{PathAlgebra} by taking the algebra's addition and multiplication operations to be \AgdaFunction{\_+ᵤ\_} and its two unit elements to be \AgdaInductiveConstructor{tt}, the inhabitant of \AgdaDatatype{⊤}.
-A more useful model for \AgdaRecord{PathAlgebra} can be obtained by considering the natural numbers extended with a `point at infinity'.
+More useful models for \AgdaRecord{PathAlgebra} can be obtained as follows.
+We first consider the natural numbers with a distinguished element, intuitively taken to be a `point at infinity'.
 Define \AgdaDatatype{ℕ∞} as follows:
 
 \AgdaHide{
@@ -502,10 +502,31 @@ module InfinityExtension where
 \end{code}
 
 The natural numbers, \AgdaDatatype{ℕ}, can be embedded into \AgdaDatatype{ℕ∞} in the obvious way, using the constructor \AgdaInductiveConstructor{↑}.
-Define addition and minimum functions, \AgdaFunction{\_+\_} and \AgdaFunction{\_⊓\_} respectively, that interprets \AgdaInductiveConstructor{∞} as the largest element of \AgdaDatatype{ℕ∞}, and in the case of addition considers the addition of \AgdaInductiveConstructor{∞} to any other element of \AgdaDatatype{ℕ∞} to be equal to \AgdaInductiveConstructor{∞}.
+Define addition, multiplication, minimum and maximum functions, \AgdaFunction{\_+\_}, \AgdaFunction{\_*\_}, \AgdaFunction{\_⊓\_}, and \AgdaFunction{\_⊔\_}, respectively, so that \AgdaInductiveConstructor{∞} is fixed as the largest element of \AgdaDatatype{ℕ∞}, and the following properties of addition and multiplication hold for all \AgdaBound{m}:
+\begin{gather*}
+\AgdaInductiveConstructor{∞}\; \AgdaFunction{+}\; \AgdaBound{m}\; \AgdaDatatype{≡}\; \AgdaInductiveConstructor{∞}\; \AgdaDatatype{≡}\; \AgdaBound{m}\; \AgdaFunction{+}\; \AgdaInductiveConstructor{∞}\; \quad\text{and}\quad \AgdaInductiveConstructor{∞}\; \AgdaFunction{*}\; \AgdaBound{m}\; \AgdaDatatype{≡}\; \AgdaInductiveConstructor{∞}\; \AgdaDatatype{≡}\; \AgdaBound{m}\; \AgdaFunction{*}\; \AgdaInductiveConstructor{∞}
+\end{gather*}
+In all other cases addition and multiplication behave in the `obvious way'.
+Using these definitions we can provide two different models for \AgdaRecord{PathAlgebra}:
+\begin{enumerate}
+\item
+The \emph{shortest path algebra} is obtained as follows.
+Take the algebra's addition and multiplication functions to be \AgdaFunction{\_⊓\_} and \AgdaFunction{\_+\_} on \AgdaDatatype{ℕ∞}, respectively.
+Take the unit for addition to be \AgdaInductiveConstructor{∞} and the unit for multiplication to be \AgdaInductiveConstructor{↑}~\AgdaInductiveConstructor{0}.
+\item
+The \emph{widest path algebra} is obtained as follows.
+Take the algebra's addition and multiplication functions to be \AgdaFunction{\_⊓\_} and and \AgdaFunction{\_⊔\_} on \AgdaDatatype{ℕ∞}, respectively.
+Take the unit for addition to be \AgdaInductiveConstructor{∞} and the unit for multiplication to be \AgdaInductiveConstructor{↑}~\AgdaInductiveConstructor{0}.
+\end{enumerate}
+In both cases, it is routine to check that the axioms for a \AgdaRecord{PathAlgebra} can be satisfied.
+As the names suggest, executing our generalised Dijkstra algorithm with adjacency matrix coefficients taken from a shortest path algebra will compute the shortest path through the graph described by the matrix, whilst taking matrix coefficients from a widest path algebra will compute the widest path.
+
 
 \section{Correctness}
 \label{sect.correctness}
+
+\section{Example}
+\label{sect.example}
 
 \section{Conclusions}
 \label{sect.conclusions}
