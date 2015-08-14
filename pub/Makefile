@@ -7,7 +7,7 @@ LFLAGS = -pdf -silent
 LLNCSFILES = llncs.cls splncs03.bst
 LLNCSZIP = llncs2e.zip
 
-itp16.pdf: itp16.tex llncs
+itp16.pdf: itp16.tex agda.sty llncs
 	$(LATEX) $(LFLAGS) $<
 
 itp16.tex: itp16.lagda
