@@ -22,6 +22,7 @@
 \DeclareUnicodeCharacter{8760}{\ensuremath{\overset{\cdot}{\vphantom{.}\smash{-}}}} % -}
 \DeclareUnicodeCharacter{8799}{\ensuremath{\overset{?}{\vphantom{o}\smash{=}}}}
 \DeclareUnicodeCharacter{8759}{\ensuremath{::}}
+\DeclareUnicodeCharacter{11388}{\ensuremath{{}_{j}}}
 \DeclareUnicodeCharacter{7522}{\ensuremath{{}_{i}}}
 \DeclareUnicodeCharacter{7524}{\ensuremath{{}_{u}}}
 
@@ -69,19 +70,21 @@ There will be two blank lines before and after the Abstract. \dots
 \label{subsect.agda}
 
 Agda~\cite{norell_dependently_2009} is a dependently-typed functional programming language \emph{cum} proof assistant for higher-order intuitionistic logic.
-In contrast to similar systems, such as Coq~\cite{bertot_short_2008} and Matita~\cite{asperti_matita_2011}, proof terms are constructed by hand via a process of type-directed refinement, rather than construction through tactic-oriented meta-programming.
+In contrast to similar systems, such as Coq~\cite{bertot_short_2008} and Matita~\cite{asperti_matita_2011}, proof terms are constructed by hand via a process of type-directed refinement, rather than being constructed via tactic-oriented meta-programming.
 
 Agda has a uniform syntax that should be familiar to Haskell programmers and users of other dependently-typed proof assistants.
 One syntactic novelty is a flexible system of user-declared Unicode mixfix identifiers~\cite{danielsson_parsing_2011} with `holes' in an identifier being denoted by underscores.
 
 We write \AgdaSymbol{(}\AgdaBound{x}~\AgdaSymbol{:}~\AgdaBound{A}\AgdaSymbol{)}~\AgdaSymbol{→}~\AgdaBound{B} for the dependent function space where \AgdaBound{x} may occur in \AgdaBound{B}, and write \AgdaBound{A}~\AgdaSymbol{→}~\AgdaBound{B} when \AgdaBound{x} does not occur in \AgdaBound{B} as is usual.
-We enclose arguments to be inferred by unification in braces, as in \AgdaSymbol{\{}\AgdaBound{x}~\AgdaSymbol{:}~\AgdaBound{A}\AgdaSymbol{\}}~\AgdaSymbol{→}~\AgdaBound{B}, sometimes making use of the shorthand \AgdaSymbol{∀}~\AgdaBound{x}~\AgdaSymbol{→}~\AgdaBound{B} when types can be inferred.
+We enclose arguments to be inferred in braces, as in \AgdaSymbol{\{}\AgdaBound{x}~\AgdaSymbol{:}~\AgdaBound{A}\AgdaSymbol{\}}~\AgdaSymbol{→}~\AgdaBound{B}, sometimes making use of the shorthand \AgdaSymbol{∀}~\AgdaBound{x}~\AgdaSymbol{→}~\AgdaBound{B} when types can be inferred.
 We write \AgdaDatatype{Σ}~\AgdaBound{A}~\AgdaBound{B} for the dependent sum type whose first projection has type \AgdaBound{A}, and write \AgdaBound{A}~\AgdaDatatype{×}~\AgdaBound{B} when the second projection does not depend on the first, as is usual.
 Dependent sums are constructed using the comma constructor: \AgdaBound{x}~\AgdaInductiveConstructor{,}~\AgdaBound{y}.
 We sometimes write \AgdaFunction{∃}~\AgdaBound{x}~\AgdaSymbol{→}~\AgdaBound{P} for the dependent sum type when the type of the first projection can be inferred.
-Lastly, we write \AgdaBound{A}~\AgdaDatatype{⊎}~\AgdaBound{B} for the disjoint union type with constructors \AgdaInductiveConstructor{inj₁} and \AgdaInductiveConstructor{inj₂}.
+Propositional equality between two types is written \AgdaBound{A}~\AgdaDatatype{≡}~\AgdaBound{B} and has a single inhabitant, \AgdaInductiveConstructor{refl}.
+Lastly, we write \AgdaBound{A}~\AgdaDatatype{⊎}~\AgdaBound{B} for the disjoint union type with constructors \AgdaInductiveConstructor{inj₁} and \AgdaInductiveConstructor{inj₂} and \AgdaFunction{¬}~\AgdaBound{A} for constructive negation.
 
 Agda is a predicative type theory with an infinite universe hierarchy, \AgdaPrimitiveType{Setᵢ}, with \AgdaPrimitiveType{Set}---the type of small types---being identified with \AgdaPrimitiveType{Set₀}, the base universe in Agda's hierarchy.
+As a matter of course universe \AgdaPrimitiveType{Setᵢ} is not automatically contained in \AgdaPrimitiveType{Setⱼ} when $i < j$ and requires explicit lifting with \AgdaFunction{Lift}.
 Universe polymorphism is used extensively throughout this development, with explicit quantification over universe levels.
 
 \subsection{Map of Paper}
@@ -274,7 +277,10 @@ The proof proceeds by analysing the cases under which $x \in xs$, and affirms th
 \label{sect.path.algebras.their.properties.and.models}
 
 Algebraic structures called path algebras are at the heart of our formalisation of Dijkstra's algorithm.
-We introduce path algebras here, prove various lemmas about them, and later provide three models proving their non-triviality and non-categoricity in Subsection~\ref{subsect.models}.
+We introduce path algebras in Subsection~\ref{subsect.path.algebras}, describe their properties in Subsection~\ref{subsect.properties}, and later provide three models proving their non-triviality and non-categoricity in Subsection~\ref{subsect.models}.
+
+\subsection{Path Algebras}
+\label{subsect.path.algebras}
 
 \AgdaHide{
 \begin{code}
@@ -288,13 +294,22 @@ module MoreFunctionProperties {a ℓ} {A : Set a} (_≈_ : Rel A ℓ) where
   open import Data.Sum
 \end{code}}
 
-\noindent
-We start by defining a \emph{selective} binary operation as follows:
+Fix a set $S$.
+Call a binary operation on $S$, $- \bullet -$, \emph{selective} when for all $x, y \in S$ either $x \bullet y = x$ or $x \bullet y = y$.
+With this definition in mind, we call a structure $\langle S, +, *, 0, 1 \rangle$ a \emph{path algebra} when:
+\begin{itemize}
+\item
+$\langle S, +, 0 \rangle$ forms a commutative monoid,
+\item
+$1$ is a left identity for multiplication, and a left- and right zero for addition,
+\item
+addition is selective, and addition absorbs multiplication,
+\item
+the usual closure properties for the unit elements and operations apply.
+\end{itemize}
 
-\begin{code}
-  Selective : Op₂ A → Set _
-  Selective _∙_ = ∀ x y → ((x ∙ y) ≈ x) ⊎ ((x ∙ y) ≈ y)
-\end{code}
+Following established convention, we capture the notion of a path algebra as an Agda record named \AgdaRecord{PathAlgebra}.
+We call the carrier type of a path algebra (the set $S$ in the definition above) \AgdaField{Carrier}, obtaining the closure properties mentioned above for `free' as a side-effect of Agda's typing discipline, and assume that there exists a decidable setoid equivalence relation on elements of this type, \AgdaField{\_≈\_}.
 
 \subsection{Properties}
 \label{subsect.properties}
@@ -326,7 +341,7 @@ We start by defining a \emph{selective} binary operation as follows:
 \subsection{Models}
 \label{subsect.models}
 
-We now discuss three models (or inhabitants) of the \AgdaRecord{PathAlgebra} record to demonstrate that they exist, that path algebras are not canonical (i.e. are not inhabitable by only one structure up to isomorphism), and to use later in Section~\ref{sect.example} where we provide an example execution of our algorithm.
+We now discuss three models---or inhabitants---of the \AgdaRecord{PathAlgebra} record to demonstrate that they exist, that path algebras are not canonical (i.e. are not inhabitable by only one structure up to isomorphism), and to use later in Section~\ref{sect.example} where we provide an example execution of our algorithm.
 
 Trivially, the axioms of a \AgdaRecord{PathAlgebra} are satisfied by the unit type, \AgdaDatatype{⊤}.
 Defining a degenerate `addition' operation on \AgdaDatatype{⊤}, we inhabit \AgdaRecord{PathAlgebra} by taking the algebra's addition and multiplication to be this operation and its two unit elements to be \AgdaInductiveConstructor{tt}, the unit value.
@@ -380,7 +395,7 @@ Take the algebra's addition and multiplication functions to be \AgdaFunction{\_�
 Take the unit for addition to be \AgdaInductiveConstructor{∞} and the unit for multiplication to be \AgdaInductiveConstructor{↑}~\AgdaInductiveConstructor{0}.
 \end{enumerate}
 In both cases, it is routine to check that the axioms for a \AgdaRecord{PathAlgebra} can be satisfied.
-As the names suggest, executing our generalised Dijkstra algorithm with adjacency matrix coefficients taken from a shortest path algebra will compute the shortest path through the graph described by the matrix, whilst taking matrix coefficients from a widest path algebra will compute the widest path.
+As the names suggest, executing our generalised Dijkstra algorithm with adjacency matrix coefficients taken from a shortest path algebra will compute the shortest path through the graph described by the matrix, whilst taking matrix coefficients from a widest path algebra will compute the widest path, or maximum bottleneck capacity.
 
 \section{Dijkstra's Algorithm}
 \label{sect.dijkstras.algorithm}
