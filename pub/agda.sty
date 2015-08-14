@@ -345,6 +345,17 @@
 {\endpboxed\par\noindent%
 \ignorespacesafterend}
 
+% Reduce left margin
+
+\RequirePackage{mdframed, xcolor}
+
+\mdfdefinestyle{agdamdf}{%
+  hidealllines=true,
+  innerleftmargin=\dimexpr-32pt
+}
+
+\surroundwithmdframed[style=agdamdf]{code}
+
 % Default column for polytable.
 \defaultcolumn{@{~}l@{~}}
 
