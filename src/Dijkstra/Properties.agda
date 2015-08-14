@@ -58,19 +58,6 @@ open import Dijkstra.EstimateOrder decTotalOrderᴸ using (estimateOrder)
 -- Setoid reasoning for the PathAlgebra setoid
 open EqR setoid
 
--- The set of visited vertices is never empty
-seen-nonempty : (step : ℕ) {s≤n : step N≤ n} → Nonempty (seen step {s≤n})
-seen-nonempty zero      = Sub.⁅i⁆-nonempty i
-seen-nonempty (suc step) = Sub.∪-nonempty¹ _ _ (seen-nonempty step)
-
--- Any vertex contained in the set of vertices visited in step (suc step)
--- was either the head of the queue in step step or already in the set of
--- visited vertices in step step
-seen-preserved : (step : ℕ) {s<n : suc step N≤ n} → ∀ {j} → j ∈ seen (suc step) {s<n} → j ≡ Sorted.head _ (queue step) ⊎ j ∈ seen step
-seen-preserved step {s<n} {j} j∈vs′ with Sub.∪-∈ j (seen step) ⁅ Sorted.head _ (queue step) ⁆ j∈vs′
-... | inj₁ j∈seen = inj₂ j∈seen
-... | inj₂ j∈⁅q⁆  = inj₁ (Sub.i∈⁅i⁆′ _ _ j∈⁅q⁆)
-
 private
 
   -- The head of the queue has the smallest estimated distance of any vertex
@@ -104,11 +91,11 @@ private
   not-seen step {s<n} k k∉vs′ k∈vs = k∉vs′ (Sub.∪-∈′ k _ _ k∈vs)
 
 -- Once a node has been visited its estimate is optimal
-pcorrect-lemma : (step : ℕ) {s<n : suc step N≤ n} → ∀ j k →
+pcorrect-lemma : (step : ℕ) {s<n : suc step N≤ n} → ∀ {j k} →
                  let vs = seen step {≤-step′ s<n}
                      r = estimate step {≤-step′ s<n} in
                  j ∈ vs → k ∉ vs → r j + r k ≈ r j
-pcorrect-lemma zero j k j∈vs k∉vs =
+pcorrect-lemma zero {j = j} j∈vs k∉vs =
   begin
     A[ i , j ] + _  ≈⟨ +-cong lemma refl ⟩
     1#         + _  ≈⟨ proj₁ +-zero _ ⟩
@@ -124,32 +111,17 @@ pcorrect-lemma zero j k j∈vs k∉vs =
         1#
       ∎
 
-pcorrect-lemma (suc step) {s<n} j k j∈vs′ k∉vs′ with Sub.∪-∈ {suc n} j (seen step) ⁅ Sorted.head _ (queue step) ⁆ j∈vs′
+pcorrect-lemma (suc step) {s<n} {j} {k} j∈vs′ k∉vs′
+  with Sub.∪-∈ {suc n} j (seen step) ⁅ Sorted.head _ (queue step) ⁆ j∈vs′
 
 ... | inj₁ j∈vs =
   begin
-    r′ j + r′ k
-      ≡⟨⟩
-    (r j + r q * A[ q , j ]) + (r k + r q * A[ q , k ])
-      ≈⟨ +-cong (+-comm _ _) refl ⟩
-    (r q * A[ q , j ] + r j) + (r k + r q * A[ q , k ])
-      ≈⟨ +-assoc _ _ _ ⟩
-    r q * A[ q , j ] + (r j + (r k + r q * A[ q , k ]))
-      ≈⟨ +-cong refl (sym (+-assoc _ _ _)) ⟩
-    r q * A[ q , j ] + ((r j + r k) + r q * A[ q , k ])
-      ≈⟨ +-cong refl (+-cong (pcorrect-lemma step {≤-step′ s<n} j k j∈vs (not-seen step k k∉vs′)) refl) ⟩
-    r q * A[ q , j ] + (r j + r q * A[ q , k ])
-      ≈⟨ +-cong refl (+-cong (sym (pcorrect-lemma step {≤-step′ s<n} j q j∈vs (q∉seen step))) refl) ⟩
-    r q * A[ q , j ] + ((r j + r q) + r q * A[ q , k ])
-      ≈⟨ +-cong refl (+-assoc _ _ _) ⟩
-    r q * A[ q , j ] + (r j + (r q + r q * A[ q , k ]))
-      ≈⟨ +-cong refl (+-cong refl (+-absorbs-* _ _)) ⟩
-    r q * A[ q , j ] + (r j + r q)
-      ≈⟨ +-cong refl (pcorrect-lemma step {≤-step′ s<n} j q j∈vs (q∉seen step)) ⟩
-    r q * A[ q , j ] + r j
-      ≈⟨ +-comm _ _ ⟩
-    r j + r q * A[ q , j ]
-      ≡⟨⟩
+    r′ j + r′ k                                          ≡⟨⟩
+    (r j + r q * A[ q , j ]) + (r k + r q * A[ q , k ])  ≈⟨ +-cong (+-comm _ _) refl ⟩
+    (r q * A[ q , j ] + r j) + (r k + r q * A[ q , k ])  ≈⟨ +-assoc _ _ _ ⟩
+    r q * A[ q , j ] + (r j + (r k + r q * A[ q , k ]))  ≈⟨ +-cong refl lemma ⟩
+    r q * A[ q , j ] + r j                               ≈⟨ +-comm _ _ ⟩
+    r j + r q * A[ q , j ]                               ≡⟨⟩
     r′ j
   ∎
   where
@@ -157,30 +129,35 @@ pcorrect-lemma (suc step) {s<n} j k j∈vs′ k∉vs′ with Sub.∪-∈ {suc n}
     r′ = estimate (suc step) {≤-step′ s<n}
     q  = Sorted.head _ (queue step {≤-step′ s<n})
 
+    pcorrect₁ = pcorrect-lemma step {≤-step′ s<n} j∈vs (not-seen step k k∉vs′)
+    pcorrect₂ = pcorrect-lemma step {≤-step′ s<n} j∈vs (q∉seen step)
+    pcorrect₃ = pcorrect-lemma step {≤-step′ s<n} j∈vs (q∉seen step)
+
+    lemma : r j + (r k + r q * A[ q , k ]) ≈ r j
+    lemma =
+      begin
+        r j + (r k + r q * A[ q , k ])  ≈⟨ sym (+-assoc _ _ _) ⟩
+        (r j + r k) + r q * A[ q , k ]  ≈⟨ +-cong pcorrect₁ refl ⟩
+        r j + r q * A[ q , k ]          ≈⟨ +-cong (sym pcorrect₂) refl ⟩
+        (r j + r q) + r q * A[ q , k ]  ≈⟨ +-assoc _ _ _ ⟩
+        r j + (r q + r q * A[ q , k ])  ≈⟨ +-cong refl (+-absorbs-* _ _) ⟩
+        r j + r q                       ≈⟨ pcorrect₃ ⟩
+        r j
+      ∎
+
 ... | inj₂ j∈⁅q⁆ =
   begin
-    r′ j + r′ k
-      ≡⟨⟩
-    (r j + r q * A[ q , j ]) + (r k + r q * A[ q , k ])
-      ≡⟨ P.cong₂ _+_ (P.cong₂ _+_ (P.cong r j≡q) P.refl) P.refl ⟩
-    (r q + r q * A[ q , j ]) + (r k + r q * A[ q , k ])
-      ≈⟨ +-cong (+-absorbs-* _ _) refl ⟩
-    r q + (r k + r q * A[ q , k ])
-      ≈⟨ sym (+-assoc _ _ _) ⟩
-    (r q + r k) + r q * A[ q , k ]
-      ≈⟨ +-cong (+-comm _ _) refl ⟩
-    (r k + r q) + r q * A[ q , k ]
-      ≈⟨ +-assoc _ _ _ ⟩
-    r k + (r q + r q * A[ q , k ])
-      ≈⟨ +-cong refl (+-absorbs-* _ _) ⟩
-    r k + r q
-      ≈⟨ q-lemma step {≤-step′ s<n} k (not-seen step k k∉vs′) ⟩
-    r q
-      ≈⟨ sym (+-absorbs-* _ _) ⟩
-    r q + r q * A[ q , j ]
-      ≡⟨ P.cong₂ _+_ (P.cong r (P.sym j≡q)) P.refl ⟩
-    r j + r q * A[ q , j ]
-      ≡⟨⟩
+    r′ j + r′ k                                          ≡⟨⟩
+    (r j + r q * A[ q , j ]) + (r k + r q * A[ q , k ])  ≡⟨ j≡q₁ ⟩
+    (r q + r q * A[ q , j ]) + (r k + r q * A[ q , k ])  ≈⟨ +-cong (+-absorbs-* _ _) refl ⟩
+    r q + (r k + r q * A[ q , k ])                       ≈⟨ sym (+-assoc _ _ _) ⟩
+    (r q + r k) + r q * A[ q , k ]                       ≈⟨ +-cong (+-comm _ _) refl ⟩
+    (r k + r q) + r q * A[ q , k ]                       ≈⟨ +-assoc _ _ _ ⟩
+    r k + (r q + r q * A[ q , k ])                       ≈⟨ +-cong refl (+-absorbs-* _ _) ⟩
+    r k + r q                                            ≈⟨ lemma ⟩
+    r q                                                  ≈⟨ sym (+-absorbs-* _ _) ⟩
+    r q + r q * A[ q , j ]                               ≡⟨ j≡q₂ ⟩
+    r j + r q * A[ q , j ]                               ≡⟨⟩
     r′ j
   ∎
   where
@@ -190,24 +167,42 @@ pcorrect-lemma (suc step) {s<n} j k j∈vs′ k∉vs′ with Sub.∪-∈ {suc n}
     j≡q : j ≡ q
     j≡q = Sub.i∈⁅i⁆′ {suc n} q j j∈⁅q⁆
 
--- The distance estimate of a vertex stays the same once it has been visited
+    j≡q₁ = P.cong₂ _+_ (P.cong₂ _+_ (P.cong r j≡q) P.refl) P.refl
+    j≡q₂ = P.cong₂ _+_ (P.cong r (P.sym j≡q)) P.refl
+    lemma = q-lemma step {≤-step′ s<n} k (not-seen step k k∉vs′)
+
+-- The distance estimate of a vertex stays the same once it has been visited.
+-- This lemma is used in the correctness proof
 estimate-lemma : (step : ℕ) {s<n : suc step N≤ n} → ∀ k → k ∈ seen step {≤-step′ s<n} →
                  estimate (suc step) {s<n} k ≈ estimate step {≤-step′ s<n} k
 estimate-lemma step {s<n} k k∈vs =
   begin
-    r′ k
-      ≡⟨⟩
-    r k + r q * A[ q , k ]
-      ≈⟨ +-cong (sym (pcorrect-lemma step {s<n} k q k∈vs (q∉seen step))) refl ⟩
-    (r k + r q) + r q * A[ q , k ]
-      ≈⟨ +-assoc _ _ _ ⟩
-    r k + (r q + r q * A[ q , k ])
-      ≈⟨ +-cong refl (+-absorbs-* _ _) ⟩
-    r k + r q
-      ≈⟨ pcorrect-lemma step {s<n} k q k∈vs (q∉seen step) ⟩
+    r′ k                            ≡⟨⟩
+    r k + r q * A[ q , k ]          ≈⟨ +-cong (sym pcorrect) refl ⟩
+    (r k + r q) + r q * A[ q , k ]  ≈⟨ +-assoc _ _ _ ⟩
+    r k + (r q + r q * A[ q , k ])  ≈⟨ +-cong refl (+-absorbs-* _ _) ⟩
+    r k + r q                       ≈⟨ pcorrect ⟩
     r k
   ∎
   where
     r  = estimate step {≤-step′ s<n}
     r′ = estimate (suc step) {s<n}
     q  = Sorted.head _ (queue step {s<n})
+
+    pcorrect = pcorrect-lemma step {s<n} k∈vs (q∉seen step)
+
+------------------------------------------------------------------------
+-- Additional properties
+
+-- The set of visited vertices is never empty
+seen-nonempty : (step : ℕ) {s≤n : step N≤ n} → Nonempty (seen step {s≤n})
+seen-nonempty zero      = Sub.⁅i⁆-nonempty i
+seen-nonempty (suc step) = Sub.∪-nonempty¹ _ _ (seen-nonempty step)
+
+-- Any vertex contained in the set of vertices visited in step (suc step)
+-- was either the head of the queue in step step or already in the set of
+-- visited vertices in step step
+seen-preserved : (step : ℕ) {s<n : suc step N≤ n} → ∀ {j} → j ∈ seen (suc step) {s<n} → j ≡ Sorted.head _ (queue step) ⊎ j ∈ seen step
+seen-preserved step {s<n} {j} j∈vs′ with Sub.∪-∈ j (seen step) ⁅ Sorted.head _ (queue step) ⁆ j∈vs′
+... | inj₁ j∈seen = inj₂ j∈seen
+... | inj₂ j∈⁅q⁆  = inj₁ (Sub.i∈⁅i⁆′ _ _ j∈⁅q⁆)
