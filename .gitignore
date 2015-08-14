@@ -1,6 +1,5 @@
 .dir-locals.el
 pub/itp16.tex
-pub/agda.sty
 pub/llncs.cls
 pub/splncs03.bst
 pub/llncs2e.zip
