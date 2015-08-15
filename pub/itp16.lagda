@@ -19,6 +19,7 @@
 
 \DeclareUnicodeCharacter{8261}{\ensuremath{\llbracket}} % FIXME
 \DeclareUnicodeCharacter{8262}{\ensuremath{\rrbracket}} % FIXME
+\DeclareUnicodeCharacter{8718}{\ensuremath{\square}}
 \DeclareUnicodeCharacter{8760}{\ensuremath{\overset{\cdot}{\vphantom{.}\smash{-}}}} % -}
 \DeclareUnicodeCharacter{8799}{\ensuremath{\overset{?}{\vphantom{o}\smash{=}}}}
 \DeclareUnicodeCharacter{8759}{\ensuremath{::}}
@@ -33,10 +34,12 @@
 module itp16 where
 
 open import Algebra.Path.Structure
-open import Data.Matrix.Adjacency
+import Data.Matrix.Adjacency as Adj
 
 open import Data.Fin using (Fin; zero; suc)
-open import Data.Nat using (ℕ; zero; suc; _∸_)
+open import Data.Nat
+  using (ℕ; zero; suc; _∸_; z≤n)
+  renaming (_≤_ to _N≤_)
 \end{code}
 }
 
@@ -404,7 +407,7 @@ As the names suggest, executing our generalised Dijkstra algorithm with adjacenc
 \begin{code}
 module itp16-Algorithm
     {c ℓ} (alg : PathAlgebra c ℓ)
-    {n} (i : Fin (suc n)) (adj : Adj alg (suc n))
+    {n} (i : Fin (suc n)) (adj : Adj.Adj alg (suc n))
     where
 
   open import Algebra.Path.Properties
@@ -434,7 +437,7 @@ module itp16-Algorithm
   open import Dijkstra.EstimateOrder decTotalOrderᴸ using (estimateOrder)
 
   A[_,_] : Fin (suc n) → Fin (suc n) → Weight
-  A[ i , j ] = Adj.matrix adj [ i , j ]
+  A[ i , j ] = Adj.Adj.matrix adj [ i , j ]
 
   mutual
 \end{code}
@@ -499,12 +502,12 @@ Substituting the length index from \AgdaFunction{queue′} using \AgdaFunction{q
 The types of the remaining mutually inductive functions are as follows (we omit the definitions here for brevity):
 
 \begin{code}
-    queue′⇒queue  :  (step : ℕ) {s≤n : suc step ≤ n} → ∀ {p}
+    queue′⇒queue  :  (step : ℕ) {s<n : suc step ≤ n} → ∀ {p}
                      (P : ∀ {n} → Sorted.Vec _ n → Set p) →
-                     P (queue′ step) → P (queue step {s≤n})
+                     P (queue′ step) → P (queue step {s<n})
     seen-size     :  (step : ℕ) {s≤n : step ≤ n} → size (seen step {s≤n}) ≡ suc step
-    q∉seen        :  (step : ℕ) {s≤n : suc step ≤ n} →
-                     Sorted.head _ (queue step {s≤n}) ∉ seen step {≤-step′ s≤n}
+    q∉seen        :  (step : ℕ) {s<n : suc step ≤ n} →
+                     Sorted.head _ (queue step {s<n}) ∉ seen step {≤-step′ s<n}
 \end{code}
 
 \AgdaHide{
@@ -572,6 +575,463 @@ The types of the remaining mutually inductive functions are as follows (we omit 
 
 \section{Correctness}
 \label{sect.correctness}
+
+\AgdaHide{
+\begin{code}
+module itp16-Properties
+    {c ℓ} (alg : PathAlgebra c ℓ)
+    {n} (i : Fin (suc n)) (adj : Adj.Adj alg (suc n))
+    where
+
+  open import Algebra.Path.Properties
+  open import Dijkstra.Algorithm alg i adj
+
+  open import Data.Fin.Subset
+  import Data.Fin.Subset.Extra as Sub
+  open import Data.Matrix
+  open import Data.Nat.MoreProperties using (≤-step′)
+  open import Data.Nat.Properties using (≤-step)
+  open import Data.Product using (_,_; proj₁)
+  open import Data.Sum using (_⊎_; inj₁; inj₂)
+  import Data.Vec as V
+  import Data.Vec.Properties as VP
+  import Data.Vec.Sorted as Sorted
+
+  open import Function using (_$_; _∘_; flip)
+  open import Function.Equivalence using (module Equivalence)
+  open import Function.Equality using (module Π)
+  open Π using (_⟨$⟩_)
+
+  open import Relation.Nullary
+  open import Relation.Unary using (Pred)
+  open import Relation.Binary using (module DecTotalOrder)
+  import Relation.Binary.EqReasoning as EqR
+  import Relation.Binary.PropositionalEquality as P
+  open P using (_≡_; _≢_)
+  open P.≡-Reasoning
+    using ()
+    renaming (begin_ to start_; _≡⟨_⟩_ to _≣⟨_⟩_; _∎ to _■)
+
+  -- Bring the algebra's operators, constants and properties into scope
+  open PathAlgebra alg renaming (Carrier to Weight)
+  open RequiresPathAlgebra alg
+
+  -- This decidable total order is used to sort vertices by their
+  -- current estimate
+  open DecTotalOrder decTotalOrderᴸ using (_≤_)
+  open import Dijkstra.EstimateOrder decTotalOrderᴸ using (estimateOrder)
+
+  -- Setoid reasoning for the PathAlgebra setoid
+  open EqR setoid
+
+  private
+
+    -- The head of the queue has the smallest estimated distance of any vertex
+    -- that has not been visited so far
+\end{code}
+}
+
+\begin{lemma}[Queue head]\label{lemma.queue.head} The head of the queue has the smallest estimated distance from the start node of any node that has not yet been visited.\end{lemma}
+
+\begin{code}
+    q-lemma :  (step : ℕ) {s<n : suc step N≤ n} →
+               ∀ k → k ∉ seen step {≤-step′ s<n} →
+               let r  = estimate step {≤-step′ s<n}
+                   q  = Sorted.head _ (queue step {s<n}) in
+               r k + r q ≈ r q
+\end{code}
+
+\begin{proof}
+This follows directly from the fact that \AgdaFunction{queue} is a sorted vector.
+\end{proof}
+
+\AgdaHide{
+\begin{code}
+    q-lemma step {s<n} k k∉vs = rq⊴ᴸrk⟶rk+rq≈rq ⟨$⟩ S.head-≤ (∈-lemma k∉vs)
+      where
+        r = estimate step {≤-step′ s<n}
+
+        module S = Sorted (estimateOrder r)
+        open DecTotalOrder (estimateOrder r)
+          using () renaming (_≤_ to _≤ᵉ_)
+
+        q = S.head (queue step {s<n})
+
+        ∈-lemma : ∀ {k} → k ∉ seen step {≤-step′ s<n} → k S.∈ queue step {s<n}
+        ∈-lemma {k} k∉vs = queue⇒queue′ step {s<n} (λ qs → k S.∈ qs) (∈-lemma′ k∉vs)
+          where
+            ∈-lemma′ : ∀ {k} → k ∉ seen step {≤-step′ s<n} → k S.∈ queue′ step {≤-step′ s<n}
+            ∈-lemma′ k∉vs = S.fromVec-∈¹ (Sub.toVec-∈¹ (Sub.∁-∈′ k∉vs))
+
+        open Equivalence (equivalentᴸ (r q) (r k)) renaming (from to rq⊴ᴸrk⟶rk+rq≈rq)
+
+    -- If a vertex has not been visited in step (suc step) then it has not
+    -- been visited in step step
+\end{code}
+}
+% $
+
+\begin{lemma}[Unseen]\label{lemma.unseen} A node that has not yet been visited had not been visited in the previous step either.\end{lemma}
+\begin{code}
+    not-seen :  (step : ℕ) {s<n : suc step N≤ n} →
+                ∀ k → k ∉ seen (suc step) {s<n} →
+                k ∉ seen step {≤-step′ s<n}
+\end{code}
+
+\begin{proof}
+The nodes visited in \AgdaInductiveConstructor{suc}~\AgdaBound{step} are the nodes visited in \AgdaBound{step} with the head of the queue at \AgdaBound{step} added, so \AgdaFunction{seen}~\AgdaSymbol{(}\AgdaInductiveConstructor{suc}~\AgdaBound{step}\AgdaSymbol{)} is a superset of \AgdaFunction{seen}~\AgdaBound{step}. The lemma is a direct consequence of this.
+\end{proof}
+
+\AgdaHide{
+\begin{code}
+    not-seen step {s<n} k k∉vs′ k∈vs = k∉vs′ (Sub.∪-∈′ k _ _ k∈vs)
+
+  -- Once a node has been visited its estimate is optimal
+\end{code}
+}
+
+\begin{theorem}[Optimal]\label{lemma.optimal} Once a node has been visited its estimate is optimal.\end{theorem}
+\begin{code}
+  pcorrect-lemma :  (step : ℕ) {s<n : suc step N≤ n} → ∀ {j k} →
+                    let vs  = seen step {≤-step′ s<n}
+                        r   = estimate step {≤-step′ s<n} in
+                    j ∈ vs → k ∉ vs → r j + r k ≈ r j
+\end{code}
+
+This lemma, together with XXX, constitutes the core of the correctness proof.
+
+\begin{proof}
+The proof proceeds by induction on \AgdaBound{step}.
+
+\paragraph{Base case.} At step \AgdaInductiveConstructor{zero}, the set of visited nodes, \AgdaFunction{seen}, contains exactly the start node, \AgdaBound{i}, so \AgdaBound{j} is equal to \AgdaBound{i}. The base case of \AgdaFunction{estimate} is a lookup in the adjacency matrix. Consequently, \AgdaFunction{estimate}~\AgdaInductiveConstructor{zero}~\AgdaBound{j} is equal to \AgdaFunction{A[}~\AgdaBound{i}~\AgdaFunction{,}~\AgdaBound{i}~\AgdaFunction{]}. By the adjacency matrix diagonal property, this is equivalent to \AgdaFunction{1\#}, the zero element of addition in a path algebra.
+
+The corresponding Agda proof follows (\AgdaFunction{lemma} uses the adjacency matrix diagonal property, and is omitted for brevity):
+
+\begin{code}
+  pcorrect-lemma zero {j = j} {k} j∈vs _ =
+    let r = estimate zero {z≤n} in
+    begin
+      r j  + r k  ≈⟨ +-cong rj≈1 refl ⟩
+      1#   + r k  ≈⟨ proj₁ +-zero _ ⟩
+      1#          ≈⟨ sym rj≈1 ⟩
+      r j
+    ∎
+\end{code}
+
+\AgdaHide{
+\begin{code}
+    where
+      rj≈1 : A[ i , j ] ≈ 1#
+      rj≈1 =
+        begin
+          A[ i , j ]  ≡⟨ P.cong₂ A[_,_] (P.refl {x = i}) (Sub.i∈⁅i⁆′ i j j∈vs) ⟩
+          A[ i , i ]  ≈⟨ Adj.Adj.diag adj i ⟩
+          1#
+        ∎
+\end{code}
+}
+
+\paragraph{Induction step.} In the induction step, we perform a case split: by the definition of \AgdaFunction{seen}, if \AgdaBound{j} is an element of \AgdaFunction{seen}~\AgdaSymbol{(}\AgdaInductiveConstructor{suc}~\AgdaBound{step}\AgdaSymbol{)} then \AgdaBound{j} either belongs to \AgdaFunction{seen}~\AgdaBound{step} (case 1) or was the head of the queue at at \AgdaBound{step} (case 2).
+
+\AgdaHide{
+\begin{code}
+  pcorrect-lemma (suc step) {s<n} {j} {k} j∈vs′ k∉vs′
+    with Sub.∪-∈ {suc n} j (seen step) ⁅ Sorted.head _ (queue step) ⁆ j∈vs′
+\end{code}
+}
+
+\paragraph{Induction step---case 1.} \AgdaBound{j}~\AgdaDatatype{∈}~\AgdaFunction{seen}~\AgdaBound{step}
+
+\AgdaHide{
+\begin{code}
+  ... | inj₁ j∈vs =
+    begin
+      r′ j + r′ k                                          ≡⟨⟩
+      (r j + r q * A[ q , j ]) + (r k + r q * A[ q , k ])  ≈⟨ +-cong (+-comm _ _) refl ⟩
+      (r q * A[ q , j ] + r j) + (r k + r q * A[ q , k ])  ≈⟨ +-assoc _ _ _ ⟩
+      r q * A[ q , j ] + (r j + (r k + r q * A[ q , k ]))  ≈⟨ +-cong refl lemma ⟩
+      r q * A[ q , j ] + r j                               ≈⟨ +-comm _ _ ⟩
+      r j + r q * A[ q , j ]                               ≡⟨⟩
+      r′ j
+    ∎
+    where
+      r  = estimate step {≤-step′ (≤-step′ s<n)}
+      r′ = estimate (suc step) {≤-step′ s<n}
+      q  = Sorted.head _ (queue step {≤-step′ s<n})
+
+      pcorrect₁ = pcorrect-lemma step {≤-step′ s<n} j∈vs (not-seen step k k∉vs′)
+      pcorrect₂ = pcorrect-lemma step {≤-step′ s<n} j∈vs (q∉seen step)
+
+      lemma : r j + (r k + r q * A[ q , k ]) ≈ r j
+      lemma =
+        begin
+          r j + (r k + r q * A[ q , k ])  ≈⟨ sym (+-assoc _ _ _) ⟩
+          (r j + r k) + r q * A[ q , k ]  ≈⟨ +-cong pcorrect₁ refl ⟩
+          r j + r q * A[ q , k ]          ≈⟨ +-cong (sym pcorrect₂) refl ⟩
+          (r j + r q) + r q * A[ q , k ]  ≈⟨ +-assoc _ _ _ ⟩
+          r j + (r q + r q * A[ q , k ])  ≈⟨ +-cong refl (+-absorbs-* _ _) ⟩
+          r j + r q                       ≈⟨ pcorrect₂ ⟩
+          r j
+        ∎
+\end{code}
+}
+
+In the following, we use the notation \(r′_j\) to denote \AgdaFunction{estimate}~\AgdaSymbol{(}\AgdaInductiveConstructor{suc}~\AgdaBound{step}\AgdaSymbol{)}~\AgdaBound{j} and \(r_j\) for \AgdaFunction{estimate}~\AgdaBound{step}~\AgdaBound{j}.
+
+The induction step of this theorem requires a lemma that \(r_j + (r_k + r_q * A_{q,k}) ≈ r_j\) which we show first:
+
+\begin{align*}
+r_j + (r_k + r_q * A_{q,k})
+&≈ (r_j + r_k) + r_q * A_{q,k} && \text{associativity} \\
+&≈ r_j + r_q * A_{q,k}         && \text{induction step} \\
+&≈ (r_j + r_q) + r_q * A_{q,k} && \text{induction step} \\
+&≈ r_j + (r_q + r_q * A_{q,k}) && \text{associativity} \\
+&≈ r_j + r_q                   && \text{absorptivity} \\
+&≈ r_j                         && \text{induction step}
+\end{align*}
+
+\begin{align*}
+r′_j + r′_k
+&≡ (r_j + r_q * A_{q,j}) + (r_k + r_q * A_{q,k}) && \text{\AgdaFunction{estimate} definition} \\
+&≈ (r_q * A_{q,j} + r_j) + (r_k + r_q * A_{q,k}) && \text{commutativity} \\
+&≈ r_q * A_{q,j} + (r_j + (r_k + r_q * A_{q,k})) && \text{associativity} \\
+&≈ r_q * A_{q,j} + r_j                           && \text{lemma} \\
+&≈ r_j + r_q * A_{q,j}                           && \text{commutativity} \\
+&≡ r′_j                                          && \text{\AgdaFunction{estimate} definition}
+\end{align*}
+
+\paragraph{Induction step---case 2.} \AgdaBound{j}~\AgdaDatatype{≡}~\AgdaFunction{head}~\AgdaSymbol{(}\AgdaFunction{queue}~\AgdaBound{step}\AgdaSymbol{)}
+
+\AgdaHide{
+\begin{code}
+  ... | inj₂ j∈⁅q⁆ =
+    begin
+      r′ j + r′ k                                          ≡⟨⟩
+      (r j + r q * A[ q , j ]) + (r k + r q * A[ q , k ])  ≡⟨ j≡q₁ ⟩
+      (r q + r q * A[ q , j ]) + (r k + r q * A[ q , k ])  ≈⟨ +-cong (+-absorbs-* _ _) refl ⟩
+      r q + (r k + r q * A[ q , k ])                       ≈⟨ sym (+-assoc _ _ _) ⟩
+      (r q + r k) + r q * A[ q , k ]                       ≈⟨ +-cong (+-comm _ _) refl ⟩
+      (r k + r q) + r q * A[ q , k ]                       ≈⟨ +-assoc _ _ _ ⟩
+      r k + (r q + r q * A[ q , k ])                       ≈⟨ +-cong refl (+-absorbs-* _ _) ⟩
+      r k + r q                                            ≈⟨ lemma ⟩
+      r q                                                  ≈⟨ sym (+-absorbs-* _ _) ⟩
+      r q + r q * A[ q , j ]                               ≡⟨ j≡q₂ ⟩
+      r j + r q * A[ q , j ]                               ≡⟨⟩
+      r′ j
+    ∎
+    where
+      r  = estimate step {≤-step′ (≤-step′ s<n)}
+      r′ = estimate (suc step) {≤-step′ s<n}
+      q  = Sorted.head _ (queue step {≤-step′ s<n})
+      j≡q : j ≡ q
+      j≡q = Sub.i∈⁅i⁆′ {suc n} q j j∈⁅q⁆
+
+      j≡q₁ = P.cong₂ _+_ (P.cong₂ _+_ (P.cong r j≡q) P.refl) P.refl
+      j≡q₂ = P.cong₂ _+_ (P.cong r (P.sym j≡q)) P.refl
+      lemma = q-lemma step {≤-step′ s<n} k (not-seen step k k∉vs′)
+
+  -- The distance estimate of a vertex stays the same once it has been visited.
+  -- This lemma is used in the correctness proof
+\end{code}
+}
+
+In the following proof, \(q\) denotes the head of the queue at \AgdaBound{step}.
+
+\begin{align*}
+r′_j + r′_k
+&≡ (r_j + r_q * A_{q,j}) + (r_k + r_q * A_{q,k}) && \text{\AgdaFunction{estimate} definition} \\
+&≡ (r_q + r_q * A_{q,j}) + (r_k + r_q * A_{q,k}) && \text{since \(j = q\)} \\
+&≈ r_q + (r_k + r_q * A_{q,k})                  && \text{absorptivity} \\
+&≈ (r_q + r_k) + r_q * A_{q,k}                  && \text{associativity} \\
+&≈ (r_k + r_q) + r_q * A_{q,k}                  && \text{commutativity} \\
+&≈ r_k + (r_q + r_q * A_{q,k})                  && \text{associativity} \\
+&≈ r_k + r_q                                   && \text{absorptivity} \\
+&≈ r_q                                         && \text{lemma} \\
+&≈ r_q + r_q * A_{q,j}                          && \text{absorptivity} \\
+&≈ r_j + r_q * A_{q,j}                          && \text{since \(j = q\)} \\
+&≡ r′_j                                           && \text{\AgdaFunction{estimate} definition}
+\end{align*}
+
+
+\end{proof}
+
+\begin{corollary}[Estimate]\label{lemma.estimate} The distance estimate of a node stays the same once it has been visited.\end{corollary}
+\begin{code}
+  estimate-lemma :  (step : ℕ) {s<n : suc step N≤ n} →
+                    ∀ k → k ∈ seen step {≤-step′ s<n} →
+                    estimate (suc step) {s<n} k ≈ estimate step {≤-step′ s<n} k
+\end{code}
+
+\begin{proof}
+
+\begin{align*}
+r′_k
+&≡ r_k + r_q * A_{q,k}       && \text{\AgdaFunction{estimate} definition} \\
+&≈ (r_k + r_q) + r_q * A_{q,k}  && \text{\Cref{lemma.optimal}} \\
+&≈ r_k + (r_q + r_q * A_{q,k})  && \text{absorptivity} \\
+&≈ r_k + r_q                   && \text{\Cref{lemma.optimal}} \\
+&≡ r_k                           && \text{\AgdaFunction{estimate} definition}
+\end{align*}
+
+\end{proof}
+
+\AgdaHide{
+\begin{code}
+  estimate-lemma step {s<n} k k∈vs =
+    begin
+      r′ k                            ≡⟨⟩
+      r k + r q * A[ q , k ]          ≈⟨ +-cong (sym pcorrect) refl ⟩
+      (r k + r q) + r q * A[ q , k ]  ≈⟨ +-assoc _ _ _ ⟩
+      r k + (r q + r q * A[ q , k ])  ≈⟨ +-cong refl (+-absorbs-* _ _) ⟩
+      r k + r q                       ≈⟨ pcorrect ⟩
+      r k
+    ∎
+    where
+      r  = estimate step {≤-step′ s<n}
+      r′ = estimate (suc step) {s<n}
+      q  = Sorted.head _ (queue step {s<n})
+
+      pcorrect = pcorrect-lemma step {s<n} k∈vs (q∉seen step)
+\end{code}
+}
+
+\AgdaHide{
+\begin{code}
+module itp16-Correctness
+    {c ℓ} (alg : PathAlgebra c ℓ)
+    {n} (i : Fin (suc n)) (adj : Adj.Adj alg (suc n))
+    where
+
+  open import Algebra.Path.Properties
+  open import Dijkstra.Algorithm alg i adj
+  open import Dijkstra.Properties alg i adj
+
+  open import Data.Fin.Properties as FP using (_≟_)
+  open import Data.Fin.Subset
+  import Data.Fin.Subset.Extra as Sub
+  open import Data.Matrix
+  open import Data.Nat.MoreProperties using (≤-step′)
+  open import Data.Nat.Properties using (≤-step)
+  open import Data.Product using (proj₁)
+  open import Data.Sum using (inj₁; inj₂)
+  import Data.Vec as V
+  import Data.Vec.Sorted as Sorted
+
+  open import Relation.Nullary using (¬_; yes; no)
+  open import Relation.Unary using (Pred)
+  open import Relation.Binary using (module DecTotalOrder)
+  import Relation.Binary.EqReasoning as EqR
+  import Relation.Binary.PropositionalEquality as P
+  open P using (_≡_; _≢_)
+  open P.≡-Reasoning
+    using ()
+    renaming (begin_ to start_; _≡⟨_⟩_ to _≣⟨_⟩_; _∎ to _■)
+
+  open Adj alg
+  open DecTotalOrder Data.Nat.decTotalOrder using () renaming (refl to ≤-refl)
+  open PathAlgebra alg renaming (Carrier to Weight)
+  open RequiresPathAlgebra alg
+  open DecTotalOrder decTotalOrderᴸ using (_≤_)
+  open import Dijkstra.EstimateOrder decTotalOrderᴸ using (estimateOrder)
+  open import Dijkstra.Bigop +-commutativeMonoid
+  open EqR setoid
+
+  -- Partial right-local solution. This definition is suited for an
+  -- inductive proof (step by step)
+  pRLS : (step : ℕ) {s≤n : step N≤ n} → Pred (Fin (suc n)) _
+  pRLS step {s≤n} j = let r = estimate step {s≤n} in
+    r j ≈ I[ i , j ] + (⨁[ k ← seen step {s≤n} ] r k * A[ k , j ])
+
+  -- Right-local solution. The aim is to prove that this holds for step = n
+  RLS : (step : ℕ) {s≤n : step N≤ n} → Pred (Fin (suc n)) _
+  RLS step {s≤n} j = let r = estimate step {s≤n} in
+    r j ≈ I[ i , j ] + (⨁[ k ← ⊤ ] r k * A[ k , j ])
+
+  -- Inductive proof that Dijkstra's algorithm computes the partial
+  -- right-local solution
+  pcorrect : (step : ℕ) {s≤n : step N≤ n} → ∀ j → pRLS step {s≤n} j
+  pcorrect zero {s≤n} j with i FP.≟ j
+  ... | yes i≡j =
+    begin
+      r j             ≡⟨⟩
+      A[ i , j ]      ≡⟨ P.cong₂ A[_,_] (P.refl {x = i}) j≡i ⟩
+      A[ i , i ]      ≈⟨ Adj.diag adj i ⟩
+      1#              ≈⟨ sym (proj₁ +-zero _) ⟩
+      1#         + _  ≈⟨ +-cong (sym (Adj.diag I j)) refl ⟩
+      I[ j , j ] + _  ≡⟨ P.cong₂ _+_ (P.cong₂ I[_,_] j≡i (P.refl {x = j})) P.refl ⟩
+      I[ i , j ] + _
+    ∎
+    where
+      r = estimate zero {z≤n}
+      j≡i = P.sym i≡j
+
+  ... | no ¬i≡j =
+    begin
+      A[ i , j ]                             ≈⟨ sym (proj₁ +-identity _) ⟩
+      0#                 + A[ i , j ]        ≡⟨ P.cong₂ _+_ (P.sym diag-lemma) P.refl ⟩
+      diagonal 0# 1# i j + A[ i , j ]        ≡⟨ P.cong₂ _+_ (P.sym l∘t) P.refl ⟩
+      I[ i , j ]         + A[ i , j ]        ≈⟨ +-cong refl (sym (*-identityˡ _)) ⟩
+        I[ i , j ]         + 1# * A[ i , j ]   ≈⟨ +-cong refl (*-cong (sym (Adj.diag adj i)) refl) ⟩
+      I[ i , j ]         + r i * A[ i , j ]  ≈⟨ +-cong refl (sym fold) ⟩
+      I[ i , j ]         + (⨁[ k ← ⁅ i ⁆ ] r k * A[ k , j ])
+    ∎
+    where
+      r = estimate zero {z≤n}
+
+      diag-lemma = diagonal-nondiag i j ¬i≡j
+      l∘t = lookup∘tabulate {f = diagonal 0# 1#} i j
+      fold = fold-⁅i⁆ (λ k → r k * A[ k , j ]) i
+
+  pcorrect (suc step) {s≤n} j =
+    begin
+      r′ j
+    ≡⟨⟩
+      r j + r q * A[ q , j ]
+    ≈⟨ +-cong (pcorrect step {≤-step′ s≤n} j) refl ⟩
+      (I[ i , j ] + (⨁[ k ← vs ] r k * A[ k , j ])) + r q * A[ q , j ]
+    ≈⟨ +-assoc _ _ _ ⟩
+      I[ i , j ] + ((⨁[ k ← vs ] r k * A[ k , j ]) + r q * A[ q , j ])
+    ≈⟨ +-cong refl (+-cong fold (*-cong (sym (+-absorbs-* _ _)) refl)) ⟩
+      I[ i , j ] + ((⨁[ k ← vs ] r′ k * A[ k , j ]) + r′ q * A[ q , j ])
+    ≈⟨ +-cong refl (+-cong refl (sym (fold-⁅i⁆ f′ q))) ⟩
+      I[ i , j ] + ((⨁[ k ← vs ] r′ k * A[ k , j ]) + (⨁[ k ← ⁅ q ⁆ ] r′ k * A[ k , j ]))
+    ≈⟨ +-cong refl (sym (fold-∪ +-idempotent f′ (seen step) ⁅ q ⁆)) ⟩
+      I[ i , j ] + (⨁[ k ← vs ∪ ⁅ q ⁆ ] r′ k * A[ k , j ])
+    ≡⟨⟩
+      I[ i , j ] + (⨁[ k ← seen (suc step) {s≤n} ] r′ k * A[ k , j ])
+    ∎
+    where
+      r′ = estimate (suc step) {s≤n}
+      r  = estimate step {≤-step′ s≤n}
+      q  = Sorted.head _ (queue step {s≤n})
+      f  = λ k → r k * A[ k , j ]
+      f′ = λ k → r′ k * A[ k , j ]
+      vs = seen step {≤-step′ s≤n}
+
+      lemma : ∀ k → k ∈ vs → f k ≈ f′ k
+      lemma k k∈vs = *-cong (sym (estimate-lemma step k k∈vs)) refl
+
+      fold = fold-cong f f′ vs (λ k k∈vs → lemma k k∈vs)
+
+  -- Dijkstra's algorithm computes the right-local solution. This follows
+  -- directly from the inductive partial correctness proof above (pcorrect).
+  correct : ∀ j → RLS n {≤-refl} j
+  correct j = pRLS→RLS (pcorrect n j)
+    where
+      pRLS→RLS : ∀ {j} → pRLS n {≤-refl} j → RLS n {≤-refl} j
+      pRLS→RLS {j} p =
+        begin
+          r j                                                        ≈⟨ p ⟩
+          I[ i , j ] + (⨁[ k ← seen n {≤-refl} ] r k * A[ k , j ])  ≡⟨ lemma ⟩
+          I[ i , j ] + (⨁[ k ← ⊤ ] r k * A[ k , j ])
+        ∎
+        where
+          r = estimate n {≤-refl}
+
+          seen-lemma = Sub.n→⊤ (seen n) (seen-size n)
+          lemma = P.cong₂ _+_ P.refl (P.cong₂ ⨁-syntax P.refl seen-lemma)
+\end{code}
+}
 
 \section{Example}
 \label{sect.example}
