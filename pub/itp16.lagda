@@ -515,9 +515,16 @@ The types of the remaining mutually inductive functions are as follows (we omit 
     queue′⇒queue  :  (step : ℕ) {s<n : suc step ≤ n} → ∀ {p}
                      (P : ∀ {n} → Sorted.Vec _ n → Set p) →
                      P (queue′ step) → P (queue step {s<n})
-    seen-size     :  (step : ℕ) {s≤n : step ≤ n} → size (seen step {s≤n}) ≡ suc step
     q∉seen        :  (step : ℕ) {s<n : suc step ≤ n} →
                      Sorted.head _ (queue step {s<n}) ∉ seen step {≤-step′ s<n}
+\end{code}
+
+\begin{lemma}
+\label{lem.seen.size}
+The size of the set of visited nodes at \AgdaBound{step} is \AgdaInductiveConstructor{suc}~\AgdaBound{step}.
+\end{lemma}
+\begin{code}
+    seen-size     :  (step : ℕ) {s≤n : step ≤ n} → size (seen step {s≤n}) ≡ suc step
 \end{code}
 
 \AgdaHide{
@@ -718,7 +725,7 @@ Once a node has been visited its estimate is optimal.
                         r   = estimate step {≤-step′ s<n} in
                     j ∈ vs → k ∉ vs → r j + r k ≈ r j
 \end{code}
-This lemma, together with XXX, constitutes the core of the correctness proof.
+This lemma, together with \cref{thm.prls}, constitutes the core of the correctness proof.
 
 \begin{proof}
 The proof proceeds by induction on \AgdaBound{step}.
@@ -987,7 +994,7 @@ In Agda, we express this as follows:
   RLS step {s≤n} j = let r = estimate step {s≤n} in
     r j ≈ I[ i , j ] + (⨁[ k ← ⊤ ] r k * A[ k , j ])
 \end{code}
-Our aim is to prove that \AgdaFunction{RLS}~\AgdaBound{n}~\AgdaBound{j} holds for all \AgdaBound{j}. At step \AgdaBound{n}, every node has been visited: \AgdaFunction{seen}~\AgdaBound{n}~\AgdaDatatype{≡}~\AgdaFunction{⊤}. This means that \AgdaFunction{RLS}~\AgdaBound{n}~\AgdaBound{j} is a direct consequence of \AgdaFunction{pRLS}~\AgdaBound{n}~\AgdaBound{j}. We prove that our implementation of Dijkstra's algorithm computes a partial right-local solution at every step (forward pointer XXX), and then show that this implies that the end result is a right-local solution (forward pointer XXX).
+Our aim is to prove that \AgdaFunction{RLS}~\AgdaBound{n}~\AgdaBound{j} holds for all \AgdaBound{j}. At step \AgdaBound{n}, every node has been visited: \AgdaFunction{seen}~\AgdaBound{n}~\AgdaDatatype{≡}~\AgdaFunction{⊤}. This means that \AgdaFunction{RLS}~\AgdaBound{n}~\AgdaBound{j} is a direct consequence of \AgdaFunction{pRLS}~\AgdaBound{n}~\AgdaBound{j}. We prove that our implementation of Dijkstra's algorithm computes a partial right-local solution at every step (\cref{thm.prls}), and then show that this implies that the end result is a right-local solution (\cref{cor.rls}).
 
 \begin{theorem}
 \label{thm.prls}
@@ -1107,7 +1114,7 @@ Dijkstra's algorithm computes a right-local solution.
 \end{corollary}
 
 \begin{proof}
-By \cref{thm.prls}, Dijkstra's algorithm computes a partial right-local solution at step \AgdaBound{n} for every node \AgdaBound{j}. By \AgdaFunction{seen-size} (XXX), the number of nodes that have been visited at step \AgdaBound{n} is the total number of nodes in the graph, \AgdaBound{n}. Thus at step \AgdaBound{n}, every node has been visited, so \AgdaFunction{seen}~\AgdaBound{n}~\AgdaDatatype{≡}~\AgdaFunction{⊤}. It follows that \AgdaFunction{RLS}~\AgdaBound{n}~\AgdaBound{j} for all nodes \AgdaBound{j}:
+By \cref{thm.prls}, Dijkstra's algorithm computes a partial right-local solution at step \AgdaBound{n} for every node \AgdaBound{j}. By \cref{lem.seen.size}, the number of nodes that have been visited at step \AgdaBound{n} is the total number of nodes in the graph, \AgdaBound{n}. Thus at step \AgdaBound{n}, every node has been visited, so \AgdaFunction{seen}~\AgdaBound{n}~\AgdaDatatype{≡}~\AgdaFunction{⊤}. It follows that \AgdaFunction{RLS}~\AgdaBound{n}~\AgdaBound{j} for all nodes \AgdaBound{j}:
 
 \begin{code}
   correct : ∀ j → RLS n {≤-refl} j
