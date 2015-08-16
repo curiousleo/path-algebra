@@ -442,8 +442,7 @@ module itp16-Algorithm
   A[ i , j ] = Adj.Adj.matrix adj [ i , j ]
 
   mutual
-\end{code}
-}
+\end{code}} % $
 
 In this section, we introduce a generalised variant of Dijkstra's algorithm and its implementation in Agda.
 
@@ -496,7 +495,7 @@ In order to provide a queue with a strictly positive length index, we prove the 
 \begin{code}
     queue-size :  (step : ℕ) {s≤n : suc step ≤ n} →
                   size (∁ $ seen step {≤-step′ s≤n}) ≡ suc (n ∸ suc step)
-\end{code}
+\end{code} % $
 
 \begin{definition}[Queue]
 Substituting the length index from \AgdaFunction{queue′} using \AgdaFunction{queue-size}, we then define the more convenient \AgdaFunction{queue} (definition omitted):
@@ -762,8 +761,7 @@ In the induction step, we perform a case split: by the definition of \AgdaFuncti
 \begin{code}
   pcorrect-lemma (suc step) {s<n} {j} {k} j∈vs′ k∉vs′
     with Sub.∪-∈ {suc n} j (seen step) ⁅ Sorted.head _ (queue step) ⁆ j∈vs′
-\end{code}
-}
+\end{code}}
 
 \paragraph{Induction step (case \AgdaBound{j}~\AgdaDatatype{∈}~\AgdaFunction{seen}~\AgdaBound{step}).}
 \AgdaHide{
