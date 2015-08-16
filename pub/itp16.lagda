@@ -17,15 +17,17 @@
 
 \bibliographystyle{splncs03}
 
-\DeclareUnicodeCharacter{8261}{\ensuremath{\llbracket}} % FIXME
-\DeclareUnicodeCharacter{8262}{\ensuremath{\rrbracket}} % FIXME
-\DeclareUnicodeCharacter{8718}{\ensuremath{\square}}
-\DeclareUnicodeCharacter{8760}{\ensuremath{\overset{\cdot}{\vphantom{.}\smash{-}}}} % -}
-\DeclareUnicodeCharacter{8799}{\ensuremath{\overset{?}{\vphantom{o}\smash{=}}}}
-\DeclareUnicodeCharacter{8759}{\ensuremath{::}}
-\DeclareUnicodeCharacter{11388}{\ensuremath{{}_{j}}}
-\DeclareUnicodeCharacter{7522}{\ensuremath{{}_{i}}}
-\DeclareUnicodeCharacter{7524}{\ensuremath{{}_{u}}}
+\DeclareUnicodeCharacter{ 8261}{\ensuremath{\llbracket}} % ⟦ (really ⁅)
+\DeclareUnicodeCharacter{ 8262}{\ensuremath{\rrbracket}} % ⟧ (really ⁆)
+\DeclareUnicodeCharacter{ 8718}{\ensuremath{\square}} % □ (really ∎)
+\DeclareUnicodeCharacter{ 8760}{\ensuremath{\overset{\cdot}{\vphantom{.}\smash{-}}}} % -} ∸
+\DeclareUnicodeCharacter{ 8799}{\ensuremath{\overset{?}{\vphantom{o}\smash{=}}}} % ≟
+\DeclareUnicodeCharacter{ 8759}{\ensuremath{::}} % ∷
+\DeclareUnicodeCharacter{10753}{\ensuremath{\bigoplus}}
+\DeclareUnicodeCharacter{  737}{\ensuremath{{}^{l}}} % ˡ
+\DeclareUnicodeCharacter{ 7522}{\ensuremath{{}_{i}}} % ᵢ
+\DeclareUnicodeCharacter{11388}{\ensuremath{{}_{j}}} % ⱼ
+\DeclareUnicodeCharacter{ 7524}{\ensuremath{{}_{u}}} % ᵤ
 
 \begin{document}
 
