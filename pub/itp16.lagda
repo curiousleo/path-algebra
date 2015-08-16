@@ -457,6 +457,9 @@ Our implementation of this algorithm in Agda consists of nine mutually recursive
 \end{code}
 The function \AgdaFunction{estimateOrder} takes a weight function to a decidable total order on nodes, comparing them by their weight. \AgdaFunction{order} takes the current step to the estimate order based on the current estimate.
 
+\begin{definition}[Estimate]
+We define the distance estimate from the start node \(i\) to node \(j\) at \AgdaBound{step} as follows:
+\end{definition}
 \begin{code}
     estimate : (step : ℕ) {s≤n : step ≤ n} → Fin (suc n) → Weight
     estimate zero                 j = A[ i , j ]
@@ -465,9 +468,13 @@ The function \AgdaFunction{estimateOrder} takes a weight function to a decidable
         q  = Sorted.head (order step {≤-step′ step≤n}) (queue step {step≤n})
         r  = estimate step {≤-step′ step≤n}
 \end{code}
+
 The base case for the \AgdaFunction{estimate} function is a lookup in the adjacency matrix.\footnote{Note that in \cref{fig.algorithm} the base case is equivalent to a lookup in the identity matrix instead of the adjacency matrix. Our base case really corresponds to the second iteration of the imperative algorithm.}
 Since \AgdaFunction{+} is selective (see XXX), the inductive case encodes a \emph{choice} between \AgdaFunction{r}~\AgdaBound{j} and \AgdaFunction{r}~\AgdaFunction{q}~\AgdaFunction{*}~\AgdaFunction{A[}~\AgdaFunction{q}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}. The former is simply the previous distance estimate to \(j\). The latter represents the option of going from the start node to \AgdaFunction{q} via the best known path from the previous step, and then directly from \AgdaFunction{q} to \(j\) (where \AgdaFunction{q} is the head of the queue of nodes that have not yet been visited, see XXX).
 
+\begin{definition}[Seen]
+The set of visited nodes at \AgdaBound{step} is defined as follows:
+\end{definition}
 \begin{code}
     seen : (step : ℕ) {s≤n : step ≤ n} → Subset (suc n)
     seen zero                 = ⁅ i ⁆
@@ -475,6 +482,7 @@ Since \AgdaFunction{+} is selective (see XXX), the inductive case encodes a \emp
       seen step {≤-step′ step≤n} ∪
       ⁅ Sorted.head (order step {≤-step′ step≤n}) (queue step {step≤n}) ⁆
 \end{code}
+
 The set of nodes that have been visited in step \AgdaBound{step} are represented by \AgdaFunction{seen}~\AgdaBound{step}. Once a node has been visited, its distance estimate stays constant -- this important fact will be proved and used later on (see XXX).
 
 \begin{code}
@@ -491,8 +499,10 @@ In order to provide a queue with a strictly positive length index, we prove the 
     queue-size :  (step : ℕ) {s≤n : suc step ≤ n} →
                   size (∁ $ seen step {≤-step′ s≤n}) ≡ suc (n ∸ suc step)
 \end{code}
-Substituting the length index from \AgdaFunction{queue′} using \AgdaFunction{queue-size}, we then define the more convenient \AgdaFunction{queue} (definition omitted):
 
+\begin{definition}[Queue]
+Substituting the length index from \AgdaFunction{queue′} using \AgdaFunction{queue-size}, we then define the more convenient \AgdaFunction{queue} (definition omitted):
+\end{definition}
 \begin{code}
     queue : (step : ℕ) {s<n : suc step ≤ n} → Sorted.Vec _ (suc (n ∸ (suc step)))
 \end{code}
@@ -633,7 +643,10 @@ module itp16-Properties
 \end{code}
 }
 
-\begin{lemma}[Queue head]\label{lemma.queue.head} The head of the queue has the smallest estimated distance from the start node of any node that has not yet been visited.\end{lemma}
+\begin{lemma}
+\label{lemma.queue.head}
+The head of the queue has the smallest estimated distance from the start node of any node that has not yet been visited.
+\end{lemma}
 
 \begin{code}
     q-lemma :  (step : ℕ) {s<n : suc step N≤ n} →
@@ -673,7 +686,11 @@ This follows directly from the fact that \AgdaFunction{queue} is a sorted vector
 }
 % $
 
-\begin{lemma}[Unseen]\label{lemma.unseen} A node that has not yet been visited had not been visited in the previous step either.\end{lemma}
+\begin{lemma}
+\label{lemma.unseen}
+A node that has not yet been visited had not been visited in the previous step either.
+\end{lemma}
+
 \begin{code}
     not-seen :  (step : ℕ) {s<n : suc step N≤ n} →
                 ∀ k → k ∉ seen (suc step) {s<n} →
@@ -692,7 +709,11 @@ The nodes visited in \AgdaInductiveConstructor{suc}~\AgdaBound{step} are the nod
 \end{code}
 }
 
-\begin{theorem}[Optimal]\label{lemma.optimal} Once a node has been visited its estimate is optimal.\end{theorem}
+\begin{theorem}
+\label{lemma.optimal}
+Once a node has been visited its estimate is optimal.
+\end{theorem}
+
 \begin{code}
   pcorrect-lemma :  (step : ℕ) {s<n : suc step N≤ n} → ∀ {j k} →
                     let vs  = seen step {≤-step′ s<n}
@@ -711,7 +732,6 @@ The corresponding Agda proof follows (\AgdaFunction{lemma} uses the adjacency ma
 
 \begin{code}
   pcorrect-lemma zero {j = j} {k} j∈vs _ =
-    let r = estimate zero {z≤n} in
     begin
       r j  + r k  ≈⟨ +-cong rj≈1 refl ⟩
       1#   + r k  ≈⟨ proj₁ +-zero _ ⟩
@@ -719,10 +739,10 @@ The corresponding Agda proof follows (\AgdaFunction{lemma} uses the adjacency ma
       r j
     ∎
 \end{code}
-
 \AgdaHide{
 \begin{code}
     where
+      r = estimate zero {z≤n}
       rj≈1 : A[ i , j ] ≈ 1#
       rj≈1 =
         begin
@@ -732,8 +752,7 @@ The corresponding Agda proof follows (\AgdaFunction{lemma} uses the adjacency ma
         ∎
 \end{code}
 }
-
-\paragraph{Induction step.} In the induction step, we perform a case split: by the definition of \AgdaFunction{seen}, if \AgdaBound{j} is an element of \AgdaFunction{seen}~\AgdaSymbol{(}\AgdaInductiveConstructor{suc}~\AgdaBound{step}\AgdaSymbol{)} then \AgdaBound{j} either belongs to \AgdaFunction{seen}~\AgdaBound{step} (case 1) or was the head of the queue at at \AgdaBound{step} (case 2).
+In the induction step, we perform a case split: by the definition of \AgdaFunction{seen}, if \AgdaBound{j} is an element of \AgdaFunction{seen}~\AgdaSymbol{(}\AgdaInductiveConstructor{suc}~\AgdaBound{step}\AgdaSymbol{)} then \AgdaBound{j} either belongs to \AgdaFunction{seen}~\AgdaBound{step} (case 1) or was the head of the queue at at \AgdaBound{step} (case 2).
 
 \AgdaHide{
 \begin{code}
@@ -742,8 +761,7 @@ The corresponding Agda proof follows (\AgdaFunction{lemma} uses the adjacency ma
 \end{code}
 }
 
-\paragraph{Induction step---case 1.} \AgdaBound{j}~\AgdaDatatype{∈}~\AgdaFunction{seen}~\AgdaBound{step}
-
+\paragraph{Induction step (case \AgdaBound{j}~\AgdaDatatype{∈}~\AgdaFunction{seen}~\AgdaBound{step}).}
 \AgdaHide{
 \begin{code}
   ... | inj₁ j∈vs =
@@ -777,9 +795,7 @@ The corresponding Agda proof follows (\AgdaFunction{lemma} uses the adjacency ma
         ∎
 \end{code}
 }
-
 In the following, we use the notation \(r′_j\) to denote \AgdaFunction{estimate}~\AgdaSymbol{(}\AgdaInductiveConstructor{suc}~\AgdaBound{step}\AgdaSymbol{)}~\AgdaBound{j} and \(r_j\) for \AgdaFunction{estimate}~\AgdaBound{step}~\AgdaBound{j}.
-
 The induction step of this theorem requires a lemma that \(r_j + (r_k + r_q * A_{q,k}) ≈ r_j\) which we show first:
 
 \begin{align*}
@@ -791,6 +807,7 @@ r_j + (r_k + r_q * A_{q,k})
 &≈ r_j + r_q                   && \text{absorptivity} \\
 &≈ r_j                         && \text{induction step}
 \end{align*}
+Using this lemma and the assumption that \AgdaBound{j}~\AgdaDatatype{∈}~\AgdaFunction{seen}~\AgdaBound{step}, we can proceed to prove the induction step as follows:
 
 \begin{align*}
 r′_j + r′_k
@@ -802,8 +819,7 @@ r′_j + r′_k
 &≡ r′_j                                          && \text{\AgdaFunction{estimate} definition}
 \end{align*}
 
-\paragraph{Induction step---case 2.} \AgdaBound{j}~\AgdaDatatype{≡}~\AgdaFunction{head}~\AgdaSymbol{(}\AgdaFunction{queue}~\AgdaBound{step}\AgdaSymbol{)}
-
+\paragraph{Induction step (case \AgdaBound{j}~\AgdaDatatype{≡}~\AgdaFunction{head}~\AgdaSymbol{(}\AgdaFunction{queue}~\AgdaBound{step}\AgdaSymbol{)}).}
 \AgdaHide{
 \begin{code}
   ... | inj₂ j∈⁅q⁆ =
@@ -836,7 +852,6 @@ r′_j + r′_k
   -- This lemma is used in the correctness proof
 \end{code}
 }
-
 In the following proof, \(q\) denotes the head of the queue at \AgdaBound{step}.
 
 \begin{align*}
@@ -857,7 +872,11 @@ r′_j + r′_k
 
 \end{proof}
 
-\begin{corollary}[Estimate]\label{lemma.estimate} The distance estimate of a node stays the same once it has been visited.\end{corollary}
+\begin{corollary}
+\label{cor.estimate}
+The distance estimate of a node stays the same once it has been visited.
+\end{corollary}
+
 \begin{code}
   estimate-lemma :  (step : ℕ) {s<n : suc step N≤ n} →
                     ∀ k → k ∈ seen step {≤-step′ s<n} →
@@ -865,6 +884,7 @@ r′_j + r′_k
 \end{code}
 
 \begin{proof}
+This follows immediately from \cref{lemma.optimal}:
 
 \begin{align*}
 r′_k
@@ -940,50 +960,116 @@ module itp16-Correctness
 
   -- Partial right-local solution. This definition is suited for an
   -- inductive proof (step by step)
+\end{code}
+}
+
+\begin{definition}[Partial right-local solution]
+\label{def.partial.rls}
+The estimate \(r\) is a partial right-local solution for node \(j\) and step \(n\) if
+\[r_j ≈ I_{i,j} + \bigoplus_{k ∈ S_n} r_k * A_{k,j}\]
+where \(S_n\) is the set of nodes that have been visited at step \(n\).
+\end{definition}
+This is expressed in Agda as follows:
+
+\begin{code}
   pRLS : (step : ℕ) {s≤n : step N≤ n} → Pred (Fin (suc n)) _
   pRLS step {s≤n} j = let r = estimate step {s≤n} in
     r j ≈ I[ i , j ] + (⨁[ k ← seen step {s≤n} ] r k * A[ k , j ])
+\end{code}
 
-  -- Right-local solution. The aim is to prove that this holds for step = n
+\begin{definition}[Right-local solution]
+\label{def.rls}
+The estimate \(r\) is a right-local solution for node \(j\) and step \(n\) if
+\[r_j ≈ I_{i,j} + \bigoplus_{k ∈ V} r_k * A_{k,j}\]
+where \(V\) is the set of all nodes \emph{(}\AgdaFunction{⊤} in Agda\emph{)}.
+\end{definition}
+In Agda, we express this as follows:
+
+\begin{code}
   RLS : (step : ℕ) {s≤n : step N≤ n} → Pred (Fin (suc n)) _
   RLS step {s≤n} j = let r = estimate step {s≤n} in
     r j ≈ I[ i , j ] + (⨁[ k ← ⊤ ] r k * A[ k , j ])
+\end{code}
 
-  -- Inductive proof that Dijkstra's algorithm computes the partial
-  -- right-local solution
+Our aim is to prove that \AgdaFunction{RLS}~\AgdaBound{n}~\AgdaBound{j} holds for all \AgdaBound{j}. At step \AgdaBound{n}, every node has been visited: \AgdaFunction{seen}~\AgdaBound{n}~\AgdaDatatype{≡}~\AgdaFunction{⊤}. This means that \AgdaFunction{RLS}~\AgdaBound{n}~\AgdaBound{j} is a direct consequence of \AgdaFunction{pRLS}~\AgdaBound{n}~\AgdaBound{j}. We prove that our implementation of Dijkstra's algorithm computes a partial right-local solution at every step (forward pointer XXX), and then show that this implies that the end result is a right-local solution (forward pointer XXX).
+
+\begin{theorem}
+\label{thm.prls}
+Dijkstra's algorithm computes a partial right-local solution at every step.
+\end{theorem}
+
+\begin{proof}
+The proof proceeds by induction on \AgdaBound{step}.
+In the base case (\AgdaBound{step}~\AgdaSymbol{=}~\AgdaInductiveConstructor{zero}), we perform a case split on whether \AgdaBound{j} is equal to the start node \AgdaBound{i}.
+
+\paragraph{Base case (\(i = j\)).} \AgdaFunction{estimate}~\AgdaInductiveConstructor{zero}~\AgdaBound{j} is defined as \AgdaFunction{A[}~\AgdaBound{i}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}, which equals \AgdaFunction{A[}~\AgdaBound{i}~\AgdaFunction{,}~\AgdaBound{i}~\AgdaFunction{]} by assumption. This is equivalent to \AgdaFunction{1\#} by the adjacency matrix diagonal property. The theorem follows by the identity matrix' diagonal property and the fact that \AgdaFunction{1\#} is a zero element for \AgdaFunction{+}:
+
+\begin{code}
   pcorrect : (step : ℕ) {s≤n : step N≤ n} → ∀ j → pRLS step {s≤n} j
   pcorrect zero {s≤n} j with i FP.≟ j
   ... | yes i≡j =
     begin
-      r j             ≡⟨⟩
-      A[ i , j ]      ≡⟨ P.cong₂ A[_,_] (P.refl {x = i}) j≡i ⟩
-      A[ i , i ]      ≈⟨ Adj.diag adj i ⟩
-      1#              ≈⟨ sym (proj₁ +-zero _) ⟩
-      1#         + _  ≈⟨ +-cong (sym (Adj.diag I j)) refl ⟩
-      I[ j , j ] + _  ≡⟨ P.cong₂ _+_ (P.cong₂ I[_,_] j≡i (P.refl {x = j})) P.refl ⟩
-      I[ i , j ] + _
+      r j              ≡⟨⟩
+      A[ i , j ]       ≡⟨ P.cong₂ A[_,_] (P.refl {x = i}) j≡i ⟩
+      A[ i , i ]       ≈⟨ Adj.diag adj i ⟩
+      1#               ≈⟨ sym (proj₁ +-zero _) ⟩
+      1#          + _  ≈⟨ +-cong (sym (Adj.diag I j)) refl ⟩
+      I[ j , j ]  + _  ≡⟨ P.cong₂ _+_ (P.cong₂ I[_,_] j≡i (P.refl {x = j})) P.refl ⟩
+      I[ i , j ]  + _
     ∎
+\end{code}
+\AgdaHide{
+\begin{code}
     where
       r = estimate zero {z≤n}
       j≡i = P.sym i≡j
+\end{code}
+}
 
+\paragraph{Base case (\(i ≠ j\)).} We expand the definition of \AgdaFunction{estimate} and use the identity property of \AgdaFunction{+} to show that \AgdaFunction{estimate}~\AgdaInductiveConstructor{zero}~\AgdaBound{j} is equivalent to \AgdaFunction{0\#}~\AgdaFunction{+}~\AgdaFunction{A[}~\AgdaBound{i}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}.
+
+The left-hand side (\AgdaFunction{0\#}) is equal to \AgdaFunction{I[}~\AgdaBound{i}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]} by the definition of the identity matrix and the assumption \(i ≠ j\); the right-hand side (\AgdaFunction{A[}~\AgdaBound{i}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}) is tranformed into \(\bigoplus_{\{i\}} r_k * A_{k,j}\) using the left-identity property of \AgdaFunction{*} and the adjacency matrix diagonal property as follows:
+
+\begin{code}
   ... | no ¬i≡j =
     begin
-      A[ i , j ]                             ≈⟨ sym (proj₁ +-identity _) ⟩
-      0#                 + A[ i , j ]        ≡⟨ P.cong₂ _+_ (P.sym diag-lemma) P.refl ⟩
-      diagonal 0# 1# i j + A[ i , j ]        ≡⟨ P.cong₂ _+_ (P.sym l∘t) P.refl ⟩
-      I[ i , j ]         + A[ i , j ]        ≈⟨ +-cong refl (sym (*-identityˡ _)) ⟩
-        I[ i , j ]         + 1# * A[ i , j ]   ≈⟨ +-cong refl (*-cong (sym (Adj.diag adj i)) refl) ⟩
-      I[ i , j ]         + r i * A[ i , j ]  ≈⟨ +-cong refl (sym fold) ⟩
-      I[ i , j ]         + (⨁[ k ← ⁅ i ⁆ ] r k * A[ k , j ])
+      r j                             ≡⟨⟩
+      A[ i , j ]                      ≈⟨ sym (proj₁ +-identity _) ⟩
+      0#          + A[ i , j ]        ≡⟨ P.cong₂ _+_ (P.sym I[i,j]≡0) P.refl ⟩
+      I[ i , j ]  + A[ i , j ]        ≈⟨ +-cong refl (sym (*-identityˡ _)) ⟩
+      I[ i , j ]  + 1# * A[ i , j ]   ≈⟨ +-cong refl (*-cong (sym (Adj.diag adj i)) refl) ⟩
+      I[ i , j ]  + r i * A[ i , j ]  ≈⟨ +-cong refl (sym fold) ⟩
+      I[ i , j ]  + (⨁[ k ← ⁅ i ⁆ ] r k * A[ k , j ])
     ∎
+\end{code}
+\AgdaHide{
+\begin{code}
     where
       r = estimate zero {z≤n}
 
       diag-lemma = diagonal-nondiag i j ¬i≡j
       l∘t = lookup∘tabulate {f = diagonal 0# 1#} i j
-      fold = fold-⁅i⁆ (λ k → r k * A[ k , j ]) i
+      I[i,j]≡0 = P.trans l∘t diag-lemma
 
+      fold = fold-⁅i⁆ (λ k → estimate zero {z≤n} k * A[ k , j ]) i
+\end{code}
+}
+
+\paragraph{Induction step.}
+\begin{align*}
+r′_j
+&≡ r_j + r_q * A_{q,j} && \text{\AgdaFunction{estimate} definition} \\
+&≈ \left(I_{i,j} + \left(\bigoplus_{k ∈ S_n} r_k * A_{k,j}\right)\right) + r_q * A_{q,j} && \text{\Cref{thm.prls}} \\
+&≈ I_{i,j} + \left(\left(\bigoplus_{k ∈ S_n} r_k * A_{k,j}\right) + r_q * A_{q,j}\right) && \text{associativity} \\
+&≈ I_{i,j} + \left(\left(\bigoplus_{k ∈ S_n} r′_k * A_{k,j}\right) + r′_q * A_{q,j}\right) && \text{\Cref{cor.estimate} and absorptivity} \\
+&≈ I_{i,j} + \left(\left(\bigoplus_{k ∈ S_n} r′_k * A_{k,j}\right) + \left(\bigoplus_{k ∈ \{ q \}} r′_k * A_{k,j}\right)\right) && \text{singleton fold lemma (XXX)} \\
+&≈ I_{i,j} + \bigoplus_{k ∈ S_n ∪ \{ q \}} r′_k * A_{k,j} && \text{union fold lemma (XXX)} \\
+&≡ I_{i,j} + \bigoplus_{k ∈ S_{n+1}} r′_k * A_{k,j} && \text{\AgdaFunction{seen} definition}
+\end{align*}
+We omit the corresponding Agda proof for brevity.
+
+\AgdaHide{
+\begin{code}
   pcorrect (suc step) {s≤n} j =
     begin
       r′ j
@@ -1014,26 +1100,39 @@ module itp16-Correctness
       lemma k k∈vs = *-cong (sym (estimate-lemma step k k∈vs)) refl
 
       fold = fold-cong f f′ vs (λ k k∈vs → lemma k k∈vs)
-
-  -- Dijkstra's algorithm computes the right-local solution. This follows
-  -- directly from the inductive partial correctness proof above (pcorrect).
-  correct : ∀ j → RLS n {≤-refl} j
-  correct j = pRLS→RLS (pcorrect n j)
-    where
-      pRLS→RLS : ∀ {j} → pRLS n {≤-refl} j → RLS n {≤-refl} j
-      pRLS→RLS {j} p =
-        begin
-          r j                                                        ≈⟨ p ⟩
-          I[ i , j ] + (⨁[ k ← seen n {≤-refl} ] r k * A[ k , j ])  ≡⟨ lemma ⟩
-          I[ i , j ] + (⨁[ k ← ⊤ ] r k * A[ k , j ])
-        ∎
-        where
-          r = estimate n {≤-refl}
-
-          seen-lemma = Sub.n→⊤ (seen n) (seen-size n)
-          lemma = P.cong₂ _+_ P.refl (P.cong₂ ⨁-syntax P.refl seen-lemma)
 \end{code}
 }
+
+\end{proof}
+
+\begin{corollary}
+\label{cor.rls}
+Dijkstra's algorithm computes a right-local solution.
+\end{corollary}
+
+\begin{proof}
+By \cref{thm.prls}, Dijkstra's algorithm computes a partial right-local solution at step \AgdaBound{n} for every node \AgdaBound{j}. By \AgdaFunction{seen-size}, the number of nodes that have been visited at step \AgdaBound{n} is the total number of nodes in the graph, \AgdaBound{n}. Thus at step \AgdaBound{n}, every node has been visited, so \AgdaFunction{seen}~\AgdaBound{n}~\AgdaDatatype{≡}~\AgdaFunction{⊤}. It follows that \AgdaFunction{RLS}~\AgdaBound{n}~\AgdaBound{j} for all nodes \AgdaBound{j}:
+
+\begin{code}
+  correct : ∀ j → RLS n {≤-refl} j
+  correct j = 
+    begin
+      r j                                                       ≈⟨ pcorrect n j ⟩
+      I[ i , j ] + (⨁[ k ← seen n {≤-refl} ] r k * A[ k , j ])  ≡⟨ lemma ⟩
+      I[ i , j ] + (⨁[ k ← ⊤ ] r k * A[ k , j ])
+    ∎
+\end{code}
+\AgdaHide{
+\begin{code}
+    where
+      r = estimate n {≤-refl}
+
+      seen≡⊤ = Sub.n→⊤ (seen n) (seen-size n)
+      lemma = P.cong₂ _+_ P.refl (P.cong₂ ⨁-syntax P.refl seen≡⊤)
+\end{code}
+}
+
+\end{proof}
 
 \section{Example}
 \label{sect.example}
