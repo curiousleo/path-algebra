@@ -1024,7 +1024,7 @@ In the base case (\AgdaBound{step}~\AgdaSymbol{=}~\AgdaInductiveConstructor{zero
 
 \paragraph{Base case (\(i ≠ j\)).} We expand the definition of \AgdaFunction{estimate} and use the identity property of \AgdaFunction{+} to show that \AgdaFunction{estimate}~\AgdaInductiveConstructor{zero}~\AgdaBound{j} is equivalent to \AgdaFunction{0\#}~\AgdaFunction{+}~\AgdaFunction{A[}~\AgdaBound{i}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}.
 
-The left-hand side (\AgdaFunction{0\#}) is equal to \AgdaFunction{I[}~\AgdaBound{i}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]} by the definition of the identity matrix and the assumption \(i ≠ j\); the right-hand side (\AgdaFunction{A[}~\AgdaBound{i}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}) is tranformed into \(\bigoplus_{\{i\}} r_k * A_{k,j}\) using the left-identity property of \AgdaFunction{*} and the adjacency matrix diagonal property as follows:
+The left-hand side (\AgdaFunction{0\#}) is equal to \AgdaFunction{I[}~\AgdaBound{i}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]} by the definition of the identity matrix and the assumption \(i ≠ j\); the right-hand side (\AgdaFunction{A[}~\AgdaBound{i}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}) is transformed into \(\bigoplus_{k ∈ \{i\}} r_k * A_{k,j}\) using the left-identity property of \AgdaFunction{*} and the adjacency matrix diagonal property as follows:
 
 \begin{code}
   ... | no ¬i≡j =
@@ -1057,7 +1057,7 @@ r′_j
 &≡ r_j + r_q * A_{q,j} && \text{\AgdaFunction{estimate} definition} \\
 &≈ \left(I_{i,j} + \left(\bigoplus_{k ∈ S_n} r_k * A_{k,j}\right)\right) + r_q * A_{q,j} && \text{\Cref{thm.prls}} \\
 &≈ I_{i,j} + \left(\left(\bigoplus_{k ∈ S_n} r_k * A_{k,j}\right) + r_q * A_{q,j}\right) && \text{associativity} \\
-&≈ I_{i,j} + \left(\left(\bigoplus_{k ∈ S_n} r′_k * A_{k,j}\right) + r′_q * A_{q,j}\right) && \text{\Cref{cor.estimate} and absorptivity} \\
+&≈ I_{i,j} + \left(\left(\bigoplus_{k ∈ S_n} r′_k * A_{k,j}\right) + r′_q * A_{q,j}\right) && \text{\Cref{cor.estimate}, absorptivity} \\
 &≈ I_{i,j} + \left(\left(\bigoplus_{k ∈ S_n} r′_k * A_{k,j}\right) + \left(\bigoplus_{k ∈ \{ q \}} r′_k * A_{k,j}\right)\right) && \text{singleton fold lemma (XXX)} \\
 &≈ I_{i,j} + \bigoplus_{k ∈ S_n ∪ \{ q \}} r′_k * A_{k,j} && \text{union fold lemma (XXX)} \\
 &≡ I_{i,j} + \bigoplus_{k ∈ S_{n+1}} r′_k * A_{k,j} && \text{\AgdaFunction{seen} definition}
