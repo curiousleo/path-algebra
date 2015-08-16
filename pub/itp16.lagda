@@ -396,7 +396,7 @@ Take the algebra's addition and multiplication functions to be \AgdaFunction{\_�
 Take the unit for addition to be \AgdaInductiveConstructor{∞} and the unit for multiplication to be \AgdaInductiveConstructor{↑}~\AgdaInductiveConstructor{0}.
 \item
 The \emph{widest path algebra} is obtained as follows.
-Take the algebra's addition and multiplication functions to be \AgdaFunction{\_⊓\_} and and \AgdaFunction{\_⊔\_} on \AgdaDatatype{ℕ∞}, respectively.
+Take the algebra's addition and multiplication functions to be \AgdaFunction{\_⊓\_} and \AgdaFunction{\_⊔\_} on \AgdaDatatype{ℕ∞}, respectively.
 Take the unit for addition to be \AgdaInductiveConstructor{∞} and the unit for multiplication to be \AgdaInductiveConstructor{↑}~\AgdaInductiveConstructor{0}.
 \end{enumerate}
 In both cases, it is routine to check that the axioms for a \AgdaRecord{PathAlgebra} can be satisfied.
