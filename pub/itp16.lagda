@@ -468,7 +468,6 @@ We define the distance estimate from the start node \(i\) to node \(j\) at \Agda
         q  = Sorted.head (order step {≤-step′ step≤n}) (queue step {step≤n})
         r  = estimate step {≤-step′ step≤n}
 \end{code}
-
 The base case for the \AgdaFunction{estimate} function is a lookup in the adjacency matrix.\footnote{Note that in \cref{fig.algorithm} the base case is equivalent to a lookup in the identity matrix instead of the adjacency matrix. Our base case really corresponds to the second iteration of the imperative algorithm.}
 Since \AgdaFunction{+} is selective (see XXX), the inductive case encodes a \emph{choice} between \AgdaFunction{r}~\AgdaBound{j} and \AgdaFunction{r}~\AgdaFunction{q}~\AgdaFunction{*}~\AgdaFunction{A[}~\AgdaFunction{q}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}. The former is simply the previous distance estimate to \(j\). The latter represents the option of going from the start node to \AgdaFunction{q} via the best known path from the previous step, and then directly from \AgdaFunction{q} to \(j\) (where \AgdaFunction{q} is the head of the queue of nodes that have not yet been visited, see XXX).
 
@@ -482,7 +481,6 @@ The set of visited nodes at \AgdaBound{step} is defined as follows:
       seen step {≤-step′ step≤n} ∪
       ⁅ Sorted.head (order step {≤-step′ step≤n}) (queue step {step≤n}) ⁆
 \end{code}
-
 The set of nodes that have been visited in step \AgdaBound{step} are represented by \AgdaFunction{seen}~\AgdaBound{step}. Once a node has been visited, its distance estimate stays constant -- this important fact will be proved and used later on (see XXX).
 
 \begin{code}
@@ -720,7 +718,6 @@ Once a node has been visited its estimate is optimal.
                         r   = estimate step {≤-step′ s<n} in
                     j ∈ vs → k ∉ vs → r j + r k ≈ r j
 \end{code}
-
 This lemma, together with XXX, constitutes the core of the correctness proof.
 
 \begin{proof}
@@ -990,7 +987,6 @@ In Agda, we express this as follows:
   RLS step {s≤n} j = let r = estimate step {s≤n} in
     r j ≈ I[ i , j ] + (⨁[ k ← ⊤ ] r k * A[ k , j ])
 \end{code}
-
 Our aim is to prove that \AgdaFunction{RLS}~\AgdaBound{n}~\AgdaBound{j} holds for all \AgdaBound{j}. At step \AgdaBound{n}, every node has been visited: \AgdaFunction{seen}~\AgdaBound{n}~\AgdaDatatype{≡}~\AgdaFunction{⊤}. This means that \AgdaFunction{RLS}~\AgdaBound{n}~\AgdaBound{j} is a direct consequence of \AgdaFunction{pRLS}~\AgdaBound{n}~\AgdaBound{j}. We prove that our implementation of Dijkstra's algorithm computes a partial right-local solution at every step (forward pointer XXX), and then show that this implies that the end result is a right-local solution (forward pointer XXX).
 
 \begin{theorem}
@@ -1111,7 +1107,7 @@ Dijkstra's algorithm computes a right-local solution.
 \end{corollary}
 
 \begin{proof}
-By \cref{thm.prls}, Dijkstra's algorithm computes a partial right-local solution at step \AgdaBound{n} for every node \AgdaBound{j}. By \AgdaFunction{seen-size}, the number of nodes that have been visited at step \AgdaBound{n} is the total number of nodes in the graph, \AgdaBound{n}. Thus at step \AgdaBound{n}, every node has been visited, so \AgdaFunction{seen}~\AgdaBound{n}~\AgdaDatatype{≡}~\AgdaFunction{⊤}. It follows that \AgdaFunction{RLS}~\AgdaBound{n}~\AgdaBound{j} for all nodes \AgdaBound{j}:
+By \cref{thm.prls}, Dijkstra's algorithm computes a partial right-local solution at step \AgdaBound{n} for every node \AgdaBound{j}. By \AgdaFunction{seen-size} (XXX), the number of nodes that have been visited at step \AgdaBound{n} is the total number of nodes in the graph, \AgdaBound{n}. Thus at step \AgdaBound{n}, every node has been visited, so \AgdaFunction{seen}~\AgdaBound{n}~\AgdaDatatype{≡}~\AgdaFunction{⊤}. It follows that \AgdaFunction{RLS}~\AgdaBound{n}~\AgdaBound{j} for all nodes \AgdaBound{j}:
 
 \begin{code}
   correct : ∀ j → RLS n {≤-refl} j
