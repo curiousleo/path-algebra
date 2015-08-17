@@ -126,6 +126,213 @@ The type of finite sets of size \(n\) is called \AgdaDatatype{Fin}~\AgdaBound{n}
 
 \enquote{Sum} here refers to an iteration of an operator over some collection of indices like \(\bigoplus_{x ∈ X} f(x)\) \cite{bertot_canonical_2008}. The properties of the path weight operator \AgdaFunction{\_+\_} include associativity, commutative and idempotence. In combination, these properties allow us to make strong claims about the behaviour of edge weight sums.
 
+For convenience, we define path weight sums over commutative monoids since they are well supported by the standard library. Idempotency is required explicitly whenever it is needed.
+
+\AgdaHide{
+\begin{code}
+module itp16-Bigop
+    {c ℓ} (cmon : CommutativeMonoid c ℓ)
+    where
+
+  open import Data.Fin hiding (fold; fold′)
+  open import Data.Fin.Subset
+  open import Data.Fin.Subset.Extra using (empty→⊥) renaming (nonempty to nonempty-dec)
+  open import Data.Nat hiding (fold)
+  open import Data.Product hiding (map; zip)
+  open import Data.Vec hiding (_∈_)
+
+  open import Function using (_∘_; id)
+
+  open import Relation.Nullary using (yes; no)
+
+  open CommutativeMonoid cmon
+\end{code}
+}
+
+The function \AgdaFunction{fold} defines the \enquote{sum} operation using the underlying monoid's identity element \AgdaField{ε} and binary operator \AgdaField{∙}:
+
+\begin{code}
+  fold : ∀ {n} → (Fin n → Carrier) → Subset n → Carrier
+  fold f []              = ε
+  fold f (inside ∷ xs)   = f zero ∙  fold (f ∘ suc) xs
+  fold f (outside ∷ xs)  =           fold (f ∘ suc) xs
+\end{code}
+In order to allow users of the library to write sums in a notation reminiscient of pen-and-paper mathematics, we provide a \AgdaKeyword{syntax} declaration for \AgdaFunction{fold}:
+
+\AgdaHide{
+\begin{code}
+  infix 6 ⨁-syntax
+\end{code}}
+\begin{code}
+  ⨁-syntax = fold
+  syntax ⨁-syntax (λ x → e) v = ⨁[ x ← v ] e
+\end{code}
+\AgdaHide{
+\begin{code}
+  open import Algebra.FunctionProperties _≈_
+
+  open import Data.Empty using (⊥-elim)
+
+  open import Relation.Binary.EqReasoning setoid
+  import Relation.Binary.PropositionalEquality as P
+  open P using (_≡_)
+\end{code}}
+
+\paragraph{Properties.} We now show that sums over commutative monoids have certain properties, which will be used later in the correctness proof.
+
+\begin{lemma}
+\label{lem.fold.bot}
+The result of folding over an empty set is equivalent to \AgdaField{ε}.
+\end{lemma}
+\begin{proof} By induction over the empty set \AgdaFunction{⊥}:
+\begin{code}
+  fold-⊥ : ∀ {n} f → fold f (⊥ {n}) ≈ ε
+  fold-⊥ {zero}   f = refl
+  fold-⊥ {suc n}  f = fold-⊥ (f ∘ suc)
+\end{code}
+\end{proof}
+
+\begin{lemma}
+\label{lem.fold.singleton}
+The result of folding over a singleton set using a function \AgdaBound{f} is equivalent to \AgdaBound{f}~\AgdaBound{i}.
+\end{lemma}
+\begin{proof} By induction over the index \(i\):
+\begin{code}
+  fold-⁅i⁆ : ∀ {n} f (i : Fin n) → fold f ⁅ i ⁆ ≈ f i
+  fold-⁅i⁆ f zero =
+    begin
+      f zero ∙ fold (f ∘ suc) ⊥  ≈⟨ ∙-cong refl (fold-⊥ (f ∘ suc)) ⟩
+      f zero ∙ ε                 ≈⟨ proj₂ identity _ ⟩
+      f zero
+    ∎
+  fold-⁅i⁆ f (suc i) = fold-⁅i⁆ (f ∘ suc) i
+\end{code}
+\end{proof}
+
+\begin{lemma}
+\label{lem.fold.union}
+If the underlying operator is idempotent, folding over the union of two sets is equivalent to folding over the sets individually and adding the results together.
+\end{lemma}
+\begin{proof} By simultaneous induction over the two sets:
+\begin{code}
+  fold-∪ : ∀ {n} (idp : Idempotent _∙_) f (xs : Subset n) (ys : Subset n) → fold f (xs ∪ ys) ≈ fold f xs ∙ fold f ys
+  fold-∪ idp f []             []             = sym (proj₁ identity _)
+  fold-∪ idp f (inside ∷ xs)  (inside ∷ ys)  =
+    begin
+      f zero ∙ fold (f ∘ suc) (xs ∪ ys)
+    ≈⟨ ∙-cong (sym (idp _)) (fold-∪ idp (f ∘ suc) xs ys) ⟩
+      (f zero ∙ f zero) ∙ (fold (f ∘ suc) xs ∙ fold (f ∘ suc) ys)
+    ≈⟨ assoc _ _ _ ⟩
+      f zero ∙ (f zero ∙ (fold (f ∘ suc) xs ∙ fold (f ∘ suc) ys))
+    ≈⟨ ∙-cong refl (sym (assoc _ _ _)) ⟩
+      f zero ∙ ((f zero ∙ fold (f ∘ suc) xs) ∙ fold (f ∘ suc) ys)
+    ≈⟨ ∙-cong refl (∙-cong (comm _ _) refl) ⟩
+      f zero ∙ ((fold (f ∘ suc) xs ∙ f zero) ∙ fold (f ∘ suc) ys)
+    ≈⟨ ∙-cong refl (assoc _ _ _) ⟩
+      f zero ∙ (fold (f ∘ suc) xs ∙ (f zero ∙ fold (f ∘ suc) ys))
+    ≈⟨ sym (assoc _ _ _) ⟩
+      (f zero ∙ fold (f ∘ suc) xs) ∙ (f zero ∙ fold (f ∘ suc) ys)
+    ∎
+  fold-∪ idp f (inside ∷ xs) (outside ∷ ys) =
+    begin
+      f zero ∙ fold (f ∘ suc) (xs ∪ ys)
+    ≈⟨ ∙-cong refl (fold-∪ idp (f ∘ suc) xs ys) ⟩
+      f zero ∙ (fold (f ∘ suc) xs ∙ fold (f ∘ suc) ys)
+    ≈⟨ sym (assoc _ _ _) ⟩
+      (f zero ∙ fold (f ∘ suc) xs) ∙ fold (f ∘ suc) ys
+    ∎
+  fold-∪ idp f (outside ∷ xs) (inside  ∷ ys) =
+    begin
+      f zero ∙ fold (f ∘ suc) (xs ∪ ys)
+    ≈⟨ ∙-cong refl (fold-∪ idp (f ∘ suc) xs ys) ⟩
+      f zero ∙ (fold (f ∘ suc) xs ∙ fold (f ∘ suc) ys)
+    ≈⟨ sym (assoc _ _ _) ⟩
+      (f zero ∙ fold (f ∘ suc) xs) ∙ fold (f ∘ suc) ys
+    ≈⟨ ∙-cong (comm _ _) refl ⟩
+      (fold (f ∘ suc) xs ∙ f zero) ∙ fold (f ∘ suc) ys
+    ≈⟨ assoc _ _ _ ⟩
+      fold (f ∘ suc) xs ∙ (f zero ∙ fold (f ∘ suc) ys)
+    ∎
+  fold-∪ idp f (outside ∷ xs) (outside ∷ ys) = fold-∪ idp (f ∘ suc) xs ys
+\end{code}
+\end{proof}
+
+\AgdaHide{
+\begin{code}
+  fold-cong-lemma : ∀ {n} (f g : Fin (suc n) → Carrier) x (xs : Subset n) →
+                    (∀ i → i ∈ (x ∷ xs) → f i ≈ g i) → (∀ i → i ∈ xs → f (suc i) ≈ g (suc i))
+  fold-cong-lemma f g x [] eq i ()
+  fold-cong-lemma f g x (inside ∷ ys) eq i i∈y∷ys = eq (suc i) (there i∈y∷ys)
+  fold-cong-lemma f g x (outside ∷ ys) eq zero ()
+  fold-cong-lemma f g x (outside ∷ ys) eq (suc i) (there i∈y∷ys) = fold-cong-lemma (f ∘ suc) (g ∘ suc) outside ys (λ i x → eq (suc i) (there x)) i i∈y∷ys
+
+  fold-cong : ∀ {n} f g (xs : Subset n) → (∀ i → i ∈ xs → f i ≈ g i) → fold f xs ≈ fold g xs
+  fold-cong f g []             eq = refl
+  fold-cong f g (inside  ∷ xs) eq = ∙-cong (eq zero here) (fold-cong (f ∘ suc) (g ∘ suc) xs (fold-cong-lemma f g inside xs eq))
+  fold-cong f g (outside ∷ xs) eq = fold-cong (f ∘ suc) (g ∘ suc) xs (fold-cong-lemma f g outside xs eq)
+
+  fold-distr : ∀ {n} f x (i : Fin n) → fold (λ i → x ∙ f i) ⁅ i ⁆ ≈ x ∙ fold f ⁅ i ⁆
+  fold-distr {suc n} f x zero =
+    begin
+      (x ∙ f zero) ∙ fold ((λ i → x ∙ f i) ∘ suc) ⊥  ≈⟨ ∙-cong refl (fold-⊥ {n} _) ⟩
+      (x ∙ f zero) ∙ ε                                ≈⟨ assoc _ _ _ ⟩
+      x ∙ (f zero ∙ ε)                                ≈⟨ ∙-cong refl (∙-cong refl (sym (fold-⊥ {n} _))) ⟩
+      x ∙ (f zero ∙ fold (f ∘ suc) ⊥)
+    ∎
+  fold-distr f x (suc i) = fold-distr (f ∘ suc) x i
+
+  fold-empty : ∀ {n} f (xs : Subset n) → Empty xs → fold f xs ≈ ε
+  fold-empty f [] empty = refl
+  fold-empty f (inside  ∷ xs) empty = ⊥-elim (empty nonempty)
+    where
+      nonempty : Nonempty (inside ∷ xs)
+      nonempty = zero , here
+  fold-empty f (outside ∷ xs) empty = fold-empty (f ∘ suc) xs (empty′ xs empty)
+    where
+      empty′ : ∀ {n} (xs : Subset n) → Empty (outside ∷ xs) → Empty xs
+      empty′ []             empty (x , ())
+      empty′ (inside  ∷ xs) empty nonempty  = ⊥-elim (empty (suc zero , there here))
+      empty′ (outside ∷ xs) empty (i , elm) = ⊥-elim (empty (suc i , there  elm))
+
+  fold-distr′ : ∀ {n} (idp : Idempotent _∙_) f x (xs : Subset n) → Nonempty xs →
+                fold (λ i → x ∙ f i) xs ≈ x ∙ fold f xs
+  fold-distr′ idp f x [] (_ , ())
+  fold-distr′ idp f x (inside ∷ xs) (zero , here) with nonempty-dec xs
+  ... | yes nonempty-xs =
+    begin
+      (x ∙ f zero) ∙ fold (λ i → x ∙ f (suc i)) xs  ≈⟨ ∙-cong (comm _ _) refl ⟩
+      (f zero ∙ x) ∙ fold (λ i → x ∙ f (suc i)) xs  ≈⟨ assoc _ _ _ ⟩
+      f zero ∙ (x ∙ fold (λ i → x ∙ f (suc i)) xs)  ≈⟨ ∙-cong refl (∙-cong refl (fold-distr′ idp (f ∘ suc) x xs nonempty-xs)) ⟩
+      f zero ∙ (x ∙ (x ∙ fold (f ∘ suc ) xs))       ≈⟨ ∙-cong refl (sym (assoc _ _ _)) ⟩
+      f zero ∙ ((x ∙ x) ∙ fold (f ∘ suc ) xs)       ≈⟨ ∙-cong refl (∙-cong (idp _) refl) ⟩
+      f zero ∙ (x ∙ fold (f ∘ suc ) xs)             ≈⟨ sym (assoc _ _ _) ⟩
+      (f zero ∙ x) ∙ fold (f ∘ suc ) xs             ≈⟨ ∙-cong (comm _ _) refl ⟩
+      (x ∙ f zero) ∙ fold (f ∘ suc ) xs             ≈⟨ assoc _ _ _ ⟩
+      x ∙ (f zero ∙ fold (f ∘ suc) xs)
+    ∎
+  ... | no ¬nonempty-xs =
+    begin
+      (x ∙ f zero) ∙ fold (λ i → x ∙ f (suc i)) xs  ≈⟨ assoc _ _ _ ⟩
+      x ∙ (f zero ∙ fold (λ i → x ∙ f (suc i)) xs)  ≈⟨ ∙-cong refl (∙-cong refl (fold-empty (λ i → x ∙ f (suc i)) xs ¬nonempty-xs)) ⟩
+      x ∙ (f zero ∙ ε)                               ≈⟨ sym (∙-cong refl (∙-cong refl (fold-empty (f ∘ suc) xs ¬nonempty-xs))) ⟩
+      x ∙ (f zero ∙ fold (λ i → f (suc i)) xs)
+    ∎
+  fold-distr′ idp f x (inside ∷ xs) (suc i , there i∈xs) =
+    begin
+      (x ∙ f zero) ∙ fold (λ i → x ∙ f (suc i)) xs  ≈⟨ ∙-cong (comm _ _) refl ⟩
+      (f zero ∙ x) ∙ fold (λ i → x ∙ f (suc i)) xs  ≈⟨ assoc _ _ _ ⟩
+      f zero ∙ (x ∙ fold (λ i → x ∙ f (suc i)) xs)  ≈⟨ ∙-cong refl (∙-cong refl (fold-distr′ idp (f ∘ suc) x xs (i , i∈xs))) ⟩
+      f zero ∙ (x ∙ (x ∙ fold (f ∘ suc ) xs))       ≈⟨ ∙-cong refl (sym (assoc _ _ _)) ⟩
+      f zero ∙ ((x ∙ x) ∙ fold (f ∘ suc ) xs)       ≈⟨ ∙-cong refl (∙-cong (idp _) refl) ⟩
+      f zero ∙ (x ∙ fold (f ∘ suc ) xs)             ≈⟨ sym (assoc _ _ _) ⟩
+      (f zero ∙ x) ∙ fold (f ∘ suc ) xs             ≈⟨ ∙-cong (comm _ _) refl ⟩
+      (x ∙ f zero) ∙ fold (f ∘ suc ) xs             ≈⟨ assoc _ _ _ ⟩
+      x ∙ (f zero ∙ fold (f ∘ suc) xs)
+    ∎
+  fold-distr′ idp f x (outside ∷ xs) (suc i , there i∈xs) = fold-distr′ idp (f ∘ suc) x xs (i , i∈xs)
+\end{code}
+}
+
 % Representation of algebraic structures as records
 % Setoid, Equivalence
 
@@ -1063,8 +1270,8 @@ r′_j
 &≈ \left(I_{i,j} + \left(\bigoplus_{k ∈ S_n} r_k * A_{k,j}\right)\right) + r_q * A_{q,j} && \text{\Cref{thm.prls}} \\
 &≈ I_{i,j} + \left(\left(\bigoplus_{k ∈ S_n} r_k * A_{k,j}\right) + r_q * A_{q,j}\right) && \text{associativity} \\
 &≈ I_{i,j} + \left(\left(\bigoplus_{k ∈ S_n} r′_k * A_{k,j}\right) + r′_q * A_{q,j}\right) && \text{\Cref{cor.estimate}, absorptivity} \\
-&≈ I_{i,j} + \left(\left(\bigoplus_{k ∈ S_n} r′_k * A_{k,j}\right) + \left(\bigoplus_{k ∈ \{ q \}} r′_k * A_{k,j}\right)\right) && \text{singleton fold lemma (XXX)} \\
-&≈ I_{i,j} + \bigoplus_{k ∈ S_n ∪ \{ q \}} r′_k * A_{k,j} && \text{union fold lemma (XXX)} \\
+&≈ I_{i,j} + \left(\left(\bigoplus_{k ∈ S_n} r′_k * A_{k,j}\right) + \left(\bigoplus_{k ∈ \{ q \}} r′_k * A_{k,j}\right)\right) && \text{\Cref{lem.fold.singleton}} \\
+&≈ I_{i,j} + \bigoplus_{k ∈ S_n ∪ \{ q \}} r′_k * A_{k,j} && \text{\Cref{lem.fold.union}} \\
 &≡ I_{i,j} + \bigoplus_{k ∈ S_{n+1}} r′_k * A_{k,j} && \text{\AgdaFunction{seen} definition}
 \end{align*}
 We omit the corresponding Agda proof for brevity.
