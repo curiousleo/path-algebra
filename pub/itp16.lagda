@@ -47,7 +47,7 @@ open import Data.Nat
 
 \title{Dijkstra's Algorithm: Verified}
 \titlerunning{Dijkstra's Algorithm}
-\author{Leonhard Markert \and Timothy G.~Griffin \and Dominic P.~Mulligan}
+\author{Leonhard D.~Markert \and Timothy G.~Griffin \and Dominic P.~Mulligan}
 %\authorrunning{Leonhard Markert et al.}
 \institute{%
 Computer Laboratory, University of Cambridge}
