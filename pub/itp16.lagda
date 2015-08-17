@@ -343,7 +343,7 @@ If the underlying operator is idempotent, folding over the union of two sets is 
 
 % Need to mention AVL trees in standard library
 
-A key consideration in Dijkstra's algorithm is: `which node do we consider next'?
+A key consideration in graph traversal algorithms is: `which node do we consider next'?
 We now define a type of sorted vectors that will be used later in Section~\ref{sect.correctness} to maintain a simple priority queue of yet-unseen graph nodes.
 We prefer working with a linear sorted data structure, compared to a balanced binary tree such as Agda's existing implementation of \textsc{avl} trees in \AgdaModule{Data.AVL}, to simplify proofs.
 Using a length-indexed data structure also allows us to assert statically the non-emptiness of our priority queue.
@@ -488,8 +488,8 @@ The proof proceeds by analysing the cases under which $x \in xs$, and affirms th
 \section{Path Algebras, Their Properties And Models}
 \label{sect.path.algebras.their.properties.and.models}
 
-Algebraic structures called path algebras are at the heart of our formalisation of Dijkstra's algorithm.
-We introduce path algebras in Subsection~\ref{subsect.path.algebras}, describe their properties in Subsection~\ref{subsect.properties}, and later provide three models proving their non-triviality and non-categoricity in Subsection~\ref{subsect.models}.
+Algebraic structures called Path Algebras are at the heart of our formalisation of Dijkstra's algorithm.
+We introduce Path Algebras in Subsection~\ref{subsect.path.algebras}, describe their properties in Subsection~\ref{subsect.properties}, and later provide three models proving their non-triviality and non-categoricity in Subsection~\ref{subsect.models}.
 
 \subsection{Path Algebras}
 \label{subsect.path.algebras}
@@ -506,9 +506,34 @@ module MoreFunctionProperties {a ℓ} {A : Set a} (_≈_ : Rel A ℓ) where
   open import Data.Sum
 \end{code}}
 
+\begin{figure}[h]
+\centering
+\begin{tabular}{c|l@{\;\;\;}l}
+\emph{Operation} & \emph{Semiring} & \emph{Path Algebra} \\
+\midrule
+\AgdaFunction{+} & Associative & Associative \\
+                 & Commutative & Commutative \\
+                 & Identity \AgdaField{0\#} & Identity \AgdaField{0\#} \\
+                 & ---                      & Selective \\
+                 & ---                      & Zero \AgdaField{1\#} \\
+\midrule
+\AgdaFunction{*} & Associative & --- \\
+                 & Identity \AgdaField{1\#} & Left identity \AgdaField{1\#} \\
+                 & Zero \AgdaField{0\#}     & --- \\
+\midrule
+\AgdaFunction{*} and \AgdaFunction{+} & \AgdaFunction{*} distributes over \AgdaFunction{+} &
+                   \AgdaFunction{+} absorbs \AgdaFunction{*} \\
+\bottomrule
+\end{tabular}
+\label{tab.path.algebra}
+\vspace{6pt}
+\caption{Comparing the algebraic properties of a Semiring and a Path Algebra.}
+\label{fig.path.algebra}
+\end{figure}
+
 Fix a set $S$.
 Call a binary operation on $S$, $- \bullet -$, \emph{selective} when for all $x, y \in S$ either $x \bullet y = x$ or $x \bullet y = y$.
-With this definition in mind, we call a structure $\langle S, +, *, 0, 1 \rangle$ a \emph{path algebra} when:
+With this definition in mind, we call a structure $\langle S, +, *, 0, 1 \rangle$ a \emph{Path Algebra} when:
 \begin{itemize}
 \item
 $\langle S, +, 0 \rangle$ forms a commutative monoid,
@@ -520,40 +545,18 @@ addition is selective, and addition absorbs multiplication,
 the usual closure properties for the unit elements and operations apply.
 \end{itemize}
 
+A comparison between Path Algebras and the more familiar notion of Semiring is presented in Figure~\ref{fig.path.algebra}.
+
 Following established convention, we capture the notion of a path algebra as an Agda record named \AgdaRecord{PathAlgebra}.
-We call the carrier type of a path algebra (the set $S$ in the definition above) \AgdaField{Carrier}, obtaining the closure properties mentioned above for `free' as a side-effect of Agda's typing discipline, and assume that there exists a decidable setoid equivalence relation on elements of this type, \AgdaField{\_≈\_}.
+We call the carrier type of a Path Algebra (the set $S$ in the definition above) \AgdaField{Carrier}, obtaining the closure properties mentioned above for `free' as a side-effect of Agda's typing discipline, and assume that there exists a decidable setoid equivalence relation on elements of this type, \AgdaField{\_≈\_}.
 
 \subsection{Properties}
 \label{subsect.properties}
 
-\begin{table}[h]
-\centering
-\begin{tabular}{c l l}
-& \emph{Semiring} & \emph{Path algebra} \\
-\midrule
-\AgdaFunction{+} & associative & associative \\
-                 & commutative & commutative \\
-                 & identity \AgdaField{0\#} & identity \AgdaField{0\#} \\
-                 & ---                      & selective \\
-                 & ---                      & zero \AgdaField{1\#} \\
-\midrule
-\AgdaFunction{*} & associative & --- \\
-                 & identity \AgdaField{1\#} & left-identity \AgdaField{1\#} \\
-                 & zero \AgdaField{0\#}     & --- \\
-\midrule
-                 & \AgdaFunction{*} distributes over \AgdaFunction{+} &
-                   \AgdaFunction{+} absorbs \AgdaFunction{*} \\
-\bottomrule
-\end{tabular}
-\label{tab.path.algebra}
-\vspace{6pt}
-\caption{Comparing the algebraic properties of a semiring and a path algebra.}
-\end{table}
-
 \subsection{Models}
 \label{subsect.models}
 
-We now discuss three models---or inhabitants---of the \AgdaRecord{PathAlgebra} record to demonstrate that they exist, that path algebras are not canonical (i.e. are not inhabitable by only one structure up to isomorphism), and to use later in Section~\ref{sect.example} where we provide an example execution of our algorithm.
+We now discuss three models---or inhabitants---of the \AgdaRecord{PathAlgebra} record to demonstrate that they exist, that Path Algebras are not categorical (i.e. are not inhabitable by only one structure up to isomorphism), and to use later in Section~\ref{sect.example} where we provide an example execution of our algorithm.
 
 Trivially, the axioms of a \AgdaRecord{PathAlgebra} are satisfied by the unit type, \AgdaDatatype{⊤}.
 Defining a degenerate `addition' operation on \AgdaDatatype{⊤}, we inhabit \AgdaRecord{PathAlgebra} by taking the algebra's addition and multiplication to be this operation and its two unit elements to be \AgdaInductiveConstructor{tt}, the unit value.
