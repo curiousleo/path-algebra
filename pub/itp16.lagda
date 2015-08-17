@@ -105,21 +105,15 @@ In Section~\ref{sect.conclusions} we conclude.
 \section{Basic Definitions}
 \label{sect.basic.definitions}
 
-\subsubsection{Adjacency matrices.}
-Agda's standard library defines \AgdaDatatype{Vec}~\AgdaBound{A}~\AgdaBound{n}, the type of lists of fixed length \(n\) and elements of type \AgdaBound{A}. We represent an \(m × n\) matrix as a vector containing \(m\) row vectors of length \(n\). As for vectors, the dimensions of a matrix are used as type-level indices: \AgdaDatatype{Matrix}~\AgdaBound{A}~\AgdaBound{m}~\AgdaBound{n} is the type of \(m × n\) matrices with element type \AgdaBound{A}.
+\subsection{Matrices and graph nodes}
+Write \AgdaDatatype{Vec}~\AgdaBound{A}~\AgdaBound{n} for the vector containing elements of type \AgdaBound{A} with length \AgdaBound{n}.
+We write \AgdaDatatype{Matrix}~\AgdaBound{A}~\AgdaBound{m}~\AgdaBound{n} for the type of $m \times n$-dimensional matrices containing elements of type $A$, implemented as a vector of vectors.
+We use finite sets, where \AgdaDatatype{Fin}~\AgdaBound{n} is intuitively the type of natural numbers `of at most $n$', to index into matrices and represent graph nodes in our formalisation.
+The type \AgdaDatatype{Fin}~\AgdaBound{n} has a decidable equality for all $n$.
+We use the existing standard library definition of \AgdaDatatype{Subset}, which partitions a finite set into elements that lie `inside' and `outside' of the set, to capture the notion of sets of nodes.
 
-An adjacency matrix is a square matrix of edge weights whose diagonal elements are equivalent to the identity of the edge weight operator, \AgdaFunction{\_*\_}. A~square matrix is simply a matrix whose row and column indices are equal. An adjacency matrix is thus represented as a matrix of type \AgdaDatatype{Matrix}~\AgdaField{Weight}~\AgdaBound{n}~\AgdaBound{n} paired with a proof that the result of looking up any element on its diagonal evaluates to a value that is equivalent to \AgdaField{1\#}.
-
-\subsubsection{Nodes.}
-The type of finite sets of size \(n\) is called \AgdaDatatype{Fin}~\AgdaBound{n} in the standard library. Given a graph with \(n\) nodes (represented by an \(n × n\) adjacency matrix), we give its nodes the type \AgdaDatatype{Fin}~\AgdaBound{n}. This results in a number of desirable properties:
-
-\begin{enumerate}
-  \item \AgdaDatatype{Fin}~\AgdaBound{n} has exactly \(n\) inhabitants, which allows us to quantify over all nodes by abstracting over an argument of this type.
-  \item It is trivial to list all nodes.
-  \item Nodes have a decidable equality.
-\end{enumerate}
-
-\subsubsection{Sets of nodes.} Since nodes are represented as values of type \AgdaDatatype{Fin}~\AgdaBound{n}, we can re-use the definition of \AgdaDatatype{Subset}~\AgdaBound{n} included in the standard library to represent sets of nodes.
+Assume an algebraic structure with carrier type \AgdaRecord{Carrier} and left-multiplicative identity \AgdaField{1\#} (structures of this form will be further discussed in Section~\ref{sect.path.algebras.their.properties.and.models}).
+We define an $m$-dimensional adjacency matrix over this structure as a record \AgdaRecord{Adj} containing a field of type \AgdaDatatype{Matrix}~\AgdaField{Carrier}~\AgdaBound{m}~\AgdaBound{m}, bundled with a proof that all diagonal elements of this matrix are equivalent to \AgdaField{1\#}.
 
 \subsection{Path weight sums}
 \label{subsect.path.weight.sums}
@@ -553,6 +547,8 @@ We call the carrier type of a Path Algebra (the set $S$ in the definition above)
 
 \subsection{Properties}
 \label{subsect.properties}
+
+We now explore some of the immediate consequences of the Path Algebra axioms.
 
 \subsection{Models}
 \label{subsect.models}
