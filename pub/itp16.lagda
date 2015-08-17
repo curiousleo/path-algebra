@@ -215,7 +215,8 @@ If the underlying operator is idempotent, folding over the union of two sets is 
 \end{lemma}
 \begin{proof} By simultaneous induction over the two sets:
 \begin{code}
-  fold-∪ : ∀ {n} (idp : Idempotent _∙_) f (xs : Subset n) (ys : Subset n) → fold f (xs ∪ ys) ≈ fold f xs ∙ fold f ys
+  fold-∪ :  ∀ {n} (idp : Idempotent _∙_) f (xs : Subset n) (ys : Subset n) →
+            fold f (xs ∪ ys) ≈ fold f xs ∙ fold f ys
   fold-∪ idp f []             []             = sym (proj₁ identity _)
   fold-∪ idp f (inside ∷ xs)  (inside ∷ ys)  =
     begin
@@ -586,7 +587,7 @@ module InfinityExtension where
 \begin{code}
   data ℕ∞ : Set where
     ↑  : ℕ → ℕ∞
-    ∞ : ℕ∞
+    ∞  : ℕ∞
 \end{code}
 
 The natural numbers, \AgdaDatatype{ℕ}, can be embedded into \AgdaDatatype{ℕ∞} in the obvious way, using the constructor \AgdaInductiveConstructor{↑}.
@@ -653,7 +654,7 @@ module itp16-Algorithm
 
 In this section, we introduce a generalised variant of Dijkstra's algorithm and its implementation in Agda.
 
-Dijkstra's algorithm in its standard form finds the shortest distance from some start node \(i\) to each other node \(j\) in a graph given that no edge has a negative weight. Dynerowicz and Griffin found that a more general variant of Dijkstra's algorithm finds one row of the matrix \(R\) solving the fixpoint equation \[R = I ⊕ (R ⊗ A)\] for some adjacency matrix \(A\) \cite{dynerowicz_forwarding_2013} in a path algebra (see XXX). \Cref{fig.algorithm} shows the algorithm as it is presented in \cite{dynerowicz_forwarding_2013}.
+Dijkstra's algorithm in its standard form finds the shortest distance from some start node \(i\) to each other node \(j\) in a graph given that no edge has a negative weight. Dynerowicz and Griffin found that a more general variant of Dijkstra's algorithm finds one row of the matrix \(R\) solving the fixpoint equation \[R = I ⊕ (R ⊗ A)\] for some adjacency matrix \(A\) in a path algebra (see \cref{sect.path.algebras.their.properties.and.models}). \Cref{fig.algorithm} shows the algorithm as it is presented in \cite{dynerowicz_forwarding_2013}.
 
 Our implementation of this algorithm in Agda consists of nine mutually recursive definitions, the most important of which are \AgdaFunction{order}, \AgdaFunction{estimate}, \AgdaFunction{seen} and \AgdaFunction{queue}.
 
