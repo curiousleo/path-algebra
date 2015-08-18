@@ -55,10 +55,11 @@ Computer Laboratory, University of Cambridge}
 \maketitle
 
 \begin{abstract}
-The abstract should summarize the contents of the paper
-using at least 70 and at most 150 words. It will be set in 9-point
-font size and be inset 1.0 cm from the right and left margins.
-There will be two blank lines before and after the Abstract. \dots
+We present an implementation of an algorithm similar to Dijkstra's shortest-path algorithm in Agda. Given a \emph{path algebra} (similar to a semiring) of weight metrics and an adjacency matrix \(A\), the algorithm computes one row of \(R\) satisfying the fixpoint equation \(R = I ⊕ (A ⊗ R)\) where \(I\) is the identity matrix. We call this the \emph{right-local solution} and prove that our implementation finds it.
+
+% The abstract should summarize the contents of the paper
+% using at least 70 and at most 150 words. It will be set in 9-point
+
 \keywords{Dijkstra's algorithm, shortest paths, internet routing, interactive theorem proving, Agda}
 \end{abstract}
 
