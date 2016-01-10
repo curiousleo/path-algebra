@@ -36,7 +36,7 @@
 module itp16 where
 
 open import Algebra.Path.Structure
-import Data.Matrix.Adjacency as Adj
+import Data.Matrix.Adjacency as MAdj
 
 open import Data.Fin using (Fin; zero; suc)
 open import Data.Nat
@@ -113,8 +113,32 @@ We use finite sets, where \AgdaDatatype{Fin}~\AgdaBound{n} is intuitively the ty
 The type \AgdaDatatype{Fin}~\AgdaBound{n} has a decidable equality for all $n$.
 We use the existing standard library definition of \AgdaDatatype{Subset}, which partitions a finite set into elements that lie `inside' and `outside' of the set, to capture the notion of sets of nodes.
 
-Assume an algebraic structure with carrier type \AgdaField{Carrier} and left multiplicative identity \AgdaField{1\#} (structures of this form will be further discussed in Section~\ref{sect.path.algebras.their.properties.and.models}).
-We define an $m$-dimensional adjacency matrix over this structure as a record \AgdaRecord{Adj} containing a field of type \AgdaDatatype{Matrix}~\AgdaField{Carrier}~\AgdaBound{m}~\AgdaBound{m}, bundled with a proof that all diagonal elements of this matrix are equivalent to \AgdaField{1\#}.
+Assume an algebraic structure with carrier type \AgdaField{Carrier}, a decidable equality \AgdaField{\_≈\_} and left multiplicative identity \AgdaField{1\#} (structures of this form will be further discussed in Section~\ref{sect.path.algebras.their.properties.and.models}).
+We define an $m$-dimensional adjacency matrix over this structure as a record \AgdaRecord{Adj} containing a field of type \AgdaDatatype{Matrix}~\AgdaField{Carrier}~\AgdaBound{m}~\AgdaBound{m}, bundled with a proof that all diagonal elements of this matrix are equivalent to \AgdaField{1\#}:
+
+\AgdaHide{
+\begin{code}
+module itp16-Adj {c ℓ} (alg : PathAlgebra c ℓ) where
+  open import Level
+
+  open import Data.Fin using (Fin)
+  open import Data.Matrix
+  open import Data.Nat.Base using (ℕ)
+
+  import Relation.Binary.PropositionalEquality as P
+  open P using (_≡_)
+
+  open PathAlgebra alg renaming (Carrier to Weight)
+\end{code}
+}
+
+% TODO: explain universe levels (ie, where do c and ℓ come from?)
+\begin{code}
+  record Adj (n : ℕ) : Set (c ⊔ ℓ) where
+    field
+      matrix  : Matrix Weight n n
+      diag    : ∀ i → matrix [ i , i ] ≈ 1#
+\end{code}
 
 \subsection{Path weight sums}
 \label{subsect.path.weight.sums}
@@ -617,7 +641,7 @@ As the names suggest, executing our generalised Dijkstra algorithm with adjacenc
 \begin{code}
 module itp16-Algorithm
     {c ℓ} (alg : PathAlgebra c ℓ)
-    {n} (i : Fin (suc n)) (adj : Adj.Adj alg (suc n))
+    {n} (i : Fin (suc n)) (adj : MAdj.Adj alg (suc n))
     where
 
   open import Algebra.Path.Properties
@@ -647,7 +671,7 @@ module itp16-Algorithm
   open import Dijkstra.EstimateOrder decTotalOrderᴸ using (estimateOrder)
 
   A[_,_] : Fin (suc n) → Fin (suc n) → Weight
-  A[ i , j ] = Adj.Adj.matrix adj [ i , j ]
+  A[ i , j ] = MAdj.Adj.matrix adj [ i , j ]
 
   mutual
 \end{code}} % $
@@ -804,7 +828,7 @@ The size of the set of visited nodes at \AgdaBound{step} is \AgdaInductiveConstr
 \begin{code}
 module itp16-Properties
     {c ℓ} (alg : PathAlgebra c ℓ)
-    {n} (i : Fin (suc n)) (adj : Adj.Adj alg (suc n))
+    {n} (i : Fin (suc n)) (adj : MAdj.Adj alg (suc n))
     where
 
   open import Algebra.Path.Properties
@@ -958,7 +982,7 @@ The corresponding Agda proof follows (\AgdaFunction{lemma} uses the adjacency ma
       rj≈1 =
         begin
           A[ i , j ]  ≡⟨ P.cong₂ A[_,_] (P.refl {x = i}) (Sub.i∈⁅i⁆′ i j j∈vs) ⟩
-          A[ i , i ]  ≈⟨ Adj.Adj.diag adj i ⟩
+          A[ i , i ]  ≈⟨ MAdj.Adj.diag adj i ⟩
           1#
         ∎
 \end{code}
@@ -1131,7 +1155,7 @@ r′_k
 \begin{code}
 module itp16-Correctness
     {c ℓ} (alg : PathAlgebra c ℓ)
-    {n} (i : Fin (suc n)) (adj : Adj.Adj alg (suc n))
+    {n} (i : Fin (suc n)) (adj : MAdj.Adj alg (suc n))
     where
 
   open import Algebra.Path.Properties
@@ -1159,7 +1183,7 @@ module itp16-Correctness
     using ()
     renaming (begin_ to start_; _≡⟨_⟩_ to _≣⟨_⟩_; _∎ to _■)
 
-  open Adj alg
+  open MAdj alg
   open DecTotalOrder Data.Nat.decTotalOrder using () renaming (refl to ≤-refl)
   open PathAlgebra alg renaming (Carrier to Weight)
   open RequiresPathAlgebra alg
