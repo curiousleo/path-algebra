@@ -21,7 +21,7 @@ record Adj (n : ℕ) : Set (c ⊔ ℓ) where
   constructor _▦[_]
   field
     matrix : Matrix Weight n n
-    diag   : ∀ i → (matrix [ i , i ]) ≈ 1#
+    diag   : ∀ i → matrix [ i , i ] ≈ 1#
 
 -- Identity adjacency matrix
 I : ∀ {n} → Adj n
@@ -30,7 +30,7 @@ I = matrix ▦[ diag ]
     matrix : Matrix Weight _ _
     matrix = tabulate (diagonal 0# 1#)
 
-    diag : ∀ i → (matrix [ i , i ]) ≈ 1#
+    diag : ∀ i → matrix [ i , i ] ≈ 1#
     diag i = reflexive (P.trans (lookup∘tabulate i i) (diagonal-diag i))
 
 -- Shorthand for identity matrix lookup
