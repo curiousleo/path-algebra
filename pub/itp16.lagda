@@ -76,7 +76,7 @@ We present an implementation of an algorithm similar to Dijkstra's shortest-path
 \label{subsect.agda}
 
 Agda~\cite{norell_dependently_2009} is a dependently-typed functional programming language \emph{cum} proof assistant for higher-order intuitionistic logic.
-In contrast to similar systems, such as Coq~\cite{bertot_short_2008} and Matita~\cite{asperti_matita_2011}, proof terms are constructed by hand via a process of type-directed refinement, rather than being constructed via tactic-oriented meta-programming.
+In contrast to similar systems, such as Coq~\cite{bertot_short_2008} and Matita~\cite{asperti_matita_2011}, proof terms are constructed by hand via a process of type-directed refinement, rather than being constructed via tactic-assisted metaprogramming.
 
 Agda has a uniform syntax that should be familiar to Haskell programmers and users of other dependently-typed proof assistants.
 One syntactic novelty is a flexible system of user-declared Unicode mixfix identifiers~\cite{danielsson_parsing_2011} with `holes' in an identifier being denoted by underscores.
@@ -692,7 +692,7 @@ All matrix coefficients are taken from the carrier set of a Path Algebra, with $
 Pseudocode for the imperative generalised Dijkstra algorithm, as presented by Dynerowicz and Griffin~\cite[pg. 9]{dynerowicz_forwarding_2013}, is provided in Figure~\ref{fig.algorithm}.
 
 Our implementation of this algorithm in Agda consists of nine mutually recursive definitions, the most important of which are \AgdaFunction{order}, \AgdaFunction{estimate}, \AgdaFunction{seen} and \AgdaFunction{queue}.
-Throughout this section we maintain the invariant that $i$ is the start node of the graph search.
+Throughout this section we maintain the invariant that $i$ is the start node of the graph search, and use the suggestive name \AgdaFunction{Weight} to refer to the carrier set of our Path Algebra.
 
 \begin{definition}[Order]
 We construct a total order on graph nodes, ordered by weight:
@@ -705,7 +705,7 @@ The function \AgdaFunction{estimateOrder} lifts a mapping from nodes to weights 
 The function \AgdaFunction{estimate} provides an estimate of the distance from the start node $i$ to every other node in the graph.   
 
 \begin{definition}[Estimate]
-We define the distance estimate from the start node $i$ to node $j$ at \AgdaBound{step} as follows:
+We define the distance estimate from the start node $i$ to a fixed node $j$ at \AgdaBound{step} as follows:
 \end{definition}
 \begin{code}
     estimate : (step : ℕ) → {s≤n : step ≤ n} → Fin (suc n) → Weight
@@ -715,9 +715,13 @@ We define the distance estimate from the start node $i$ to node $j$ at \AgdaBoun
         q  = Sorted.head (order step {≤-step′ step≤n}) (queue step {step≤n})
         r  = estimate step {≤-step′ step≤n}
 \end{code}
-The base case for the \AgdaFunction{estimate} function is a lookup in the adjacency matrix.\footnote{Note that in \cref{fig.algorithm} the base case is equivalent to a lookup in the identity matrix instead of the adjacency matrix.
-Our base case here corresponds to the \emph{second} iteration of the imperative algorithm.} % dpm: why?
-Since the addition operation \AgdaFunction{+} is selective, the inductive case of \AgdaFunction{estimate} encodes a \emph{choice} between \AgdaFunction{r}~\AgdaBound{j} and \AgdaFunction{r}~\AgdaFunction{q}~\AgdaFunction{*}~\AgdaFunction{A[}~\AgdaFunction{q}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}. The former is simply the previous distance estimate to \(j\). The latter represents the option of going from the start node to \AgdaFunction{q} via the best known path from the previous step, and then directly from \AgdaFunction{q} to $j$ (where \AgdaFunction{q} is the head of the queue of nodes that have not yet been visited).
+The base case for the \AgdaFunction{estimate} function is a lookup in the adjacency matrix of the graph.
+Note that in the imperative algorithm of Figure~\ref{fig.algorithm}, the base case is equivalent to a lookup in the identity matrix instead of the adjacency matrix.
+Our base case here corresponds to the \emph{second} iteration of the imperative algorithm.
+%dpm: why is that?
+
+Note also that since the addition operation \AgdaFunction{+} of a Path Algebra is selective, the inductive case of \AgdaFunction{estimate} encodes a \emph{choice} between \AgdaFunction{r}~\AgdaBound{j} and \AgdaFunction{r}~\AgdaFunction{q}~\AgdaFunction{*}~\AgdaFunction{A[}~\AgdaFunction{q}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}.
+The former is simply the previous distance estimate to $j$, whilst the latter represents the option of going from the start node to \AgdaFunction{q} via the best known path from the previous step, and then directly from \AgdaFunction{q} to $j$ (where \AgdaFunction{q} is the head of the priority queue of nodes that have not yet been visited).
 
 \begin{definition}[Seen]
 The set of visited nodes at a given \AgdaBound{step} is defined as follows:
@@ -730,26 +734,28 @@ The set of visited nodes at a given \AgdaBound{step} is defined as follows:
       ⁅ Sorted.head (order step {≤-step′ step≤n}) (queue step {step≤n}) ⁆
 \end{code}
 Here, \AgdaFunction{⁅} \AgdaBound{i} \AgdaFunction{⁆} is a singleton set containing only the start node, \AgdaBound{i}.
-The inductive case of \AgdaFunction{seen} unions all visited nodes from previous steps with the next node to be visited, per our priority queue and total ordering on nodes.
-Once a node has been visited, its distance estimate stays constant---this important fact will be proved and used later in the proof of correctness of the algorithm.
+The inductive case of \AgdaFunction{seen} unions all visited nodes from previous steps with the next node to be visited, per our priority queue of nodes.
+Once a node has been visited, its distance estimate stays constant and is optimal---this important fact will be proved and used later in the proof of correctness of the algorithm in Section~\ref{sect.correctness}.
 
+The following is an auxiliary definition needed to define the function \AgdaFunction{queue}, which computes the priortiy queue of nodes that have not yet been visited by the algorithm: 
 \begin{code}
-    queue′ : (step : ℕ) → {s≤n : step ≤ n} → Sorted.Vec _ (size $ ∁ $ seen step {s≤n})
+    queue′ : (step : ℕ) {s≤n : step ≤ n} → Sorted.Vec _ (size $ ∁ $ seen step {s≤n})
     queue′ step {s≤n} = Sorted.fromVec (order step {s≤n}) $ toVec $ ∁ $ seen step
 \end{code}
-This is the direct definition of what the queue at this step is: a sorted vector of the nodes that have not yet been visited---\AgdaFunction{∁} is the set complement---ordered by their current estimate using \AgdaFunction{order}.
-
-Unfortunately, this definition is not sufficient in practice: the queue's only use is to provide the node with the smallest estimate that has not yet been visited, which is always at the head of the queue. But to extract the head of a queue, its type must guarantee that it contains at least one element: the index must of of the form \AgdaInductiveConstructor{suc}~\AgdaBound{n} for some \AgdaBound{n}.
-
-In order to provide a queue with a strictly positive length index, we prove the following equality:
+Here \AgdaFunction{∁} is setwise complement.
+The function \AgdaFunction{queue′} is a direct definition of the priority queue of unvisited nodes at a given step of the algorithm: we take the complement set of the set of nodes that have been visited thus far and order them using our total order, \AgdaFunction{order}.
+Whilst straightforward to understand, unfortunately, this definition is not sufficient in practice due to a problem with the type of \AgdaFunction{queue′}: the priority queue's only use is to provide the node with the smallest estimate that has not yet been visited, which is always at the head of the queue. But to extract the head of a queue, its type must guarantee that it contains at least one element: the index must of of the form \AgdaInductiveConstructor{suc}~\AgdaBound{n} for some \AgdaBound{n}.
+Therefore, in order to provide a queue with a more usable length index, we prove the following lemma which we will use to `massage' the type of \AgdaFunction{queue′} into something more amenable:
 
 \begin{code}
     queue-size :  (step : ℕ) → {s≤n : suc step ≤ n} →
                   size (∁ $ seen step {≤-step′ s≤n}) ≡ suc (n ∸ suc step)
 \end{code} % $
 
+Using \AgdaFunction{queue′} and \AgdaFunction{queue-size}, we can then give the following more useful definition:
+
 \begin{definition}[Queue]
-Substituting the length index from \AgdaFunction{queue′} using \AgdaFunction{queue-size}, we then define the more convenient \AgdaFunction{queue} (definition omitted):
+We define the priority queue of nodes yet to be visited by the search algorithm (definition omitted):
 \end{definition}
 \begin{code}
     queue : (step : ℕ) → {s<n : suc step ≤ n} → Sorted.Vec _ (suc (n ∸ (suc step)))
@@ -759,12 +765,18 @@ Substituting the length index from \AgdaFunction{queue′} using \AgdaFunction{q
     queue step {s<n} = P.subst (Sorted.Vec (order step {≤-step′ s<n})) (queue-size step {s<n}) (queue′ step)
 \end{code}
 }
-The types of the remaining mutually inductive functions are as follows (we omit the definitions here for brevity):
-
+%dpm: following commented out --- where is it used.  Doesn't seem to be mentioned in the rest of the document so probably not needed.
+\AgdaHide{
 \begin{code}
     queue′⇒queue  :  (step : ℕ) → {s<n : suc step ≤ n} → ∀ {p}
                      (P : ∀ {n} → Sorted.Vec _ n → Set p) →
                      P (queue′ step) → P (queue step {s<n})
+\end{code}}
+
+\section{Correctness}
+\label{sect.correctness}
+
+\begin{code}
     q∉seen        :  (step : ℕ) {s<n : suc step ≤ n} →
                      Sorted.head _ (queue step {s<n}) ∉ seen step {≤-step′ s<n}
 \end{code}
@@ -832,9 +844,6 @@ The size of the set of visited nodes at \AgdaBound{step} is \AgdaInductiveConstr
         q∉q∷qs = P.subst (λ qs → ¬ (q S.∈ qs)) S.destruct q∉queue
 \end{code}
 }
-
-\section{Correctness}
-\label{sect.correctness}
 
 \AgdaHide{
 \begin{code}
