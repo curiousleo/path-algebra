@@ -678,7 +678,7 @@ module itp16-Algorithm
 
 \begin{figure}[ht]
 %\includegraphics{algorithm.pdf}
-\caption{Imperative generalised Dijkstra's algorithm \cite[p.~9]{dynerowicz_forwarding_2013}}
+\caption{Dynerowicz and Griffin's imperative generalised Dijkstra's algorithm}
 \label{fig.algorithm}
 \end{figure}
 
@@ -689,9 +689,10 @@ R = I + (R \times A)
 \end{displaymath}
 Here, $A$ is the adjacency matrix of the graph $G$ and $I$ the identity matrix.
 All matrix coefficients are taken from the carrier set of a Path Algebra, with $-+-$ and $-\times-$ the binary addition and multiplication operations of a Path Algebra lifted to matrices (see Section~\ref{sect.path.algebras.their.properties.and.models}).
-The imperative generalised Dijkstra algorithm, as presented by Dynerowicz and Griffin, is provided in Figure~\ref{fig.algorithm}.
+Pseudocode for the imperative generalised Dijkstra algorithm, as presented by Dynerowicz and Griffin~\cite[pg. 9]{dynerowicz_forwarding_2013}, is provided in Figure~\ref{fig.algorithm}.
 
 Our implementation of this algorithm in Agda consists of nine mutually recursive definitions, the most important of which are \AgdaFunction{order}, \AgdaFunction{estimate}, \AgdaFunction{seen} and \AgdaFunction{queue}.
+Throughout this section we maintain the invariant that $i$ is the start node of the graph search.
 
 \begin{definition}[Order]
 We construct a total order on graph nodes, ordered by weight:
@@ -700,7 +701,8 @@ We construct a total order on graph nodes, ordered by weight:
     order : (step : ℕ) → {s≤n : step ≤ n} → DecTotalOrder _ _ _
     order step {s≤n} = estimateOrder $ estimate step {s≤n}
 \end{code}
-The function \AgdaFunction{estimateOrder} lifts a mapping from nodes to weights into a decidable total order on nodes, comparing them by their weight, and \AgdaFunction{estimate} provides an estimate of the distance from the start node $i$ to every other node in the graph.   
+The function \AgdaFunction{estimateOrder} lifts a mapping from nodes to weights into a decidable total order on nodes.
+The function \AgdaFunction{estimate} provides an estimate of the distance from the start node $i$ to every other node in the graph.   
 
 \begin{definition}[Estimate]
 We define the distance estimate from the start node $i$ to node $j$ at \AgdaBound{step} as follows:
@@ -718,7 +720,7 @@ Our base case here corresponds to the \emph{second} iteration of the imperative 
 Since the addition operation \AgdaFunction{+} is selective, the inductive case of \AgdaFunction{estimate} encodes a \emph{choice} between \AgdaFunction{r}~\AgdaBound{j} and \AgdaFunction{r}~\AgdaFunction{q}~\AgdaFunction{*}~\AgdaFunction{A[}~\AgdaFunction{q}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}. The former is simply the previous distance estimate to \(j\). The latter represents the option of going from the start node to \AgdaFunction{q} via the best known path from the previous step, and then directly from \AgdaFunction{q} to $j$ (where \AgdaFunction{q} is the head of the queue of nodes that have not yet been visited).
 
 \begin{definition}[Seen]
-The set of visited nodes at \AgdaBound{step} is defined as follows:
+The set of visited nodes at a given \AgdaBound{step} is defined as follows:
 \end{definition}
 \begin{code}
     seen : (step : ℕ) → {s≤n : step ≤ n} → Subset (suc n)
@@ -727,13 +729,15 @@ The set of visited nodes at \AgdaBound{step} is defined as follows:
       seen step {≤-step′ step≤n} ∪
       ⁅ Sorted.head (order step {≤-step′ step≤n}) (queue step {step≤n}) ⁆
 \end{code}
-The set of nodes that have been visited in step \AgdaBound{step} are represented by \AgdaFunction{seen}~\AgdaBound{step}. Once a node has been visited, its distance estimate stays constant -- this important fact will be proved and used later on (see XXX).
+Here, \AgdaFunction{⁅} \AgdaBound{i} \AgdaFunction{⁆} is a singleton set containing only the start node, \AgdaBound{i}.
+The inductive case of \AgdaFunction{seen} unions all visited nodes from previous steps with the next node to be visited, per our priority queue and total ordering on nodes.
+Once a node has been visited, its distance estimate stays constant---this important fact will be proved and used later in the proof of correctness of the algorithm.
 
 \begin{code}
     queue′ : (step : ℕ) → {s≤n : step ≤ n} → Sorted.Vec _ (size $ ∁ $ seen step {s≤n})
     queue′ step {s≤n} = Sorted.fromVec (order step {s≤n}) $ toVec $ ∁ $ seen step
 \end{code}
-This is the direct definition of what the queue at this step is: a sorted vector of the nodes that have not yet been visited -- \AgdaFunction{∁} is the set complement -- ordered by their current estimate using \AgdaFunction{order}.
+This is the direct definition of what the queue at this step is: a sorted vector of the nodes that have not yet been visited---\AgdaFunction{∁} is the set complement---ordered by their current estimate using \AgdaFunction{order}.
 
 Unfortunately, this definition is not sufficient in practice: the queue's only use is to provide the node with the smallest estimate that has not yet been visited, which is always at the head of the queue. But to extract the head of a queue, its type must guarantee that it contains at least one element: the index must of of the form \AgdaInductiveConstructor{suc}~\AgdaBound{n} for some \AgdaBound{n}.
 
