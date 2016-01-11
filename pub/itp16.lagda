@@ -82,11 +82,11 @@ Agda has a uniform syntax that should be familiar to Haskell programmers and use
 One syntactic novelty is a flexible system of user-declared Unicode mixfix identifiers~\cite{danielsson_parsing_2011} with `holes' in an identifier being denoted by underscores.
 
 We write \AgdaSymbol{(}\AgdaBound{x}~\AgdaSymbol{:}~\AgdaBound{A}\AgdaSymbol{)}~\AgdaSymbol{→}~\AgdaBound{B} for the dependent function space where \AgdaBound{x} may occur in \AgdaBound{B}, and write \AgdaBound{A}~\AgdaSymbol{→}~\AgdaBound{B} when \AgdaBound{x} does not occur in \AgdaBound{B} as is usual.
-We enclose arguments to be inferred in braces, as in \AgdaSymbol{\{}\AgdaBound{x}~\AgdaSymbol{:}~\AgdaBound{A}\AgdaSymbol{\}}~\AgdaSymbol{→}~\AgdaBound{B}, sometimes making use of the shorthand \AgdaSymbol{∀}~\AgdaBound{x}~\AgdaSymbol{→}~\AgdaBound{B} when types can be inferred.
+We enclose arguments to be inferred in braces, as in \AgdaSymbol{\{}\AgdaBound{x}~\AgdaSymbol{:}~\AgdaBound{A}\AgdaSymbol{\}}~\AgdaSymbol{→}~\AgdaBound{B}, sometimes making use of the shorthands \AgdaSymbol{∀}~\AgdaBound{x}~\AgdaSymbol{→}~\AgdaBound{B} and \AgdaSymbol{∀}~\AgdaSymbol{\{}\AgdaBound{x}\AgdaSymbol{\}}~\AgdaSymbol{→}~\AgdaBound{B} when types can be inferred.
 We write \AgdaDatatype{Σ}~\AgdaBound{A}~\AgdaBound{B} for the dependent sum type whose first projection has type \AgdaBound{A}, and write \AgdaBound{A}~\AgdaDatatype{×}~\AgdaBound{B} when the second projection does not depend on the first, as is usual.
 Dependent sums are constructed using the comma constructor: \AgdaBound{x}~\AgdaInductiveConstructor{,}~\AgdaBound{y}.
-We sometimes write \AgdaFunction{∃}~\AgdaBound{x}~\AgdaSymbol{→}~\AgdaBound{P} for the dependent sum type when the type of the first projection can be inferred.
-Propositional equality between two types is written \AgdaBound{A}~\AgdaDatatype{≡}~\AgdaBound{B} and has a single inhabitant, \AgdaInductiveConstructor{refl}.
+We sometimes write \AgdaFunction{∃}~\AgdaSymbol{λ}~\AgdaBound{x}~\AgdaSymbol{→}~\AgdaBound{P} for the dependent sum type when the type of the first projection can be inferred.
+Propositional equality between two types is written \AgdaBound{A}~\AgdaDatatype{≡}~\AgdaBound{B} and has a single canonical inhabitant, \AgdaInductiveConstructor{refl}.
 Lastly, we write \AgdaBound{A}~\AgdaDatatype{⊎}~\AgdaBound{B} for the disjoint union type with constructors \AgdaInductiveConstructor{inj₁} and \AgdaInductiveConstructor{inj₂} and \AgdaFunction{¬}~\AgdaBound{A} for constructive negation.
 
 Agda is a predicative type theory with an infinite universe hierarchy, \AgdaPrimitiveType{Setᵢ}, with \AgdaPrimitiveType{Set}---the type of small types---being identified with \AgdaPrimitiveType{Set₀}, the base universe in Agda's hierarchy.
@@ -366,7 +366,7 @@ If the underlying operator is idempotent, folding over the union of two sets is 
 A key consideration in graph traversal algorithms is: `which node do we consider next'?
 We now define a type of sorted vectors that will be used later in Section~\ref{sect.correctness} to maintain a simple priority queue of yet-unseen graph nodes.
 We prefer working with a linear sorted data structure, compared to a balanced binary tree such as Agda's existing implementation of \textsc{avl} trees in \AgdaModule{Data.AVL}, to simplify proofs.
-Using a length-indexed data structure also allows us to assert statically the non-emptiness of our priority queue.
+Using a length-indexed data structure also allows us to straightforwardly assert statically the non-emptiness of our priority queue.
 
 Throughout this Section we fix and open a decidable total order, \AgdaRecord{DecTotalOrder}.
 We write \AgdaField{Carrier}, \AgdaField{≤} and \AgdaField{≤?} for the ordering's carrier set, ordering relation, and proof that the ordering relation is decidable, respectively.
@@ -674,39 +674,54 @@ module itp16-Algorithm
   A[ i , j ] = MAdj.Adj.matrix adj [ i , j ]
 
   mutual
-\end{code}} % $
+\end{code}} %
 
-In this section, we introduce a generalised variant of Dijkstra's algorithm and its implementation in Agda.
+\begin{figure}[ht]
+%\includegraphics{algorithm.pdf}
+\caption{Imperative generalised Dijkstra's algorithm \cite[p.~9]{dynerowicz_forwarding_2013}}
+\label{fig.algorithm}
+\end{figure}
 
-Dijkstra's algorithm in its standard form finds the shortest distance from some start node \(i\) to each other node \(j\) in a graph given that no edge has a negative weight. Dynerowicz and Griffin found that a more general variant of Dijkstra's algorithm finds one row of the matrix \(R\) solving the fixpoint equation \[R = I ⊕ (R ⊗ A)\] for some adjacency matrix \(A\) in a path algebra (see \cref{sect.path.algebras.their.properties.and.models}). \Cref{fig.algorithm} shows the algorithm as it is presented in \cite{dynerowicz_forwarding_2013}.
+Given a weighted graph $G$, Dijkstra's algorithm in its standard form finds the shortest distance from some start node $i \in G$ to each other connected node $j \in G$, provided all edges in $G$ have non-negative weight.
+Dynerowicz and Griffin~\cite{dynerowicz_forwarding_2013} found that a generalised variant of Dijkstra's algorithm finds one row of the matrix $R$ solving the fixpoint equation:
+\begin{displaymath}
+R = I + (R \times A)
+\end{displaymath}
+Here, $A$ is the adjacency matrix of the graph $G$ and $I$ the identity matrix.
+All matrix coefficients are taken from the carrier set of a Path Algebra, with $-+-$ and $-\times-$ the binary addition and multiplication operations of a Path Algebra lifted to matrices (see Section~\ref{sect.path.algebras.their.properties.and.models}).
+The imperative generalised Dijkstra algorithm, as presented by Dynerowicz and Griffin, is provided in Figure~\ref{fig.algorithm}.
 
 Our implementation of this algorithm in Agda consists of nine mutually recursive definitions, the most important of which are \AgdaFunction{order}, \AgdaFunction{estimate}, \AgdaFunction{seen} and \AgdaFunction{queue}.
 
-\begin{code}
-    order : (step : ℕ) {s≤n : step ≤ n} → DecTotalOrder _ _ _
-    order step {s≤n} = estimateOrder $ estimate step {s≤n}
-\end{code}
-The function \AgdaFunction{estimateOrder} takes a weight function to a decidable total order on nodes, comparing them by their weight. \AgdaFunction{order} takes the current step to the estimate order based on the current estimate.
-
-\begin{definition}[Estimate]
-We define the distance estimate from the start node \(i\) to node \(j\) at \AgdaBound{step} as follows:
+\begin{definition}[Order]
+We construct a total order on graph nodes, ordered by weight:
 \end{definition}
 \begin{code}
-    estimate : (step : ℕ) {s≤n : step ≤ n} → Fin (suc n) → Weight
+    order : (step : ℕ) → {s≤n : step ≤ n} → DecTotalOrder _ _ _
+    order step {s≤n} = estimateOrder $ estimate step {s≤n}
+\end{code}
+The function \AgdaFunction{estimateOrder} lifts a mapping from nodes to weights into a decidable total order on nodes, comparing them by their weight, and \AgdaFunction{estimate} provides an estimate of the distance from the start node $i$ to every other node in the graph.   
+
+\begin{definition}[Estimate]
+We define the distance estimate from the start node $i$ to node $j$ at \AgdaBound{step} as follows:
+\end{definition}
+\begin{code}
+    estimate : (step : ℕ) → {s≤n : step ≤ n} → Fin (suc n) → Weight
     estimate zero                 j = A[ i , j ]
     estimate (suc step) {step≤n}  j = r j + r q * A[ q , j ]
       where
         q  = Sorted.head (order step {≤-step′ step≤n}) (queue step {step≤n})
         r  = estimate step {≤-step′ step≤n}
 \end{code}
-The base case for the \AgdaFunction{estimate} function is a lookup in the adjacency matrix.\footnote{Note that in \cref{fig.algorithm} the base case is equivalent to a lookup in the identity matrix instead of the adjacency matrix. Our base case really corresponds to the second iteration of the imperative algorithm.}
-Since \AgdaFunction{+} is selective (see XXX), the inductive case encodes a \emph{choice} between \AgdaFunction{r}~\AgdaBound{j} and \AgdaFunction{r}~\AgdaFunction{q}~\AgdaFunction{*}~\AgdaFunction{A[}~\AgdaFunction{q}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}. The former is simply the previous distance estimate to \(j\). The latter represents the option of going from the start node to \AgdaFunction{q} via the best known path from the previous step, and then directly from \AgdaFunction{q} to \(j\) (where \AgdaFunction{q} is the head of the queue of nodes that have not yet been visited, see XXX).
+The base case for the \AgdaFunction{estimate} function is a lookup in the adjacency matrix.\footnote{Note that in \cref{fig.algorithm} the base case is equivalent to a lookup in the identity matrix instead of the adjacency matrix.
+Our base case here corresponds to the \emph{second} iteration of the imperative algorithm.} % dpm: why?
+Since the addition operation \AgdaFunction{+} is selective, the inductive case of \AgdaFunction{estimate} encodes a \emph{choice} between \AgdaFunction{r}~\AgdaBound{j} and \AgdaFunction{r}~\AgdaFunction{q}~\AgdaFunction{*}~\AgdaFunction{A[}~\AgdaFunction{q}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}. The former is simply the previous distance estimate to \(j\). The latter represents the option of going from the start node to \AgdaFunction{q} via the best known path from the previous step, and then directly from \AgdaFunction{q} to $j$ (where \AgdaFunction{q} is the head of the queue of nodes that have not yet been visited).
 
 \begin{definition}[Seen]
 The set of visited nodes at \AgdaBound{step} is defined as follows:
 \end{definition}
 \begin{code}
-    seen : (step : ℕ) {s≤n : step ≤ n} → Subset (suc n)
+    seen : (step : ℕ) → {s≤n : step ≤ n} → Subset (suc n)
     seen zero                 = ⁅ i ⁆
     seen (suc step) {step≤n}  =
       seen step {≤-step′ step≤n} ∪
@@ -715,7 +730,7 @@ The set of visited nodes at \AgdaBound{step} is defined as follows:
 The set of nodes that have been visited in step \AgdaBound{step} are represented by \AgdaFunction{seen}~\AgdaBound{step}. Once a node has been visited, its distance estimate stays constant -- this important fact will be proved and used later on (see XXX).
 
 \begin{code}
-    queue′ : (step : ℕ) {s≤n : step ≤ n} → Sorted.Vec _ (size $ ∁ $ seen step {s≤n})
+    queue′ : (step : ℕ) → {s≤n : step ≤ n} → Sorted.Vec _ (size $ ∁ $ seen step {s≤n})
     queue′ step {s≤n} = Sorted.fromVec (order step {s≤n}) $ toVec $ ∁ $ seen step
 \end{code}
 This is the direct definition of what the queue at this step is: a sorted vector of the nodes that have not yet been visited -- \AgdaFunction{∁} is the set complement -- ordered by their current estimate using \AgdaFunction{order}.
@@ -725,7 +740,7 @@ Unfortunately, this definition is not sufficient in practice: the queue's only u
 In order to provide a queue with a strictly positive length index, we prove the following equality:
 
 \begin{code}
-    queue-size :  (step : ℕ) {s≤n : suc step ≤ n} →
+    queue-size :  (step : ℕ) → {s≤n : suc step ≤ n} →
                   size (∁ $ seen step {≤-step′ s≤n}) ≡ suc (n ∸ suc step)
 \end{code} % $
 
@@ -733,7 +748,7 @@ In order to provide a queue with a strictly positive length index, we prove the 
 Substituting the length index from \AgdaFunction{queue′} using \AgdaFunction{queue-size}, we then define the more convenient \AgdaFunction{queue} (definition omitted):
 \end{definition}
 \begin{code}
-    queue : (step : ℕ) {s<n : suc step ≤ n} → Sorted.Vec _ (suc (n ∸ (suc step)))
+    queue : (step : ℕ) → {s<n : suc step ≤ n} → Sorted.Vec _ (suc (n ∸ (suc step)))
 \end{code}
 \AgdaHide{
 \begin{code}
@@ -743,7 +758,7 @@ Substituting the length index from \AgdaFunction{queue′} using \AgdaFunction{q
 The types of the remaining mutually inductive functions are as follows (we omit the definitions here for brevity):
 
 \begin{code}
-    queue′⇒queue  :  (step : ℕ) {s<n : suc step ≤ n} → ∀ {p}
+    queue′⇒queue  :  (step : ℕ) → {s<n : suc step ≤ n} → ∀ {p}
                      (P : ∀ {n} → Sorted.Vec _ n → Set p) →
                      P (queue′ step) → P (queue step {s<n})
     q∉seen        :  (step : ℕ) {s<n : suc step ≤ n} →
@@ -755,7 +770,7 @@ The types of the remaining mutually inductive functions are as follows (we omit 
 The size of the set of visited nodes at \AgdaBound{step} is \AgdaInductiveConstructor{suc}~\AgdaBound{step}.
 \end{lemma}
 \begin{code}
-    seen-size     :  (step : ℕ) {s≤n : step ≤ n} → size (seen step {s≤n}) ≡ suc step
+    seen-size     :  (step : ℕ) → {s≤n : step ≤ n} → size (seen step {s≤n}) ≡ suc step
 \end{code}
 
 \AgdaHide{
@@ -813,13 +828,6 @@ The size of the set of visited nodes at \AgdaBound{step} is \AgdaInductiveConstr
         q∉q∷qs = P.subst (λ qs → ¬ (q S.∈ qs)) S.destruct q∉queue
 \end{code}
 }
-
-% dpm: temporarily removed as it was messing up formatting
-%\begin{figure}[h]
-%\includegraphics{algorithm.pdf}
-%\caption{Imperative generalised Dijkstra's algorithm \cite[p.~9]{dynerowicz_forwarding_2013}}
-%\label{fig.algorithm}
-%\end{figure}
 
 \section{Correctness}
 \label{sect.correctness}
