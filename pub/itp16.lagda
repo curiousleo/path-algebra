@@ -363,12 +363,14 @@ If the underlying operator is idempotent, folding over the union of two sets is 
 
 % Need to mention AVL trees in standard library
 
-A key consideration in graph traversal algorithms is: `which node do we consider next'?
-We now define a type of sorted vectors that will be used later in Section~\ref{sect.correctness} to maintain a simple priority queue of yet-unseen graph nodes.
-We prefer working with a linear sorted data structure, compared to a balanced binary tree such as Agda's existing implementation of \textsc{avl} trees in \AgdaModule{Data.AVL}, to simplify proofs.
-Using a length-indexed data structure also allows us to straightforwardly assert statically the non-emptiness of our priority queue.
+Dijkstra's algorithm fixes the order that nodes in a graph are visited by maintaining a priority queue of previously unvisited nodes---the node with the lowest priority is the node that will be considered next by the algorithm.\footnote{How these priorities are assigned to a node in our particular implementation of Dijkstra's algorithm will be further discussed in Section~\ref{sect.dijkstras.algorithm}.}
+In this Section we define an indexed family of types of sorted vectors that we will use in Sections~\ref{sect.dijkstras.algorithm} and~\ref{sect.correctness} to implement this priority queue of unvisited nodes.
+Here, for generality we keep the particular type used to implement priorties abstract, and any type with a decidable total order structure defined over them will suffice.
 
-Throughout this Section we fix and open a decidable total order, \AgdaRecord{DecTotalOrder}.
+Note that we prefer working with a linear sorted data structure, compared to a balanced binary tree such as Agda's existing implementation of AVL trees in \AgdaModule{Data.AVL}, to simplify proofs.
+Using a length-indexed data structure also allows us to straightforwardly statically assert the non-emptiness of our priority queue by mandating that the queue's length must be of the form \AgdaInductiveConstructor{suc}~\AgdaBound{n}, for some $n$.
+
+Throughout this Section we fix and open a decidable total order record, \AgdaRecord{DecTotalOrder}.
 We write \AgdaField{Carrier}, \AgdaField{≤} and \AgdaField{≤?} for the ordering's carrier set, ordering relation, and proof that the ordering relation is decidable, respectively.
 Assuming this, we define a type of sorted vectors, or sorted lists indexed by their length:
 
@@ -466,14 +468,16 @@ The function \AgdaFunction{insert} places the inserted element in the correct po
 Here, \AgdaFunction{¬x≤y→y≤x} is a proof that $x \not\le y$ implies $y \le x$ in a total order.
 We use \AgdaFunction{≼-trans} to construct the domination proof in the `cons' case of \AgdaFunction{insert}.
 
-Appending two vectors, \AgdaFunction{\_++\_}, can be defined easily by repeatedly inserting elements from the first vector into the second.
-Append is given the usual precise type signature:
+Functions that take the head of a vector (\AgdaFunction{head}), append two vectors together (\AgdaFunction{\_++\_}), and so on, can be given the precise types one expects when working with vectors. 
 
+% dpm: not mentioned anywhere, now?  commented out...
+%Appending two vectors, \AgdaFunction{\_++\_}, can be defined easily by repeatedly inserting elements from the first vector into the second.
+%Append is given the usual precise type signature:
+
+\AgdaHide{
 \begin{code}
   _++_ : ∀ {m n} → SortedVec m → SortedVec n → SortedVec (m + n)
 \end{code}
-
-\AgdaHide{
 \begin{code}
   []                ++ ys = ys
   (x ∷ xs ⟨ x≼xs ⟩) ++ ys = insert x (xs ++ ys)
@@ -677,7 +681,7 @@ module itp16-Algorithm
 \end{code}} %
 
 \begin{figure}[ht]
-%\includegraphics{algorithm.pdf}
+\includegraphics{algorithm.pdf}
 \caption{Dynerowicz and Griffin's imperative generalised Dijkstra's algorithm}
 \label{fig.algorithm}
 \end{figure}
