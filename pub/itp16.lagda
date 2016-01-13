@@ -197,7 +197,8 @@ In order to allow users of the library to write sums in a notation reminiscient 
   open P using (_≡_)
 \end{code}}
 
-\paragraph{Properties.} We now show that sums over commutative monoids have certain properties, which will be used later in the correctness proof.
+\paragraph{Properties}
+We now show that sums over commutative monoids have certain properties, which will be used later in the correctness proof.
 
 \begin{lemma}
 \label{lem.fold.bot}
@@ -466,9 +467,7 @@ The function \AgdaFunction{insert} places the inserted element in the correct po
 \end{code}
 
 Here, \AgdaFunction{¬x≤y→y≤x} is a proof that $x \not\le y$ implies $y \le x$ in a total order.
-We use \AgdaFunction{≼-trans} to construct the domination proof in the `cons' case of \AgdaFunction{insert}.
-
-Functions that take the head of a vector (\AgdaFunction{head}), append two vectors together (\AgdaFunction{\_++\_}), and so on, can be given the precise types one expects when working with vectors. 
+We use \AgdaFunction{≼-trans} to construct the domination proof in the `cons' case of \AgdaFunction{insert}. 
 
 % dpm: not mentioned anywhere, now?  commented out...
 %Appending two vectors, \AgdaFunction{\_++\_}, can be defined easily by repeatedly inserting elements from the first vector into the second.
@@ -483,6 +482,7 @@ Functions that take the head of a vector (\AgdaFunction{head}), append two vecto
   (x ∷ xs ⟨ x≼xs ⟩) ++ ys = insert x (xs ++ ys)
 \end{code}}
 
+Functions that take the head of a vector (\AgdaFunction{head}), append two vectors together (\AgdaFunction{\_++\_}), and so on, can be given the precise types one usually expects when working with vectors.
 Vector membership, \AgdaDatatype{\_∈\_}, is defined using an inductive relation, only complicated slightly by the need to quantify over explicit domination proofs:
 
 \begin{code}
@@ -507,7 +507,7 @@ Using this definition, we may show that the head of a vector is indeed the small
     ≤-trans z≤y (head-≤ x∈y∷ys)
 \end{code}}
 
-The proof proceeds by analysing the cases under which $x \in xs$, and affirms the suitability of \AgdaDatatype{SortedVec} as a priority queue implementation.
+The proof proceeds by analysing the cases under which \AgdaBound{x}~\AgdaFunction{∈}~\AgdaBound{xs}, and affirms the suitability of \AgdaDatatype{SortedVec} as a priority queue implementation.
 
 \section{Path Algebras, Their Properties And Models}
 \label{sect.path.algebras.their.properties.and.models}
@@ -695,22 +695,18 @@ Here, $A$ is the adjacency matrix of the graph $G$ and $I$ the identity matrix.
 All matrix coefficients are taken from the carrier set of a Path Algebra, with $-+-$ and $-\times-$ the binary addition and multiplication operations of a Path Algebra lifted to matrices (see Section~\ref{sect.path.algebras.their.properties.and.models}).
 Pseudocode for the imperative generalised Dijkstra algorithm, as presented by Dynerowicz and Griffin~\cite[pg. 9]{dynerowicz_forwarding_2013}, is provided in Figure~\ref{fig.algorithm}.
 
-Our implementation of this algorithm in Agda consists of nine mutually recursive definitions, the most important of which are \AgdaFunction{order}, \AgdaFunction{estimate}, \AgdaFunction{seen} and \AgdaFunction{queue}.
+Our purely functional implementation of this algorithm in Agda consists of nine mutually recursive definitions, the most important of which are \AgdaFunction{order}, \AgdaFunction{estimate}, \AgdaFunction{seen} and \AgdaFunction{queue}.
 Throughout this section we maintain the invariant that $i$ is the start node of the graph search, and use the suggestive name \AgdaFunction{Weight} to refer to the carrier set of our Path Algebra.
 
-\begin{definition}[Order]
-We construct a total order on graph nodes, ordered by weight:
-\end{definition}
+At each \AgdaBound{step} of the algorithm graph nodes are totally ordered.
+This total order is constructed using the \AgdaFunction{order} function, which is parameterised by the \AgdaBound{step} of the algorithm:
 \begin{code}
     order : (step : ℕ) → {s≤n : step ≤ n} → DecTotalOrder _ _ _
     order step {s≤n} = estimateOrder $ estimate step {s≤n}
 \end{code}
 The function \AgdaFunction{estimateOrder} lifts a mapping from nodes to weights into a decidable total order on nodes.
 The function \AgdaFunction{estimate} provides an estimate of the distance from the start node $i$ to every other node in the graph.   
-
-\begin{definition}[Estimate]
-We define the distance estimate from the start node $i$ to a fixed node $j$ at \AgdaBound{step} as follows:
-\end{definition}
+We define \AgdaFunction{estimate} as follows:
 \begin{code}
     estimate : (step : ℕ) → {s≤n : step ≤ n} → Fin (suc n) → Weight
     estimate zero                 j = A[ i , j ]
@@ -721,15 +717,12 @@ We define the distance estimate from the start node $i$ to a fixed node $j$ at \
 \end{code}
 The base case for the \AgdaFunction{estimate} function is a lookup in the adjacency matrix of the graph.
 Note that in the imperative algorithm of Figure~\ref{fig.algorithm}, the base case is equivalent to a lookup in the identity matrix instead of the adjacency matrix.
-Our base case here corresponds to the \emph{second} iteration of the imperative algorithm.
+Our base case here therefore corresponds to the \emph{second} iteration of the imperative algorithm.
 %dpm: why is that?
-
-Note also that since the addition operation \AgdaFunction{+} of a Path Algebra is selective, the inductive case of \AgdaFunction{estimate} encodes a \emph{choice} between \AgdaFunction{r}~\AgdaBound{j} and \AgdaFunction{r}~\AgdaFunction{q}~\AgdaFunction{*}~\AgdaFunction{A[}~\AgdaFunction{q}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}.
+Note also that since the addition operation, \AgdaFunction{\_+\_}, of a Path Algebra is selective, the inductive case of \AgdaFunction{estimate} encodes a \emph{choice} between \AgdaFunction{r}~\AgdaBound{j} and \AgdaFunction{r}~\AgdaFunction{q}~\AgdaFunction{*}~\AgdaFunction{A[}~\AgdaFunction{q}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}.
 The former is simply the previous distance estimate to $j$, whilst the latter represents the option of going from the start node to \AgdaFunction{q} via the best known path from the previous step, and then directly from \AgdaFunction{q} to $j$ (where \AgdaFunction{q} is the head of the priority queue of nodes that have not yet been visited).
 
-\begin{definition}[Seen]
-The set of visited nodes at a given \AgdaBound{step} is defined as follows:
-\end{definition}
+We keep track of the set of visited nodes at a given \AgdaBound{step} using the function \AgdaFunction{seen}, which is defined as follows:
 \begin{code}
     seen : (step : ℕ) → {s≤n : step ≤ n} → Subset (suc n)
     seen zero                 = ⁅ i ⁆
@@ -738,29 +731,25 @@ The set of visited nodes at a given \AgdaBound{step} is defined as follows:
       ⁅ Sorted.head (order step {≤-step′ step≤n}) (queue step {step≤n}) ⁆
 \end{code}
 Here, \AgdaFunction{⁅} \AgdaBound{i} \AgdaFunction{⁆} is a singleton set containing only the start node, \AgdaBound{i}.
-The inductive case of \AgdaFunction{seen} unions all visited nodes from previous steps with the next node to be visited, per our priority queue of nodes.
-Once a node has been visited, its distance estimate stays constant and is optimal---this important fact will be proved and used later in the proof of correctness of the algorithm in Section~\ref{sect.correctness}.
+The inductive case of \AgdaFunction{seen} unions together all visited nodes from previous steps of the algorithm with the next node to be visited, per our priority queue of nodes.
+Once a node has been visited, its distance estimate stays constant and is optimal---this important invariant will be proved and used later in the proof of correctness of the algorithm in Section~\ref{sect.correctness}.
 
-The following is an auxiliary definition needed to define the function \AgdaFunction{queue}, which computes the priortiy queue of nodes that have not yet been visited by the algorithm: 
+The following is an auxiliary definition needed to define the function \AgdaFunction{queue}, which computes the priortiy queue of nodes that have not yet been visited by the algorithm:
 \begin{code}
     queue′ : (step : ℕ) {s≤n : step ≤ n} → Sorted.Vec _ (size $ ∁ $ seen step {s≤n})
     queue′ step {s≤n} = Sorted.fromVec (order step {s≤n}) $ toVec $ ∁ $ seen step
 \end{code}
-Here \AgdaFunction{∁} is setwise complement.
-The function \AgdaFunction{queue′} is a direct definition of the priority queue of unvisited nodes at a given step of the algorithm: we take the complement set of the set of nodes that have been visited thus far and order them using our total order, \AgdaFunction{order}.
-Whilst straightforward to understand, unfortunately, this definition is not sufficient in practice due to a problem with the type of \AgdaFunction{queue′}: the priority queue's only use is to provide the node with the smallest estimate that has not yet been visited, which is always at the head of the queue. But to extract the head of a queue, its type must guarantee that it contains at least one element: the index must of of the form \AgdaInductiveConstructor{suc}~\AgdaBound{n} for some \AgdaBound{n}.
+Here the function \AgdaFunction{∁} is setwise complement, with the expression \AgdaFunction{∁}~\AgdaFunction{\$}~\AgdaFunction{seen}~\AgdaBound{step} \AgdaSymbol{\{}\AgdaBound{s≤n}\AgdaSymbol{\}} corresponding to the set of \emph{unseen} graph nodes.
+The function \AgdaFunction{queue′} is a direct definition of the priority queue of unvisited nodes at a given step of the algorithm: we take the complement set of the set of nodes that have been visited thus far and order them using our total order, \AgdaFunction{order}, at the given algorithm step.
+Whilst straightforward to understand, unfortunately, this definition is awkward to use in practice due to a problem with the type of \AgdaFunction{queue′}: the priority queue's only use is to provide the node with the smallest estimate that has not yet been visited, which is always at the head of the queue. But to extract the head of a queue, its type must guarantee that it contains at least one element.
+This fact is expressed by mandating that the length index of the vector whose head is being examined must be of the form \AgdaInductiveConstructor{suc}~\AgdaBound{n} for some \AgdaBound{n}.
 Therefore, in order to provide a queue with a more usable length index, we prove the following lemma which we will use to `massage' the type of \AgdaFunction{queue′} into something more amenable:
-
 \begin{code}
     queue-size :  (step : ℕ) → {s≤n : suc step ≤ n} →
                   size (∁ $ seen step {≤-step′ s≤n}) ≡ suc (n ∸ suc step)
 \end{code} % $
 
-Using \AgdaFunction{queue′} and \AgdaFunction{queue-size}, we can then give the following more useful definition:
-
-\begin{definition}[Queue]
-We define the priority queue of nodes yet to be visited by the search algorithm (definition omitted):
-\end{definition}
+Using \AgdaFunction{queue′} and \AgdaFunction{queue-size}, we can then give the following more useful definition of the priority queue of previously unvisited nodes, with a \AgdaInductiveConstructor{suc} in head position in the vector's length index, with the function \AgdaFunction{queue}:
 \begin{code}
     queue : (step : ℕ) → {s<n : suc step ≤ n} → Sorted.Vec _ (suc (n ∸ (suc step)))
 \end{code}
@@ -769,6 +758,7 @@ We define the priority queue of nodes yet to be visited by the search algorithm 
     queue step {s<n} = P.subst (Sorted.Vec (order step {≤-step′ s<n})) (queue-size step {s<n}) (queue′ step)
 \end{code}
 }
+We omit the obvious definition.
 %dpm: following commented out --- where is it used.  Doesn't seem to be mentioned in the rest of the document so probably not needed.
 \AgdaHide{
 \begin{code}
@@ -780,15 +770,17 @@ We define the priority queue of nodes yet to be visited by the search algorithm 
 \section{Correctness}
 \label{sect.correctness}
 
+In this Section we describe our proof of correctness of the generalised Dijkstra algorithm.
+
+At step $step$ the next node to be visited per the priority queue is not in the list of previously seen nodes:
+
 \begin{code}
-    q∉seen        :  (step : ℕ) {s<n : suc step ≤ n} →
-                     Sorted.head _ (queue step {s<n}) ∉ seen step {≤-step′ s<n}
+    q∉seen :  (step : ℕ) {s<n : suc step ≤ n} →
+      Sorted.head _ (queue step {s<n}) ∉ seen step {≤-step′ s<n}
 \end{code}
 
-\begin{lemma}
-\label{lem.seen.size}
 The size of the set of visited nodes at \AgdaBound{step} is \AgdaInductiveConstructor{suc}~\AgdaBound{step}.
-\end{lemma}
+
 \begin{code}
     seen-size     :  (step : ℕ) → {s≤n : step ≤ n} → size (seen step {s≤n}) ≡ suc step
 \end{code}
@@ -904,10 +896,7 @@ module itp16-Properties
 \end{code}
 }
 
-\begin{lemma}
-\label{lemma.queue.head}
 The head of the queue has the smallest estimated distance from the start node of any node that has not yet been visited.
-\end{lemma}
 
 \begin{code}
     q-lemma :  (step : ℕ) {s<n : suc step N≤ n} →
@@ -917,9 +906,8 @@ The head of the queue has the smallest estimated distance from the start node of
                r k + r q ≈ r q
 \end{code}
 
-\begin{proof}
 This follows directly from the fact that \AgdaFunction{queue} is a sorted vector.
-\end{proof}
+
 
 \AgdaHide{
 \begin{code}
@@ -947,10 +935,7 @@ This follows directly from the fact that \AgdaFunction{queue} is a sorted vector
 }
 % $
 
-\begin{lemma}
-\label{lemma.unseen}
 A node that has not yet been visited had not been visited in the previous step either.
-\end{lemma}
 
 \begin{code}
     not-seen :  (step : ℕ) {s<n : suc step N≤ n} →
@@ -958,9 +943,7 @@ A node that has not yet been visited had not been visited in the previous step e
                 k ∉ seen step {≤-step′ s<n}
 \end{code}
 
-\begin{proof}
 The nodes visited in \AgdaInductiveConstructor{suc}~\AgdaBound{step} are the nodes visited in \AgdaBound{step} with the head of the queue at \AgdaBound{step} added, so \AgdaFunction{seen}~\AgdaSymbol{(}\AgdaInductiveConstructor{suc}~\AgdaBound{step}\AgdaSymbol{)} is a superset of \AgdaFunction{seen}~\AgdaBound{step}. The lemma is a direct consequence of this.
-\end{proof}
 
 \AgdaHide{
 \begin{code}
@@ -970,10 +953,7 @@ The nodes visited in \AgdaInductiveConstructor{suc}~\AgdaBound{step} are the nod
 \end{code}
 }
 
-\begin{theorem}
-\label{lemma.optimal}
 Once a node has been visited its estimate is optimal.
-\end{theorem}
 
 \begin{code}
   pcorrect-lemma :  (step : ℕ) {s<n : suc step N≤ n} → ∀ {j k} →
@@ -983,7 +963,6 @@ Once a node has been visited its estimate is optimal.
 \end{code}
 This lemma, together with \cref{thm.prls}, constitutes the core of the correctness proof.
 
-\begin{proof}
 The proof proceeds by induction on \AgdaBound{step}.
 
 \paragraph{Base case.} At step \AgdaInductiveConstructor{zero}, the set of visited nodes, \AgdaFunction{seen}, contains exactly the start node, \AgdaBound{i}, so \AgdaBound{j} is equal to \AgdaBound{i}. The base case of \AgdaFunction{estimate} is a lookup in the adjacency matrix. Consequently, \AgdaFunction{estimate}~\AgdaInductiveConstructor{zero}~\AgdaBound{j} is equal to \AgdaFunction{A[}~\AgdaBound{i}~\AgdaFunction{,}~\AgdaBound{i}~\AgdaFunction{]}. By the adjacency matrix diagonal property, this is equivalent to \AgdaFunction{1\#}, the zero element of addition in a path algebra.
@@ -1128,13 +1107,7 @@ r′_j + r′_k
 &≡ r′_j                                           && \text{\AgdaFunction{estimate} definition}
 \end{align*}
 
-
-\end{proof}
-
-\begin{corollary}
-\label{cor.estimate}
 The distance estimate of a node stays the same once it has been visited.
-\end{corollary}
 
 \begin{code}
   estimate-lemma :  (step : ℕ) {s<n : suc step N≤ n} →
@@ -1142,7 +1115,6 @@ The distance estimate of a node stays the same once it has been visited.
                     estimate (suc step) {s<n} k ≈ estimate step {≤-step′ s<n} k
 \end{code}
 
-\begin{proof}
 This follows immediately from \cref{lemma.optimal}:
 
 \begin{align*}
@@ -1153,8 +1125,6 @@ r′_k
 &≈ r_k + r_q                   && \text{\Cref{lemma.optimal}} \\
 &≡ r_k                           && \text{\AgdaFunction{estimate} definition}
 \end{align*}
-
-\end{proof}
 
 \AgdaHide{
 \begin{code}
@@ -1222,12 +1192,9 @@ module itp16-Correctness
 \end{code}
 }
 
-\begin{definition}[Partial right-local solution]
-\label{def.partial.rls}
 The estimate \(r\) is a partial right-local solution for node \(j\) and step \(n\) if
 \[r_j ≈ I_{i,j} + \bigoplus_{k ∈ S_n} r_k * A_{k,j}\]
 where \(S_n\) is the set of nodes that have been visited at step \(n\).
-\end{definition}
 This is expressed in Agda as follows:
 
 \begin{code}
@@ -1236,12 +1203,9 @@ This is expressed in Agda as follows:
     r j ≈ I[ i , j ] + (⨁[ k ← seen step {s≤n} ] r k * A[ k , j ])
 \end{code}
 
-\begin{definition}[Right-local solution]
-\label{def.rls}
 The estimate \(r\) is a right-local solution for node \(j\) and step \(n\) if
 \[r_j ≈ I_{i,j} + \bigoplus_{k ∈ V} r_k * A_{k,j}\]
 where \(V\) is the set of all nodes \emph{(}\AgdaFunction{⊤} in Agda\emph{)}.
-\end{definition}
 In Agda, we express this as follows:
 
 \begin{code}
@@ -1251,12 +1215,8 @@ In Agda, we express this as follows:
 \end{code}
 Our aim is to prove that \AgdaFunction{RLS}~\AgdaBound{n}~\AgdaBound{j} holds for all \AgdaBound{j}. At step \AgdaBound{n}, every node has been visited: \AgdaFunction{seen}~\AgdaBound{n}~\AgdaDatatype{≡}~\AgdaFunction{⊤}. This means that \AgdaFunction{RLS}~\AgdaBound{n}~\AgdaBound{j} is a direct consequence of \AgdaFunction{pRLS}~\AgdaBound{n}~\AgdaBound{j}. We prove that our implementation of Dijkstra's algorithm computes a partial right-local solution at every step (\cref{thm.prls}), and then show that this implies that the end result is a right-local solution (\cref{cor.rls}).
 
-\begin{theorem}
-\label{thm.prls}
 Dijkstra's algorithm computes a partial right-local solution at every step.
-\end{theorem}
 
-\begin{proof}
 The proof proceeds by induction on \AgdaBound{step}.
 In the base case (\AgdaBound{step}~\AgdaSymbol{=}~\AgdaInductiveConstructor{zero}), we perform a case split on whether \AgdaBound{j} is equal to the start node \AgdaBound{i}.
 
@@ -1361,14 +1321,8 @@ We omit the corresponding Agda proof for brevity.
 \end{code}
 }
 
-\end{proof}
-
-\begin{corollary}
-\label{cor.rls}
 Dijkstra's algorithm computes a right-local solution.
-\end{corollary}
 
-\begin{proof}
 By \cref{thm.prls}, Dijkstra's algorithm computes a partial right-local solution at step \AgdaBound{n} for every node \AgdaBound{j}. By \cref{lem.seen.size}, the number of nodes that have been visited at step \AgdaBound{n} is the total number of nodes in the graph, \AgdaBound{n}. Thus at step \AgdaBound{n}, every node has been visited, so \AgdaFunction{seen}~\AgdaBound{n}~\AgdaDatatype{≡}~\AgdaFunction{⊤}. It follows that \AgdaFunction{RLS}~\AgdaBound{n}~\AgdaBound{j} for all nodes \AgdaBound{j}:
 
 \begin{code}
@@ -1389,8 +1343,6 @@ By \cref{thm.prls}, Dijkstra's algorithm computes a partial right-local solution
       lemma = P.cong₂ _+_ P.refl (P.cong₂ ⨁-syntax P.refl seen≡⊤)
 \end{code}
 }
-
-\end{proof}
 
 \section{Example}
 \label{sect.example}
