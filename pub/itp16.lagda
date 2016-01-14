@@ -5,6 +5,7 @@
 \usepackage[british]{babel}
 \usepackage{booktabs}
 \usepackage{cite}
+\usepackage{color}
 \usepackage{csquotes}
 \usepackage{graphics}
 \usepackage[colorlinks]{hyperref}
@@ -29,6 +30,8 @@
 \DeclareUnicodeCharacter{11388}{\ensuremath{{}_{j}}} % ⱼ
 \DeclareUnicodeCharacter{ 7524}{\ensuremath{{}_{u}}} % ᵤ
 
+\newcommand{\todo}[1]{{\color{red}{\ensuremath{\texttt{[TODO: #1]}}}}}
+
 \begin{document}
 
 \AgdaHide{
@@ -45,7 +48,7 @@ open import Data.Nat
 \end{code}
 }
 
-\title{Dijkstra's Algorithm: Verified}
+\title{On the Correctness of a Generalised Dijkstra's Algorithm}
 \titlerunning{Dijkstra's Algorithm}
 \author{Leonhard D.~Markert \and Timothy G.~Griffin \and Dominic P.~Mulligan}
 %\authorrunning{Leonhard Markert et al.}
@@ -638,8 +641,13 @@ Take the unit for addition to be \AgdaInductiveConstructor{∞} and the unit for
 In both cases, it is routine to check that the axioms for a \AgdaRecord{PathAlgebra} can be satisfied.
 As the names suggest, executing our generalised Dijkstra algorithm with adjacency matrix coefficients taken from a shortest path algebra will compute the shortest path through the graph described by the matrix, whilst taking matrix coefficients from a widest path algebra will compute the widest path, or maximum bottleneck capacity.
 
-\section{Dijkstra's Algorithm}
-\label{sect.dijkstras.algorithm}
+\section{Dijkstra's Algorithm and its Correctness}
+\label{sect.dijkstras.algorithm.and.its.correctness}
+
+In this Section we discuss the generalised imperative Dijkstra's algorithm (Subsection~\ref{subsect.algorithm}), our functional implementation (Subsection~\ref{subsect.functional.implementation}), and the proof of correctness of this implementation (Subsection~\ref{subsect.correctness}).
+
+\subsection{Algorithm}
+\label{subsect.algorithm}
 
 \AgdaHide{
 \begin{code}
@@ -695,6 +703,11 @@ Here, $A$ is the adjacency matrix of the graph $G$ and $I$ the identity matrix.
 All matrix coefficients are taken from the carrier set of a Path Algebra, with $-+-$ and $-\times-$ the binary addition and multiplication operations of a Path Algebra lifted to matrices (see Section~\ref{sect.path.algebras.their.properties.and.models}).
 Pseudocode for the imperative generalised Dijkstra algorithm, as presented by Dynerowicz and Griffin~\cite[pg. 9]{dynerowicz_forwarding_2013}, is provided in Figure~\ref{fig.algorithm}.
 
+\todo{finish this description}
+
+\subsection{A Functional Implementation}
+\label{subsect.functional.implementation}
+
 Our purely functional implementation of this algorithm in Agda consists of nine mutually recursive definitions, the most important of which are \AgdaFunction{order}, \AgdaFunction{estimate}, \AgdaFunction{seen} and \AgdaFunction{queue}.
 Throughout this section we maintain the invariant that $i$ is the start node of the graph search, and use the suggestive name \AgdaFunction{Weight} to refer to the carrier set of our Path Algebra.
 
@@ -732,7 +745,7 @@ We keep track of the set of visited nodes at a given \AgdaBound{step} using the 
 \end{code}
 Here, \AgdaFunction{⁅} \AgdaBound{i} \AgdaFunction{⁆} is a singleton set containing only the start node, \AgdaBound{i}.
 The inductive case of \AgdaFunction{seen} unions together all visited nodes from previous steps of the algorithm with the next node to be visited, per our priority queue of nodes.
-Once a node has been visited, its distance estimate stays constant and is optimal---this important invariant will be proved and used later in the proof of correctness of the algorithm in Section~\ref{sect.correctness}.
+Once a node has been visited, its distance estimate stays constant and is optimal---this important invariant will be proved and used later in the proof of correctness of the algorithm in Subsection~\ref{subsect.correctness}.
 
 The following is an auxiliary definition needed to define the function \AgdaFunction{queue}, which computes the priortiy queue of nodes that have not yet been visited by the algorithm:
 \begin{code}
@@ -767,23 +780,26 @@ We omit the obvious definition.
                      P (queue′ step) → P (queue step {s<n})
 \end{code}}
 
-\section{Correctness}
-\label{sect.correctness}
+\subsection{Correctness}
+\label{subsect.correctness}
 
-In this Section we describe our proof of correctness of the generalised Dijkstra algorithm.
+We now work towards a full proof of correctness of our implementation.
+Here `correctness' entails showing that our algorithm computes a right local solution to the fixpoint equation in Subsection~\ref{subsect.algorithm}.
+We proceed by demonstrating that the algorithm preserves several important invariants that, taken together, imply this result. 
 
-At step $step$ the next node to be visited per the priority queue is not in the list of previously seen nodes:
-
+We have two basic `sanity checking' results relating the size of of the queue of unseen nodes and set of seen nodes to the \AgdaBound{step} of the algorithm.
+At step $step$ the next node to be visited per the priority queue is not in the list of previously seen nodes.
+This is expressed by the lemma \AgdaFunction{q∉seen}:
 \begin{code}
-    q∉seen :  (step : ℕ) {s<n : suc step ≤ n} →
+    q∉seen :  (step : ℕ) → {s<n : suc step ≤ n} →
       Sorted.head _ (queue step {s<n}) ∉ seen step {≤-step′ s<n}
 \end{code}
-
-The size of the set of visited nodes at \AgdaBound{step} is \AgdaInductiveConstructor{suc}~\AgdaBound{step}.
-
+Further, the size of the set of visited nodes at \AgdaBound{step} is \AgdaInductiveConstructor{suc}~\AgdaBound{step}.
+This is expressed by the lemma \AgdaFunction{seen-size}:
 \begin{code}
     seen-size     :  (step : ℕ) → {s≤n : step ≤ n} → size (seen step {s≤n}) ≡ suc step
 \end{code}
+Both proofs are straightforward and omitted for brevity.
 
 \AgdaHide{
 \begin{code}
@@ -896,17 +912,16 @@ module itp16-Properties
 \end{code}
 }
 
-The head of the queue has the smallest estimated distance from the start node of any node that has not yet been visited.
-
+Another important invariant is the fact that the head of the priority queue of unseen nodes has the smallest estimated distance from the start node of any of the nodes that have not yet been visited.
+This is expressed in the lemma \AgdaFunction{q-lemma}:
 \begin{code}
-    q-lemma :  (step : ℕ) {s<n : suc step N≤ n} →
+    q-lemma :  (step : ℕ) → {s<n : suc step N≤ n} →
                ∀ k → k ∉ seen step {≤-step′ s<n} →
                let r  = estimate step {≤-step′ s<n}
                    q  = Sorted.head _ (queue step {s<n}) in
                r k + r q ≈ r q
 \end{code}
-
-This follows directly from the fact that \AgdaFunction{queue} is a sorted vector.
+The proof of this result is a direct consequence of the fact that the priority queue is a sorted vector.
 
 
 \AgdaHide{
@@ -934,11 +949,11 @@ This follows directly from the fact that \AgdaFunction{queue} is a sorted vector
 \end{code}
 }
 % $
-
-A node that has not yet been visited had not been visited in the previous step either.
-
+Further, the set of nodes that has been visited so far is strictly monotonic in the step of the algorithm.
+This fact is most usefully stated in the form: `if a node has not been visited at a given step then it has also not been visited in its immediate predecessor step, neither'.
+This is expressed in the lemma~\AgdaFunction{not-seen}:
 \begin{code}
-    not-seen :  (step : ℕ) {s<n : suc step N≤ n} →
+    not-seen :  (step : ℕ) → {s<n : suc step N≤ n} →
                 ∀ k → k ∉ seen (suc step) {s<n} →
                 k ∉ seen step {≤-step′ s<n}
 \end{code}
