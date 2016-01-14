@@ -48,7 +48,7 @@ open import Data.Nat
 \end{code}
 }
 
-\title{On the Correctness of a Generalised Dijkstra's Algorithm}
+\title{On the Correctness of a Generalised Dijkstra-like Algorithm}
 \titlerunning{Dijkstra's Algorithm}
 \author{Leonhard D.~Markert \and Timothy G.~Griffin \and Dominic P.~Mulligan}
 %\authorrunning{Leonhard Markert et al.}
@@ -68,12 +68,6 @@ We present an implementation of an algorithm similar to Dijkstra's shortest-path
 
 \section{Introduction}
 \label{sect.introduction}
-
-\subsection{Shortest Paths and Equilibrium Routing}
-\label{subsect.shortest.paths.and.equilibrium.routing}
-
-\subsection{Contributions}
-\label{subsect.contributions}
 
 \subsection{Agda}
 \label{subsect.agda}
@@ -96,28 +90,28 @@ Agda is a predicative type theory with an infinite universe hierarchy, \AgdaPrim
 As a matter of course universe \AgdaPrimitiveType{Setᵢ} is not automatically contained in \AgdaPrimitiveType{Setⱼ} when $i < j$ and requires explicit lifting with \AgdaFunction{Lift}.
 Universe polymorphism is used extensively throughout this development, with explicit quantification over universe levels.
 
-\subsection{Map of Paper}
-\label{subsect.map.of.paper}
-
-In Section~\ref{sect.basic.definitions} we cover some definitions needed to define Dijkstra's algorithm and its correctness proof.
-In Section~\ref{sect.sorted.vectors} we discuss a type of sorted vectors used to maintain a priority queue of yet-unseen graph nodes in the algorithm.
-In Section~\ref{sect.path.algebras.their.properties.and.models} we discuss `path algebras', a variety of algebraic structure central to our proof of correctness, also providing three models of path algebras to demonstrate that models exist and that path algebras are not categorical.
-In Section~\ref{sect.correctness} we discuss the main body of the correctness proof leading up to our main theorem: Dijkstra's algorithm computes a right-local solution.
-In Section~\ref{sect.example} we demonstrate the algorithm in action with an example execution inside Agda.
-In Section~\ref{sect.conclusions} we conclude.
+%\subsection{Map of Paper}
+%\label{subsect.map.of.paper}
+%In Section~\ref{sect.basic.definitions} we cover some definitions needed to define Dijkstra's algorithm and its correctness proof.
+%In Section~\ref{sect.path.algebras.their.properties.and.models} we discuss `path algebras', a variety of algebraic structure central to our proof of correctness, also providing three models of path algebras to demonstrate that models exist and that path algebras are not categorical.
+%In Section~\ref{sect.dijkstras.algorithm.and.its.correctness} we discuss the imperative Dijkstra algorithm, our functional implementation, and main body of the correctness proof leading up to our main theorem: Dijkstra's algorithm computes a right-local solution.
+%In Section~\ref{sect.example} we demonstrate the algorithm in action with an example execution inside Agda.
+%In Section~\ref{sect.conclusions} we conclude.
 
 \section{Basic Definitions}
 \label{sect.basic.definitions}
 
 \subsection{Matrices and graph nodes}
-Write \AgdaDatatype{Vec}~\AgdaBound{A}~\AgdaBound{n} for the length-indexed list, or vector, containing elements of type \AgdaBound{A} with length \AgdaBound{n}.
+\label{subsect.matrices.and.graph.nodes}
+
+We write \AgdaDatatype{Vec}~\AgdaBound{A}~\AgdaBound{n} for the length-indexed list, or vector, containing elements of type \AgdaBound{A} with length \AgdaBound{n}.
 We write \AgdaDatatype{Matrix}~\AgdaBound{A}~\AgdaBound{m}~\AgdaBound{n} for the type of $m \times n$-dimensional matrices containing elements of type $A$, implemented as a vector of vectors.
 We use finite sets, where \AgdaDatatype{Fin}~\AgdaBound{n} is intuitively the type of natural numbers `of at most $n$', to index into matrices and represent graph nodes in our formalisation.
 The type \AgdaDatatype{Fin}~\AgdaBound{n} has a decidable equality for all $n$.
 We use the existing standard library definition of \AgdaDatatype{Subset}, which partitions a finite set into elements that lie `inside' and `outside' of the set, to capture the notion of sets of nodes.
 
 Assume an algebraic structure with carrier type \AgdaField{Carrier}, a decidable equality \AgdaField{\_≈\_} and left multiplicative identity \AgdaField{1\#} (structures of this form will be further discussed in Section~\ref{sect.path.algebras.their.properties.and.models}).
-We define an $m$-dimensional adjacency matrix over this structure as a record \AgdaRecord{Adj} containing a field of type \AgdaDatatype{Matrix}~\AgdaField{Carrier}~\AgdaBound{m}~\AgdaBound{m}, bundled with a proof that all diagonal elements of this matrix are equivalent to \AgdaField{1\#}:
+We define an $m$-dimensional adjacency matrix over this structure as a record \AgdaRecord{Adj} parameterised by a dimension:
 
 \AgdaHide{
 \begin{code}
@@ -143,12 +137,22 @@ module itp16-Adj {c ℓ} (alg : PathAlgebra c ℓ) where
       diag    : ∀ i → matrix [ i , i ] ≈ 1#
 \end{code}
 
-\subsection{Path weight sums}
-\label{subsect.path.weight.sums}
+Here, a field of type \AgdaDatatype{Matrix}~\AgdaField{Carrier}~\AgdaBound{m}~\AgdaBound{m} is bundled with a proof that all diagonal elements of this matrix are equivalent to \AgdaField{1\#}.
 
-\enquote{Sum} here refers to an iteration of an operator over some collection of indices like \(\bigoplus_{x ∈ X} f(x)\) \cite{bertot_canonical_2008}. The properties of the path weight operator \AgdaFunction{\_+\_} include associativity, commutative and idempotence. In combination, these properties allow us to make strong claims about the behaviour of edge weight sums.
+\subsection{Sums}
+\label{subsect.sums}
 
-For convenience, we define path weight sums over commutative monoids since they are well supported by the standard library. Idempotency is required explicitly whenever it is needed.
+By `sum' we refer to the lifting of a binary operator over an indexed set, like $\bigoplus_{x ∈ X} f(x)$~\cite{bertot_canonical_2008}.
+The properties of the Path Algebra addition operator, \AgdaFunction{\_+\_}, include associativity, commutative and idempotence.
+In combination, these properties allow us to make strong claims about the behaviour of edge weight sums. 
+
+For convenience, we define path weight sums over commutative monoids since they are well supported by the standard library.
+Idempotency is required explicitly whenever it is needed.
+
+Key to understanding this section is knowledge of the family of types, \AgdaFunction{Subset}~\AgdaBound{n}, which describes subsets of finite sets of size \AgdaBound{n}, and implemented in the Agda standard library.
+\AgdaFunction{Subset}~\AgdaBound{n} is a fixed-length list of length \AgdaBound{n} containing one of two flags---\AgdaInductiveConstructor{inside} and \AgdaInductiveConstructor{outside}---detailing whether a given element lies inside or outside of the described subset.
+
+We use the function \AgdaFunction{fold} to define sums over subsets of finite sets using the underlying monoid's identity element \AgdaField{ε} and binary operator \AgdaField{∙}:
 
 \AgdaHide{
 \begin{code}
@@ -171,24 +175,23 @@ module itp16-Bigop
 \end{code}
 }
 
-The function \AgdaFunction{fold} defines the \enquote{sum} operation using the underlying monoid's identity element \AgdaField{ε} and binary operator \AgdaField{∙}:
-
 \begin{code}
   fold : ∀ {n} → (Fin n → Carrier) → Subset n → Carrier
   fold f []              = ε
   fold f (inside ∷ xs)   = f zero ∙  fold (f ∘ suc) xs
   fold f (outside ∷ xs)  =           fold (f ∘ suc) xs
 \end{code}
-In order to allow users of the library to write sums in a notation reminiscient of pen-and-paper mathematics, we provide a \AgdaKeyword{syntax} declaration for \AgdaFunction{fold}:
+Intuitively, for a subset of a finite set of size \AgdaBound{n}, the function call \AgdaFunction{fold}~\AgdaBound{f}~\AgdaBound{xs} enumerates all \AgdaBound{n} possible elements of the set, testing each in turn whether it is an element of the subset described by \AgdaBound{xs}, acting on the element if so, ignoring it otherwise.
+In order to allow users of the library to write sums in a notation reminiscient of pen-and-paper mathematics we provide a \AgdaKeyword{syntax} declaration for \AgdaFunction{fold}, permitting the notation $\AgdaFunction{⨁[}~\AgdaBound{x}~\AgdaFunction{←}~\AgdaBound{v}~\AgdaFunction{]}~\AgdaBound{e}$ to refer to the application of $\AgdaFunction{fold}$ to the function $(\AgdaSymbol{λ}~\AgdaBound{x}~\AgdaSymbol{→}~\AgdaBound{e})$ and the subset $\AgdaBound{v}$.
 
 \AgdaHide{
 \begin{code}
   infix 6 ⨁-syntax
-\end{code}}
+\end{code}
 \begin{code}
   ⨁-syntax = fold
   syntax ⨁-syntax (λ x → e) v = ⨁[ x ← v ] e
-\end{code}
+\end{code}}
 \AgdaHide{
 \begin{code}
   open import Algebra.FunctionProperties _≈_
@@ -200,28 +203,24 @@ In order to allow users of the library to write sums in a notation reminiscient 
   open P using (_≡_)
 \end{code}}
 
-\paragraph{Properties}
-We now show that sums over commutative monoids have certain properties, which will be used later in the correctness proof.
+We now show that sums over commutative monoids have certain properties, of which we present only a selection of the most useful or interesting.
+We omit proofs, all of which proceed by straightforward case analysis or induction, unless otherwise stated.
 
-\begin{lemma}
-\label{lem.fold.bot}
-The result of folding over an empty set is equivalent to \AgdaField{ε}.
-\end{lemma}
-\begin{proof} By induction over the empty set \AgdaFunction{⊥}:
+Trivially, we have that folding over an empty set is equivalent to the neutral element of the monoid, and folding over a singleton set containing an element \AgdaBound{i} is equivalent to applying the function \AgdaBound{f} to \AgdaBound{i}.
+These facts are expressed as the lemmas \AgdaFunction{fold-⊥} and \AgdaFunction{fold-⁅i⁆}, respectively:
 \begin{code}
   fold-⊥ : ∀ {n} f → fold f (⊥ {n}) ≈ ε
+  
+  fold-⁅i⁆ : ∀ {n} f (i : Fin n) → fold f ⁅ i ⁆ ≈ f i
+\end{code}
+Here, \AgdaFunction{⊥} is the empty set, and $\AgdaFunction{⁅}~\AgdaBound{i}~\AgdaFunction{⁆}$ is a singleton set containing only \AgdaBound{i}.  
+\AgdaHide{
+\begin{code}
   fold-⊥ {zero}   f = refl
   fold-⊥ {suc n}  f = fold-⊥ (f ∘ suc)
-\end{code}
-\end{proof}
-
-\begin{lemma}
-\label{lem.fold.singleton}
-The result of folding over a singleton set using a function \AgdaBound{f} is equivalent to \AgdaBound{f}~\AgdaBound{i}.
-\end{lemma}
-\begin{proof} By induction over the index \(i\):
+\end{code}}
+\AgdaHide{
 \begin{code}
-  fold-⁅i⁆ : ∀ {n} f (i : Fin n) → fold f ⁅ i ⁆ ≈ f i
   fold-⁅i⁆ f zero =
     begin
       f zero ∙ fold (f ∘ suc) ⊥  ≈⟨ ∙-cong refl (fold-⊥ (f ∘ suc)) ⟩
@@ -229,18 +228,23 @@ The result of folding over a singleton set using a function \AgdaBound{f} is equ
       f zero
     ∎
   fold-⁅i⁆ f (suc i) = fold-⁅i⁆ (f ∘ suc) i
-\end{code}
-\end{proof}
+\end{code}}
 
-\begin{lemma}
-\label{lem.fold.union}
-If the underlying operator is idempotent, folding over the union of two sets is equivalent to folding over the sets individually and adding the results together.
-\end{lemma}
-\begin{proof} By simultaneous induction over the two sets:
+Folding a function \AgdaBound{f} over a union of two subsets, \AgdaBound{xs} and \AgdaBound{ys}, is equivalent to folding over \AgdaBound{xs} and \AgdaBound{ys} separately and combining the two results with the monoid's binary operator, \AgdaField{∙}, whenever the operator is idempotent, as expressed by lemma \AgdaFunction{fold-∪}:
+
 \begin{code}
   fold-∪ :  ∀ {n} (idp : Idempotent _∙_) f (xs : Subset n) (ys : Subset n) →
             fold f (xs ∪ ys) ≈ fold f xs ∙ fold f ys
+\end{code}
+
+The proof proceeds by simultaneous induction on both subsets, combined with equational reasoning, considering all possible combinations of \AgdaInductiveConstructor{inside} and \AgdaInductiveConstructor{outside} denoting whether the $n^\mathrm{th}$ element of a set is a member of the subset or not.
+We present a single case, the combination \AgdaInductiveConstructor{inside}-\AgdaInductiveConstructor{inside}:
+
+\AgdaHide{
+\begin{code}
   fold-∪ idp f []             []             = sym (proj₁ identity _)
+\end{code}}
+\begin{code}
   fold-∪ idp f (inside ∷ xs)  (inside ∷ ys)  =
     begin
       f zero ∙ fold (f ∘ suc) (xs ∪ ys)
@@ -257,6 +261,12 @@ If the underlying operator is idempotent, folding over the union of two sets is 
     ≈⟨ sym (assoc _ _ _) ⟩
       (f zero ∙ fold (f ∘ suc) xs) ∙ (f zero ∙ fold (f ∘ suc) ys)
     ∎
+\end{code}
+
+Here, \AgdaFunction{assoc}, \AgdaFunction{sym}, and \AgdaFunction{∙-cong} are the associativity, symmetry, and congruence with respect to setoid-equivalence properties of the underlying commutative monoid, respectively.
+
+\AgdaHide{
+\begin{code}
   fold-∪ idp f (inside ∷ xs) (outside ∷ ys) =
     begin
       f zero ∙ fold (f ∘ suc) (xs ∪ ys)
@@ -278,24 +288,43 @@ If the underlying operator is idempotent, folding over the union of two sets is 
       fold (f ∘ suc) xs ∙ (f zero ∙ fold (f ∘ suc) ys)
     ∎
   fold-∪ idp f (outside ∷ xs) (outside ∷ ys) = fold-∪ idp (f ∘ suc) xs ys
-\end{code}
-\end{proof}
+\end{code}}
 
 \AgdaHide{
 \begin{code}
   fold-cong-lemma : ∀ {n} (f g : Fin (suc n) → Carrier) x (xs : Subset n) →
                     (∀ i → i ∈ (x ∷ xs) → f i ≈ g i) → (∀ i → i ∈ xs → f (suc i) ≈ g (suc i))
+\end{code}
+\begin{code}
   fold-cong-lemma f g x [] eq i ()
   fold-cong-lemma f g x (inside ∷ ys) eq i i∈y∷ys = eq (suc i) (there i∈y∷ys)
   fold-cong-lemma f g x (outside ∷ ys) eq zero ()
   fold-cong-lemma f g x (outside ∷ ys) eq (suc i) (there i∈y∷ys) = fold-cong-lemma (f ∘ suc) (g ∘ suc) outside ys (λ i x → eq (suc i) (there x)) i i∈y∷ys
+\end{code}}
 
-  fold-cong : ∀ {n} f g (xs : Subset n) → (∀ i → i ∈ xs → f i ≈ g i) → fold f xs ≈ fold g xs
+Finally, we demonstrate an extensionality property, namely that folding two different functions across the same set results in equivalent values if the functions agree pointwise on all elements in the set.
+This is expressed in the lemma \AgdaFunction{fold-cong}: 
+
+\begin{code}
+  fold-cong : ∀ {n} f g (xs : Subset n) → (∀ i → i ∈ xs → f i ≈ g i) →
+               fold f xs ≈ fold g xs
+\end{code}
+
+\AgdaHide{
+\begin{code}
   fold-cong f g []             eq = refl
   fold-cong f g (inside  ∷ xs) eq = ∙-cong (eq zero here) (fold-cong (f ∘ suc) (g ∘ suc) xs (fold-cong-lemma f g inside xs eq))
   fold-cong f g (outside ∷ xs) eq = fold-cong (f ∘ suc) (g ∘ suc) xs (fold-cong-lemma f g outside xs eq)
+\end{code}}
 
+\noindent
+The proof proceeds by induction on $\AgdaBound{xs}$ and is omitted.
+
+\AgdaHide{
+\begin{code}
   fold-distr : ∀ {n} f x (i : Fin n) → fold (λ i → x ∙ f i) ⁅ i ⁆ ≈ x ∙ fold f ⁅ i ⁆
+\end{code}
+\begin{code}
   fold-distr {suc n} f x zero =
     begin
       (x ∙ f zero) ∙ fold ((λ i → x ∙ f i) ∘ suc) ⊥  ≈⟨ ∙-cong refl (fold-⊥ {n} _) ⟩
@@ -304,8 +333,13 @@ If the underlying operator is idempotent, folding over the union of two sets is 
       x ∙ (f zero ∙ fold (f ∘ suc) ⊥)
     ∎
   fold-distr f x (suc i) = fold-distr (f ∘ suc) x i
+\end{code}}
 
+\AgdaHide{
+\begin{code}
   fold-empty : ∀ {n} f (xs : Subset n) → Empty xs → fold f xs ≈ ε
+\end{code}
+\begin{code}
   fold-empty f [] empty = refl
   fold-empty f (inside  ∷ xs) empty = ⊥-elim (empty nonempty)
     where
@@ -317,9 +351,14 @@ If the underlying operator is idempotent, folding over the union of two sets is 
       empty′ []             empty (x , ())
       empty′ (inside  ∷ xs) empty nonempty  = ⊥-elim (empty (suc zero , there here))
       empty′ (outside ∷ xs) empty (i , elm) = ⊥-elim (empty (suc i , there  elm))
+\end{code}}
 
+\AgdaHide{
+\begin{code}
   fold-distr′ : ∀ {n} (idp : Idempotent _∙_) f x (xs : Subset n) → Nonempty xs →
                 fold (λ i → x ∙ f i) xs ≈ x ∙ fold f xs
+\end{code}
+\begin{code}
   fold-distr′ idp f x [] (_ , ())
   fold-distr′ idp f x (inside ∷ xs) (zero , here) with nonempty-dec xs
   ... | yes nonempty-xs =
@@ -362,13 +401,13 @@ If the underlying operator is idempotent, folding over the union of two sets is 
 
 % Subset, Bigop, EstimateOrder
 
-\section{Sorted Vectors}
-\label{sect.sorted.vectors}
+\subsection{Sorted Vectors}
+\label{subsect.sorted.vectors}
 
 % Need to mention AVL trees in standard library
 
-Dijkstra's algorithm fixes the order that nodes in a graph are visited by maintaining a priority queue of previously unvisited nodes---the node with the lowest priority is the node that will be considered next by the algorithm.\footnote{How these priorities are assigned to a node in our particular implementation of Dijkstra's algorithm will be further discussed in Section~\ref{sect.dijkstras.algorithm}.}
-In this Section we define an indexed family of types of sorted vectors that we will use in Sections~\ref{sect.dijkstras.algorithm} and~\ref{sect.correctness} to implement this priority queue of unvisited nodes.
+Dijkstra's algorithm fixes the order that nodes in a graph are visited by maintaining a priority queue of previously unvisited nodes---the node with the lowest priority is the node that will be considered next by the algorithm.\footnote{How these priorities are assigned to a node in our particular implementation of Dijkstra's algorithm will be further discussed in Section~\ref{sect.dijkstras.algorithm.and.its.correctness}.}
+In this Subsection we define an indexed family of types of sorted vectors that we will use in Section~\ref{sect.dijkstras.algorithm.and.its.correctness} to implement this priority queue of unvisited nodes.
 Here, for generality we keep the particular type used to implement priorties abstract, and any type with a decidable total order structure defined over them will suffice.
 
 Note that we prefer working with a linear sorted data structure, compared to a balanced binary tree such as Agda's existing implementation of AVL trees in \AgdaModule{Data.AVL}, to simplify proofs.
