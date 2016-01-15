@@ -147,10 +147,11 @@ The properties of the Path Algebra addition operator, \AgdaFunction{\_+\_}, incl
 In combination, these properties allow us to make strong claims about the behaviour of edge weight sums. 
 
 For convenience, we define path weight sums over commutative monoids since they are well supported by the standard library.
-Idempotency is required explicitly whenever it is needed.
+A proof of idempotency is required explicitly whenever needed.
 
-Key to understanding this section is knowledge of the family of types, \AgdaFunction{Subset}~\AgdaBound{n}, which describes subsets of finite sets of size \AgdaBound{n}, and implemented in the Agda standard library.
-\AgdaFunction{Subset}~\AgdaBound{n} is a fixed-length list of length \AgdaBound{n} containing one of two flags---\AgdaInductiveConstructor{inside} and \AgdaInductiveConstructor{outside}---detailing whether a given element lies inside or outside of the described subset.
+Key to understanding this section is knowledge of the family of types, \AgdaFunction{Subset}~\AgdaBound{n}, describing subsets of finite sets of size \AgdaBound{n}, and implemented in the \AgdaModule{Data.Fin.Subset} module of the Agda standard library.
+\AgdaFunction{Subset}~\AgdaBound{n} is a fixed-length list of length \AgdaBound{n}.
+At each index \AgdaBound{i} of the vector are one of two flags---\AgdaInductiveConstructor{inside} or \AgdaInductiveConstructor{outside}---denotating whether the $i^\mathrm{th}$ element of the finite set in question is inside or outside the described subset, i.e. a partitioning of a finite set into two new sets.
 
 We use the function \AgdaFunction{fold} to define sums over subsets of finite sets using the underlying monoid's identity element \AgdaField{ε} and binary operator \AgdaField{∙}:
 
@@ -182,7 +183,7 @@ module itp16-Bigop
   fold f (outside ∷ xs)  =           fold (f ∘ suc) xs
 \end{code}
 Intuitively, for a subset of a finite set of size \AgdaBound{n}, the function call \AgdaFunction{fold}~\AgdaBound{f}~\AgdaBound{xs} enumerates all \AgdaBound{n} possible elements of the set, testing each in turn whether it is an element of the subset described by \AgdaBound{xs}, acting on the element if so, ignoring it otherwise.
-In order to allow users of the library to write sums in a notation reminiscient of pen-and-paper mathematics we provide a \AgdaKeyword{syntax} declaration for \AgdaFunction{fold}, permitting the notation $\AgdaFunction{⨁[}~\AgdaBound{x}~\AgdaFunction{←}~\AgdaBound{v}~\AgdaFunction{]}~\AgdaBound{e}$ to refer to the application of $\AgdaFunction{fold}$ to the function $(\AgdaSymbol{λ}~\AgdaBound{x}~\AgdaSymbol{→}~\AgdaBound{e})$ and the subset $\AgdaBound{v}$.
+For convenience we provide a \AgdaKeyword{syntax} declaration for \AgdaFunction{fold}, so that the notation $\AgdaFunction{⨁[}~\AgdaBound{x}~\AgdaFunction{←}~\AgdaBound{v}~\AgdaFunction{]}~\AgdaBound{e}$ denotes the application \AgdaFunction{fold}~(\AgdaSymbol{λ}~\AgdaBound{x}~\AgdaSymbol{→}~\AgdaBound{e})~\AgdaBound{v}.
 
 \AgdaHide{
 \begin{code}
@@ -205,15 +206,13 @@ In order to allow users of the library to write sums in a notation reminiscient 
 
 We now show that sums over commutative monoids have certain properties, of which we present only a selection of the most useful or interesting.
 We omit proofs, all of which proceed by straightforward case analysis or induction, unless otherwise stated.
-
 Trivially, we have that folding over an empty set is equivalent to the neutral element of the monoid, and folding over a singleton set containing an element \AgdaBound{i} is equivalent to applying the function \AgdaBound{f} to \AgdaBound{i}.
 These facts are expressed as the lemmas \AgdaFunction{fold-⊥} and \AgdaFunction{fold-⁅i⁆}, respectively:
 \begin{code}
   fold-⊥ : ∀ {n} f → fold f (⊥ {n}) ≈ ε
   
   fold-⁅i⁆ : ∀ {n} f (i : Fin n) → fold f ⁅ i ⁆ ≈ f i
-\end{code}
-Here, \AgdaFunction{⊥} is the empty set, and $\AgdaFunction{⁅}~\AgdaBound{i}~\AgdaFunction{⁆}$ is a singleton set containing only \AgdaBound{i}.  
+\end{code}  
 \AgdaHide{
 \begin{code}
   fold-⊥ {zero}   f = refl
@@ -229,16 +228,17 @@ Here, \AgdaFunction{⊥} is the empty set, and $\AgdaFunction{⁅}~\AgdaBound{i}
     ∎
   fold-⁅i⁆ f (suc i) = fold-⁅i⁆ (f ∘ suc) i
 \end{code}}
-
-Folding a function \AgdaBound{f} over a union of two subsets, \AgdaBound{xs} and \AgdaBound{ys}, is equivalent to folding over \AgdaBound{xs} and \AgdaBound{ys} separately and combining the two results with the monoid's binary operator, \AgdaField{∙}, whenever the operator is idempotent, as expressed by lemma \AgdaFunction{fold-∪}:
+Here, \AgdaFunction{⊥} is the empty set, and $\AgdaFunction{⁅}~\AgdaBound{i}~\AgdaFunction{⁆}$ is a singleton set containing only \AgdaBound{i}.
+Folding a function \AgdaBound{f} over a union of two subsets, \AgdaBound{xs} and \AgdaBound{ys}, is equivalent to folding over \AgdaBound{xs} and \AgdaBound{ys} separately and combining the two results with the commutative monoid's binary operator, \AgdaField{∙}, whenever the operator is idempotent, as expressed by the following lemma, \AgdaFunction{fold-∪}:
 
 \begin{code}
   fold-∪ :  ∀ {n} (idp : Idempotent _∙_) f (xs : Subset n) (ys : Subset n) →
             fold f (xs ∪ ys) ≈ fold f xs ∙ fold f ys
 \end{code}
 
-The proof proceeds by simultaneous induction on both subsets, combined with equational reasoning, considering all possible combinations of \AgdaInductiveConstructor{inside} and \AgdaInductiveConstructor{outside} denoting whether the $n^\mathrm{th}$ element of a set is a member of the subset or not.
-We present a single case, the combination \AgdaInductiveConstructor{inside}-\AgdaInductiveConstructor{inside}:
+The proof proceeds by simultaneous induction on both subsets, combined with equational reasoning.
+For each element of the two sets we must consider whether it lies inside or outside of the subsets being described by \AgdaBound{xs} and \AgdaBound{ys}.
+We present a single case, \AgdaInductiveConstructor{inside}-\AgdaInductiveConstructor{inside}:
 
 \AgdaHide{
 \begin{code}
@@ -262,8 +262,6 @@ We present a single case, the combination \AgdaInductiveConstructor{inside}-\Agd
       (f zero ∙ fold (f ∘ suc) xs) ∙ (f zero ∙ fold (f ∘ suc) ys)
     ∎
 \end{code}
-
-Here, \AgdaFunction{assoc}, \AgdaFunction{sym}, and \AgdaFunction{∙-cong} are the associativity, symmetry, and congruence with respect to setoid-equivalence properties of the underlying commutative monoid, respectively.
 
 \AgdaHide{
 \begin{code}
@@ -302,6 +300,7 @@ Here, \AgdaFunction{assoc}, \AgdaFunction{sym}, and \AgdaFunction{∙-cong} are 
   fold-cong-lemma f g x (outside ∷ ys) eq (suc i) (there i∈y∷ys) = fold-cong-lemma (f ∘ suc) (g ∘ suc) outside ys (λ i x → eq (suc i) (there x)) i i∈y∷ys
 \end{code}}
 
+Here, \AgdaFunction{assoc}, \AgdaFunction{sym}, and \AgdaFunction{∙-cong} are the associativity, symmetry, and congruence with respect to setoid-equivalence properties of the underlying commutative monoid, respectively.
 Finally, we demonstrate an extensionality property, namely that folding two different functions across the same set results in equivalent values if the functions agree pointwise on all elements in the set.
 This is expressed in the lemma \AgdaFunction{fold-cong}: 
 
@@ -406,7 +405,7 @@ The proof proceeds by induction on $\AgdaBound{xs}$ and is omitted.
 
 % Need to mention AVL trees in standard library
 
-Dijkstra's algorithm fixes the order that nodes in a graph are visited by maintaining a priority queue of previously unvisited nodes---the node with the lowest priority is the node that will be considered next by the algorithm.\footnote{How these priorities are assigned to a node in our particular implementation of Dijkstra's algorithm will be further discussed in Section~\ref{sect.dijkstras.algorithm.and.its.correctness}.}
+Dijkstra's algorithm fixes the order that nodes in a graph are visited by maintaining a priority queue of previously unvisited nodes---the node with the lowest priority in this queue is the node that will be considered next by the algorithm.\footnote{How these priorities are assigned to a node in our particular implementation of Dijkstra's algorithm will be further discussed in Section~\ref{sect.dijkstras.algorithm.and.its.correctness}.}
 In this Subsection we define an indexed family of types of sorted vectors that we will use in Section~\ref{sect.dijkstras.algorithm.and.its.correctness} to implement this priority queue of unvisited nodes.
 Here, for generality we keep the particular type used to implement priorties abstract, and any type with a decidable total order structure defined over them will suffice.
 
@@ -524,7 +523,7 @@ We use \AgdaFunction{≼-trans} to construct the domination proof in the `cons' 
   (x ∷ xs ⟨ x≼xs ⟩) ++ ys = insert x (xs ++ ys)
 \end{code}}
 
-Functions that take the head of a vector (\AgdaFunction{head}), append two vectors together (\AgdaFunction{\_++\_}), and so on, can be given the precise types one usually expects when working with vectors.
+Functions that take the head of a vector, \AgdaFunction{head}, append two vectors together, \AgdaFunction{\_++\_}, and so on, can be given the precise types one usually expects when working with vectors.
 Vector membership, \AgdaDatatype{\_∈\_}, is defined using an inductive relation, only complicated slightly by the need to quantify over explicit domination proofs:
 
 \begin{code}
