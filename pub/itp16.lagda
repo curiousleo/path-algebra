@@ -48,8 +48,8 @@ open import Data.Nat
 \end{code}
 }
 
-\title{On the Correctness of a Generalised Dijkstra-like Algorithm}
-\titlerunning{Dijkstra's Algorithm}
+\title{On the Correctness of a Generalised Shortest Path Algorithm}
+\titlerunning{Generalised Shortest Path Algorithm}
 \author{Leonhard D.~Markert \and Timothy G.~Griffin \and Dominic P.~Mulligan}
 %\authorrunning{Leonhard Markert et al.}
 \institute{%
@@ -58,7 +58,13 @@ Computer Laboratory, University of Cambridge}
 \maketitle
 
 \begin{abstract}
-We present an implementation of an algorithm similar to Dijkstra's shortest-path algorithm in Agda. Given a \emph{path algebra} (similar to a semiring) of weight metrics and an adjacency matrix \(A\), the algorithm computes one row of \(R\) satisfying the fixpoint equation \(R = I ⊕ (A ⊗ R)\) where \(I\) is the identity matrix. We call this the \emph{right-local solution} and prove that our implementation finds it.
+We present an implementation and proof of correctness of a shortest-path graph algorithm in Agda.
+The shortest-path algorithm computes locally-optimal shortest paths, in contrast to algorithms like Floyd-Warshall and Dijkstra which both compute globally-optimal paths.
+Shortest path algorithms of this form find are applied in Internet routing.
+
+Following Dynerowicz and Griffin, our proof of correctness is algebraic in character.
+In particular, given an adjacency matrix with coefficients taken from the carrier set of a Path Algebra---a semiring-like algebraic structure---our algorithm computes one row of the right-local solution to a matrix fixpoint equation.
+Our implementation and proof of correctness make essential use of dependent types and some of Agda's more cutting-edge features, such as induction-recursion.
 
 % The abstract should summarize the contents of the paper
 % using at least 70 and at most 150 words. It will be set in 9-point
@@ -68,6 +74,8 @@ We present an implementation of an algorithm similar to Dijkstra's shortest-path
 
 \section{Introduction}
 \label{sect.introduction}
+
+\paragraph{Contributions and map of paper}
 
 \subsection{Agda}
 \label{subsect.agda}
@@ -101,7 +109,7 @@ Universe polymorphism is used extensively throughout this development, with expl
 \section{Basic Definitions}
 \label{sect.basic.definitions}
 
-\subsection{Matrices and graph nodes}
+\subsection{Matrices and Graph Nodes}
 \label{subsect.matrices.and.graph.nodes}
 
 We write \AgdaDatatype{Vec}~\AgdaBound{A}~\AgdaBound{n} for the length-indexed list, or vector, containing elements of type \AgdaBound{A} with length \AgdaBound{n}.
@@ -550,7 +558,7 @@ Using this definition, we may show that the head of a vector is indeed the small
 
 The proof proceeds by analysing the cases under which \AgdaBound{x}~\AgdaFunction{∈}~\AgdaBound{xs}, and affirms the suitability of \AgdaDatatype{SortedVec} as a priority queue implementation.
 
-\section{Path Algebras, Their Properties And Models}
+\section{Path Algebras, their Properties and Models}
 \label{sect.path.algebras.their.properties.and.models}
 
 Algebraic structures called Path Algebras are at the heart of our formalisation of Dijkstra's algorithm.
@@ -571,23 +579,23 @@ module MoreFunctionProperties {a ℓ} {A : Set a} (_≈_ : Rel A ℓ) where
   open import Data.Sum
 \end{code}}
 
-\begin{figure}[h]
+\begin{figure}[t]
 \centering
-\begin{tabular}{c|l@{\;\;\;}l}
-\emph{Operation} & \emph{Semiring} & \emph{Path Algebra} \\
+\begin{tabular}{c||l@{\;\;\;}|l}
+\textbf{Operation} & \textbf{Semiring} & \textbf{Path Algebra} \\
 \midrule
-\AgdaFunction{+} & Associative & Associative \\
+\AgdaFunction{\_+\_} & Associative & Associative \\
                  & Commutative & Commutative \\
-                 & Identity \AgdaField{0\#} & Identity \AgdaField{0\#} \\
+                 & Identity: \AgdaField{0\#} & Identity: \AgdaField{0\#} \\
                  & ---                      & Selective \\
-                 & ---                      & Zero \AgdaField{1\#} \\
+                 & ---                      & Zero: \AgdaField{1\#} \\
 \midrule
-\AgdaFunction{*} & Associative & --- \\
-                 & Identity \AgdaField{1\#} & Left identity \AgdaField{1\#} \\
-                 & Zero \AgdaField{0\#}     & --- \\
+\AgdaFunction{\_*\_} & Associative & --- \\
+                 & Identity: \AgdaField{1\#} & Left identity: \AgdaField{1\#} \\
+                 & Zero: \AgdaField{0\#}     & --- \\
 \midrule
-\AgdaFunction{*} and \AgdaFunction{+} & \AgdaFunction{*} distributes over \AgdaFunction{+} &
-                   \AgdaFunction{+} absorbs \AgdaFunction{*} \\
+\AgdaFunction{\_*\_} and \AgdaFunction{\_+\_} & \AgdaFunction{\_*\_} distributes over \AgdaFunction{\_+\_} &
+                   \AgdaFunction{\_+\_} absorbs \AgdaFunction{\_*\_} \\
 \bottomrule
 \end{tabular}
 \label{tab.path.algebra}
