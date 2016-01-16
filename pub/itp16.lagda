@@ -29,6 +29,7 @@
 \DeclareUnicodeCharacter{ 7522}{\ensuremath{{}_{i}}} % ᵢ
 \DeclareUnicodeCharacter{11388}{\ensuremath{{}_{j}}} % ⱼ
 \DeclareUnicodeCharacter{ 7524}{\ensuremath{{}_{u}}} % ᵤ
+\DeclareUnicodeCharacter{ 7480}{\ensuremath{\ell}} % ℓ
 
 \newcommand{\todo}[1]{{\color{red}{\ensuremath{\texttt{[TODO: #1]}}}}}
 
@@ -57,9 +58,9 @@ open import Data.Nat
 \maketitle
 
 \begin{abstract}
-We present an implementation and proof of correctness of a shortest-path graph algorithm in Agda.
-The shortest-path algorithm computes locally-optimal shortest paths, in contrast to algorithms like Floyd-Warshall and Dijkstra which both compute globally-optimal paths.
-Shortest path algorithms of this form find are applied in Internet routing.
+We present an implementation and proof of correctness of a shortest path graph algorithm in Agda.
+The shortest path algorithm computes locally optimal shortest paths, in contrast to algorithms like Floyd-Warshall and Dijkstra which both compute globally optimal paths.
+Shortest path algorithms of this form are applied in Internet routing.
 
 Following Dynerowicz and Griffin, our proof of correctness is algebraic in character.
 In particular, given an adjacency matrix with coefficients taken from the carrier set of a Path Algebra---a semiring-like algebraic structure---our algorithm computes one row of the right-local solution to a matrix fixpoint equation.
