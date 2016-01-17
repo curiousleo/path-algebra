@@ -19,7 +19,7 @@ module Dijkstra.Correctness
     {n} (i : Fin (suc n)) (adj : Adj.Adj alg (suc n))
     where
 
-open import Algebra.Path.Properties
+open import Algebra.Path.Properties using (module RequiresPathAlgebra)
 open import Dijkstra.Algorithm alg i adj
 open import Dijkstra.Properties alg i adj
 
@@ -47,7 +47,7 @@ open P.≡-Reasoning
 open Adj alg
 open DecTotalOrder Data.Nat.decTotalOrder using () renaming (refl to ≤-refl)
 open PathAlgebra alg renaming (Carrier to Weight)
-open RequiresPathAlgebra alg
+open RequiresPathAlgebra alg using (decTotalOrderᴸ ; +-idempotent)
 open DecTotalOrder decTotalOrderᴸ using (_≤_)
 open import Dijkstra.EstimateOrder decTotalOrderᴸ using (estimateOrder)
 open import Dijkstra.Bigop +-commutativeMonoid
