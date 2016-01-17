@@ -622,6 +622,8 @@ We call the carrier type of a Path Algebra (the set $S$ in the definition above)
 \subsection{Properties}
 \label{subsect.properties}
 
+In this section we first introduce the left and right canonical orders of commutative monoids and show that both give rise to total orders when selectivity is assumed.
+
 \AgdaHide{
 \begin{code}
 ------------------------------------------------------------------------
@@ -694,17 +696,17 @@ module itp16-requires-commutative-monoid
         ∎
 \end{code}
 
-\AgdaHide{
-\begin{code}
-  ⊴ᴸ‿¬irrefl : ¬ Irreflexive _≈_ _⊴ᴸ_
-  ⊴ᴸ‿¬irrefl irrefl = irrefl (proj₁ identity ε) (ε , refl)
-
-  ⊴ᴸ‿¬tri : ¬ Trichotomous _≈_ _⊴ᴸ_
-  ⊴ᴸ‿¬tri tri with tri ε ε
-  ... | tri< a ¬b ¬c = ¬b refl
-  ... | tri≈ ¬a b ¬c = ¬a (ε , (sym (proj₁ identity ε)))
-  ... | tri> ¬a ¬b c = ¬b refl
-\end{code}}
+%\AgdaHide{
+%\begin{code}
+%  ⊴ᴸ‿¬irrefl : ¬ Irreflexive _≈_ _⊴ᴸ_
+%  ⊴ᴸ‿¬irrefl irrefl = irrefl (proj₁ identity ε) (ε , refl)
+%
+%  ⊴ᴸ‿¬tri : ¬ Trichotomous _≈_ _⊴ᴸ_
+%  ⊴ᴸ‿¬tri tri with tri ε ε
+%  ... | tri< a ¬b ¬c = ¬b refl
+%  ... | tri≈ ¬a b ¬c = ¬a (ε , (sym (proj₁ identity ε)))
+%  ... | tri> ¬a ¬b c = ¬b refl
+%\end{code}}
   
 \begin{code}
   isTotalOrderᴸ : Selective _∙_ → IsTotalOrder _≈_ _⊴ᴸ_
@@ -801,7 +803,13 @@ module itp16-requires-commutative-monoid
       total x y with selective x y
       ... | inj₁ ≈x = inj₂ (x , (trans (sym ≈x) (comm _ _)))
       ... | inj₂ ≈y = inj₁ (y , (sym ≈y))
+\end{code}
+}
 
+Next, we show that the left canonical order of a path algebra's addition operator is a decidable total order.
+
+\AgdaHide{
+\begin{code}
 module itp16-requires-path-algebra
        {c ℓ} (dijkstra : PathAlgebra c ℓ) where
 
@@ -1007,6 +1015,7 @@ module itp16-requires-path-algebra
               b
             ∎
 
+{-
   *-rightIncreasingᴸ : (a b : Carrier) → a ⊴ᴸ a * b
   *-rightIncreasingᴸ a b = a , lemma
     where
@@ -1019,13 +1028,15 @@ module itp16-requires-path-algebra
             ≈⟨ +-absorbs-* a b ⟩
           a
         ∎
+-}
 
-  1#-bottomᴸ : ∀ a → 1# ⊴ᴸ a
-  1#-bottomᴸ a = 1# , sym (proj₂ +-zero a)
+--  1#-bottomᴸ : ∀ a → 1# ⊴ᴸ a
+--  1#-bottomᴸ a = 1# , sym (proj₂ +-zero a)
 
-  0#-topᴸ : ∀ a → a ⊴ᴸ 0#
-  0#-topᴸ a = a , sym (proj₁ +-identity a)
+--  0#-topᴸ : ∀ a → a ⊴ᴸ 0#
+--  0#-topᴸ a = a , sym (proj₁ +-identity a)
 
+{-
   +-upperᴸ : ∀ {a b c} → a ⊴ᴸ b → a ⊴ᴸ c → a ⊴ᴸ b + c
   +-upperᴸ {a} {b} {c} (d , a≡b+d) (e , a≡c+e) = d + e , lemma
     where
@@ -1050,6 +1061,7 @@ module itp16-requires-path-algebra
             ≈⟨ +-idempotent a ⟩
           a
         ∎
+-}
 
   isDecTotalOrderᴸ : IsDecTotalOrder _≈_ _⊴ᴸ_
   isDecTotalOrderᴸ =
