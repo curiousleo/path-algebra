@@ -931,6 +931,7 @@ module itp16-requires-path-algebra
         where
           open Equivalence (equivalentᴸ a b) renaming (to to b+a≈a⟶a⊴ᴸb)
 
+{-
   lem₁ : ∀ {a b} → a ≈ b → ¬ a ⊲ᴸ b
   lem₁ a≈b (_ , ¬a≈b) = ¬a≈b a≈b
 
@@ -1073,7 +1074,7 @@ module itp16-requires-path-algebra
               a + x  ≈⟨ sym b≈a+x ⟩
               b
             ∎
-
+-}
 {-
   *-rightIncreasingᴸ : (a b : Carrier) → a ⊴ᴸ a * b
   *-rightIncreasingᴸ a b = a , lemma
