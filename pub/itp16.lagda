@@ -29,7 +29,7 @@
 \DeclareUnicodeCharacter{ 7522}{\ensuremath{{}_{i}}} % ᵢ
 \DeclareUnicodeCharacter{11388}{\ensuremath{{}_{j}}} % ⱼ
 \DeclareUnicodeCharacter{ 7524}{\ensuremath{{}_{u}}} % ᵤ
-\DeclareUnicodeCharacter{ 7480}{\ensuremath{\ell}} % ℓ
+\DeclareUnicodeCharacter{ 7480}{\ensuremath{{}^{\textsf{L}}}} % ᴸ
 
 \newcommand{\todo}[1]{{\color{red}{\ensuremath{\texttt{[TODO: #1]}}}}}
 
