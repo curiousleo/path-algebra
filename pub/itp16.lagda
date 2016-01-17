@@ -161,7 +161,7 @@ Key to understanding this section is knowledge of the family of types, \AgdaFunc
 \AgdaFunction{Subset}~\AgdaBound{n} is a fixed-length list of length \AgdaBound{n}.
 At each index \AgdaBound{i} of the vector are one of two flags---\AgdaInductiveConstructor{inside} or \AgdaInductiveConstructor{outside}---denotating whether the $i^\mathrm{th}$ element of the finite set in question is inside or outside the described subset, i.e. a partitioning of a finite set into two new sets.
 
-We use the function \AgdaFunction{fold} to define sums over subsets of finite sets using the underlying monoid's identity element \AgdaField{ε} and binary operator \AgdaField{∙}:
+We use the function \AgdaFunction{fold} to define sums over subsets of finite sets using the underlying monoid's identity element \AgdaField{ε} and binary operator \AgdaField{\_∙\_}:
 
 \AgdaHide{
 \begin{code}
@@ -237,7 +237,7 @@ These facts are expressed as the lemmas \AgdaFunction{fold-⊥} and \AgdaFunctio
   fold-⁅i⁆ f (suc i) = fold-⁅i⁆ (f ∘ suc) i
 \end{code}}
 Here, \AgdaFunction{⊥} is the empty set, and $\AgdaFunction{⁅}~\AgdaBound{i}~\AgdaFunction{⁆}$ is a singleton set containing only \AgdaBound{i}.
-Folding a function \AgdaBound{f} over a union of two subsets, \AgdaBound{xs} and \AgdaBound{ys}, is equivalent to folding over \AgdaBound{xs} and \AgdaBound{ys} separately and combining the two results with the commutative monoid's binary operator, \AgdaField{∙}, whenever the operator is idempotent, as expressed by the following lemma, \AgdaFunction{fold-∪}:
+Folding a function \AgdaBound{f} over a union of two subsets, \AgdaBound{xs} and \AgdaBound{ys}, is equivalent to folding over \AgdaBound{xs} and \AgdaBound{ys} separately and combining the two results with the commutative monoid's binary operator, \AgdaField{\_∙\_}, whenever the operator is idempotent, as expressed by the following lemma, \AgdaFunction{fold-∪}:
 
 \begin{code}
   fold-∪ :  ∀ {n} (idp : Idempotent _∙_) f (xs : Subset n) (ys : Subset n) →
@@ -313,7 +313,7 @@ Finally, we demonstrate an extensionality property, namely that folding two diff
 This is expressed in the lemma \AgdaFunction{fold-cong}: 
 
 \begin{code}
-  fold-cong : ∀ {n} f g (xs : Subset n) → (∀ i → i ∈ xs → f i ≈ g i) →
+  fold-cong :  ∀ {n} f g (xs : Subset n) → (∀ i → i ∈ xs → f i ≈ g i) →
                fold f xs ≈ fold g xs
 \end{code}
 
@@ -601,8 +601,8 @@ module MoreFunctionProperties {a ℓ} {A : Set a} (_≈_ : Rel A ℓ) where
 \label{fig.path.algebra}
 \end{figure}
 
-Fix a set $S$.
-Call a binary operation on $S$, $- \bullet -$, \emph{selective} when for all $x, y \in S$ either $x \bullet y = x$ or $x \bullet y = y$.
+Fix a set $S$ and an equivalence relation $- ≈ -$.
+Call a binary operation on $S$, $- \bullet -$, \emph{selective} when for all $x, y \in S$ either $x \bullet y ≈ x$ or $x \bullet y ≈ y$.
 With this definition in mind, we call a structure $\langle S, +, *, 0, 1 \rangle$ a `Path Algebra' when:
 \begin{itemize}
 \item
