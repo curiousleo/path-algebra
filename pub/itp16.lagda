@@ -58,13 +58,11 @@ open import Data.Nat
 \maketitle
 
 \begin{abstract}
-We present an implementation and proof of correctness of a shortest path graph algorithm in Agda.
-The shortest path algorithm computes locally optimal shortest paths, in contrast to algorithms like Floyd-Warshall and Dijkstra which both compute globally optimal paths.
-Shortest path algorithms of this form are applied in Internet routing.
-
+We present a functional implementation and mechanised correctness proof of an algorithm which computes locally-optimal shortest paths between nodes in a graph.
+Shortest path algorithms of this form find application in Internet routing.
 Following Dynerowicz and Griffin, our proof of correctness is algebraic in character.
 In particular, given an adjacency matrix with coefficients taken from the carrier set of a Path Algebra---a semiring-like algebraic structure---our algorithm computes one row of the right-local solution to a matrix fixpoint equation.
-Our implementation and proof of correctness make essential use of dependent types and some of Agda's more cutting-edge features, such as induction-recursion.
+We use the proof assistant Agda for our implementation and proof of correctness, making essential use of dependent types and some of Agda's more cutting-edge features, such as induction-recursion, to structure the proof.
 
 % The abstract should summarize the contents of the paper
 % using at least 70 and at most 150 words. It will be set in 9-point
