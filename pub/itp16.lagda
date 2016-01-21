@@ -58,7 +58,7 @@ open import Data.Nat
 \maketitle
 
 \begin{abstract}
-We present a functional implementation and mechanised correctness proof of an algorithm which computes locally-optimal shortest paths between nodes in a graph.
+We present a purely functional implementation and mechanised correctness proof of an algorithm which computes locally-optimal shortest paths between nodes in a graph.
 Shortest path algorithms of this form find application in Internet routing.
 Following Dynerowicz and Griffin, our proof of correctness is algebraic in character.
 In particular, given an adjacency matrix with coefficients taken from the carrier set of a Path Algebra---a semiring-like algebraic structure---our algorithm computes one row of the right-local solution to a matrix fixpoint equation.
