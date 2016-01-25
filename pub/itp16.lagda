@@ -1090,8 +1090,46 @@ We omit the obvious definition.
                      P (queue′ step) → P (queue step {s<n})
 \end{code}}
 
+
 \subsection{Correctness}
 \label{subsect.correctness}
+
+In this section we show that our algorithm computes a right-local solution to the fixpoint equation in \cref{subsect.algorithm}.
+The estimate \(r\) is a right-local solution for node \(j\) at step \(n\) if
+\[r_j ≈ I_{i,j} + \bigoplus_{k ∈ V} r_k * A_{k,j}\]
+where \(V\) is the set of all nodes \emph{(}\AgdaFunction{⊤} in Agda\emph{)}.
+In Agda, we express this as follows:
+
+\AgdaHide{
+\begin{code}
+  RLS : (step : ℕ) {s≤n : step N≤ n} → Pred (Fin (suc n)) _
+\end{code}
+}
+\begin{code}
+  RLS step {s≤n} j = let r = estimate step {s≤n} in
+    r j ≈ I[ i , j ] + (⨁[ k ← ⊤ ] r k * A[ k , j ])
+\end{code}
+
+In order to prove this, we define an auxiliary predicate, \emph{partial right-local solution}:
+the estimate \(r\) is a partial right-local solution for node \(j\) and step \(n\) if
+\[r_j ≈ I_{i,j} + \bigoplus_{k ∈ S_n} r_k * A_{k,j}\]
+where \(S_n\) is the set of nodes that have been visited at step \(n\).
+This is expressed in Agda as follows:
+
+\AgdaHide{
+\begin{code}
+  pRLS : (step : ℕ) {s≤n : step N≤ n} → Pred (Fin (suc n)) _
+\end{code}
+}
+\begin{code}
+  pRLS step {s≤n} j = let r = estimate step {s≤n} in
+    r j ≈ I[ i , j ] + (⨁[ k ← seen step {s≤n} ] r k * A[ k , j ])
+\end{code}
+
+This definition is useful because we expect to compute a partial right-local solution at every step, which allows us to prove by induction that the predicate \AgdaFunction{pRLS} holds for any \AgdaBound{step} and \AgdaBound{j}. We then show that \AgdaFunction{RLS}~\AgdaBound{n}~\AgdaBound{j} follows from \AgdaFunction{pRLS}~\AgdaBound{n}~\AgdaBound{j} and the fact that at step \AgdaBound{n}, all nodes have been visited.
+
+
+\subsection{Correctness (old)}
 
 We now work towards a full proof of correctness of our implementation.
 Here `correctness' entails showing that our algorithm computes a right local solution to the fixpoint equation in Subsection~\ref{subsect.algorithm}.
