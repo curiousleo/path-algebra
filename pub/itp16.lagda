@@ -1194,19 +1194,19 @@ module itp16-Correctness
 
 In this Section we prove that our algorithm computes a Right Local Solution to the matrix fixpoint equation of~\cref{subsect.algorithm}.
 Throughout this Section, we fix \AgdaBound{alg}, an arbitrary inhabitant of \AgdaRecord{PathAlgebra}, and \AgdaBound{adj}, an arbitrary $n \times n$ adjacency matrix describing a graph.
-Ultimately in this Section we aim to show the following statement of correctness:
-\begin{displaymath}
-\AgdaFunction{correct}~\AgdaSymbol{:}~\AgdaSymbol{∀}~\AgdaBound{j}~\AgdaSymbol{→}~\AgdaFunction{RLS}~\AgdaBound{n}~\AgdaSymbol{\{}\AgdaFunction{≤-refl}\AgdaSymbol{\}}~\AgdaBound{j}
-\end{displaymath}
-That is, we claim that after \AgdaBound{n} iterations of the algorithm on the adjacency matrix \AgdaBound{adj}, a Right Local Solution to the matrix fixpoint equation has been found.
-Above, we make use of \AgdaFunction{RLS}, a predicate over graph nodes and steps of the algorithm, which captures the notion of a Right Local Solution.
-An estimate $r_j^{(n)}$ for node $j$ at step $n$ is a Right Local Solution iff the equation
+Ultimately we aim to show the following statement of correctness:
 \begin{equation}
-\label{eqn.correctness.rls}
-r_j^{(n)} ≈ I_{i,j} + \bigoplus_{k ∈ V} r_k^{(n)} * A_{k,j}
+\label{eqn.correctness.correct}
+\AgdaFunction{correct}~\AgdaSymbol{:}~\AgdaSymbol{∀}~\AgdaBound{j}~\AgdaSymbol{→}~\AgdaFunction{RLS}~\AgdaBound{n}~\AgdaSymbol{\{}\AgdaFunction{≤-refl}\AgdaSymbol{\}}~\AgdaBound{j}
 \end{equation}
+That is, our algorithm is correct if, after \AgdaBound{n} iterations of the algorithm on the adjacency matrix \AgdaBound{adj}, a Right Local Solution to the matrix fixpoint equation has been found.
+Above, we make use of \AgdaFunction{RLS}, a predicate over graph nodes and steps of the algorithm, which captures the notion of a Right Local Solution.
+An estimate $r_j^{(n)}$ for node $j$ at step $n$ is a \emph{Right Local Solution} iff the equation
+\begin{displaymath}
+r_j^{(n)} ≈ I_{i,j} + \bigoplus_{k ∈ V} r_k^{(n)} * A_{k,j}
+\end{displaymath}
 % leo: at this point it must be clear to the reader how this corresponds to solving the shortest path problem.
-holds, where $V$ is the set of all nodes in the graph \AgdaBound{adj} (expressed as \AgdaFunction{⊤} in Agda).
+holds, where $V$ is the set of all nodes in the graph described by \AgdaBound{adj} (expressed as \AgdaFunction{⊤} in Agda).
 Concretely, in Agda we define this as follows:
 \AgdaHide{
 \begin{code}
@@ -1219,7 +1219,7 @@ Concretely, in Agda we define this as follows:
       r j ≈ I[ i , j ] + (⨁[ k ← ⊤ ] r k * A[ k , j ])
 \end{code}
 
-To prove Equation~\ref{eqn.correctness.rls} above, we first define an auxiliary, weaker predicate, capturing the notion of a Partial Right Local Solution.
+To prove Property~\ref{eqn.correctness.correct} above, we define an auxiliary, weaker predicate, capturing the notion of a \emph{Partial Right Local Solution}.
 In particular, the estimate $r_j^{(n)}$ for node $j$ at step $n$ is a Partial Right Local Solution iff the equation
 \begin{displaymath}
 r_j^{(n)} ≈ I_{i,j} + \bigoplus_{k ∈ S_n} r_k^{(n)} * A_{k,j}
@@ -1237,8 +1237,7 @@ We express this in Agda as follows:
       r j ≈ I[ i , j ] + (⨁[ k ← seen step {s≤n} ] r k * A[ k , j ])
 \end{code}
 
-This definition of a Partial Right Local Solution, as captured by \AgdaFunction{pRLS}, is central to our proof of correctness.
-At each step of the algorithm, we will show that we have computed a Partial Right Local Solution.
+This definition of a Partial Right Local Solution, as captured by \AgdaFunction{pRLS}, is central to our proof of correctness, as at each step of the algorithm, we will show that we have computed a Partial Right Local Solution.
 Using this fact, we will then prove by induction on the number of steps taken that the predicate \AgdaFunction{pRLS} holds for any \AgdaBound{step} and \AgdaBound{j}.
 We then show that \AgdaFunction{RLS}~\AgdaBound{n}~\AgdaBound{j} follows from \AgdaFunction{pRLS}~\AgdaBound{n}~\AgdaBound{j} and the fact that at step \AgdaBound{n} the algorithm has visited all graph nodes.
 Correctness, as defined above, immediately follows.
@@ -1405,7 +1404,7 @@ We omit the straightforward proof of this fact, which we refer to as \AgdaFuncti
 \end{code}
 }
 Above, we use the shorthands \todo{finish me}.
-This completes the correctness proof of the algorithm.
+With this, we have Property~\ref{eqn.correctness.correct}, and have the correctness proof of the algorithm.
 
 \section{Example}
 \label{sect.example}
