@@ -150,7 +150,7 @@ Here, a field of type \AgdaDatatype{Matrix}~\AgdaField{Carrier}~\AgdaBound{m}~\A
 
 By `sum' we refer to the lifting of a binary operator over an indexed set, like $\bigoplus_{x ∈ X} f(x)$~\cite{bertot_canonical_2008}.
 The properties of the Path Algebra addition operator, \AgdaFunction{\_+\_}, include associativity, commutative and idempotence.
-In combination, these properties allow us to make strong claims about the behaviour of edge weight sums. 
+In combination, these properties allow us to make strong claims about the behaviour of edge weight sums.
 
 For convenience, we define path weight sums over commutative monoids since they are well supported by the standard library.
 A proof of idempotency is required explicitly whenever needed.
@@ -216,9 +216,9 @@ Trivially, we have that folding over an empty set is equivalent to the neutral e
 These facts are expressed as the lemmas \AgdaFunction{fold-⊥} and \AgdaFunction{fold-⁅i⁆}, respectively:
 \begin{code}
   fold-⊥ : ∀ {n} f → fold f (⊥ {n}) ≈ ε
-  
+
   fold-⁅i⁆ : ∀ {n} f (i : Fin n) → fold f ⁅ i ⁆ ≈ f i
-\end{code}  
+\end{code}
 \AgdaHide{
 \begin{code}
   fold-⊥ {zero}   f = refl
@@ -308,7 +308,7 @@ We present a single case, \AgdaInductiveConstructor{inside}-\AgdaInductiveConstr
 
 Here, \AgdaFunction{assoc}, \AgdaFunction{sym}, and \AgdaFunction{∙-cong} are the associativity, symmetry, and congruence with respect to setoid-equivalence properties of the underlying commutative monoid, respectively.
 Finally, we demonstrate an extensionality property, namely that folding two different functions across the same set results in equivalent values if the functions agree pointwise on all elements in the set.
-This is expressed in the lemma \AgdaFunction{fold-cong}: 
+This is expressed in the lemma \AgdaFunction{fold-cong}:
 
 \begin{code}
   fold-cong :  ∀ {n} f g (xs : Subset n) → (∀ i → i ∈ xs → f i ≈ g i) →
@@ -444,7 +444,7 @@ module it16-Sorted
   open V
     using (Vec; foldr)
     renaming ([] to []′; _∷_ to _∷′_; _++_ to _++′_)
-  
+
   open import Function
 
   open import Relation.Binary.PropositionalEquality
@@ -514,7 +514,7 @@ The function \AgdaFunction{insert} places the inserted element in the correct po
 \end{code}
 
 Here, \AgdaFunction{¬x≤y→y≤x} is a proof that $x \not\le y$ implies $y \le x$ in a total order.
-We use \AgdaFunction{≼-trans} to construct the domination proof in the `cons' case of \AgdaFunction{insert}. 
+We use \AgdaFunction{≼-trans} to construct the domination proof in the `cons' case of \AgdaFunction{insert}.
 
 % dpm: not mentioned anywhere, now?  commented out...
 %Appending two vectors, \AgdaFunction{\_++\_}, can be defined easily by repeatedly inserting elements from the first vector into the second.
@@ -764,7 +764,7 @@ module itp16-requires-commutative-monoid
 %  ... | tri≈ ¬a b ¬c = ¬a (ε , (sym (proj₁ identity ε)))
 %  ... | tri> ¬a ¬b c = ¬b refl
 %\end{code}}
-  
+
 \begin{code}
   isTotalOrderᴸ : Selective _∙_ → IsTotalOrder _≈_ _⊴ᴸ_
 \end{code}
@@ -1025,7 +1025,7 @@ This total order is constructed using the \AgdaFunction{order} function, which i
     order step {s≤n} = estimateOrder $ estimate step {s≤n}
 \end{code}
 The function \AgdaFunction{estimateOrder} lifts a mapping from nodes to weights into a decidable total order on nodes.
-The function \AgdaFunction{estimate} provides an estimate of the distance from the start node $i$ to every other node in the graph.   
+The function \AgdaFunction{estimate} provides an estimate of the distance from the start node $i$ to every other node in the graph.
 We define \AgdaFunction{estimate} as follows:
 \begin{code}
     estimate : (step : ℕ) → {s≤n : step ≤ n} → Fin (suc n) → Weight
@@ -1190,45 +1190,54 @@ module itp16-Correctness
 \end{code}
 }
 
-
-In this section we show that our algorithm computes a right-local solution to the fixpoint equation in \cref{subsect.algorithm}.
-Throughout this section, a path algebra \AgdaBound{alg} and an \(n × n\) adjacency matrix \AgdaBound{adj} are taken as arbitrary, but fixed, free variables.
-
-The correctness proof \AgdaFunction{correct}~\AgdaSymbol{:}~\AgdaSymbol{∀}~\AgdaBound{j}~\AgdaSymbol{→}~\AgdaFunction{RLS}~\AgdaBound{n}~\AgdaSymbol{\{}\AgdaFunction{≤-refl}\AgdaSymbol{\}}~\AgdaBound{j} is expressed in terms of the predicate \AgdaFunction{RLS} (for right-local solution) defined below. In words, we claim that after \AgdaBound{n} iterations of the algorithm on the given \(n × n\) matrix, a right-local solution to the fixpoint equation has been found.
-
-An estimate \(r_j^{(n)}\) for node \(j\) at step \(n\) is a right-local solution if
-\[r_j^{(n)} ≈ I_{i,j} + \bigoplus_{k ∈ V} r_k^{(n)} * A_{k,j}\]
+In this Section we demonstrate that our algorithm computes a Right Local Solution to the matrix fixpoint equation of~\cref{subsect.algorithm}.
+Throughout this Section, we fix \AgdaBound{alg}, an arbitrary inhabitant of \AgdaRecord{PathAlgebra}, and \AgdaBound{adj}, an arbitrary $n \times n$ adjacency matrix describing a graph.
+Ultimately in this Section we aim to show the following statement of correctness:
+\begin{displaymath}
+\AgdaFunction{correct}~\AgdaSymbol{:}~\AgdaSymbol{∀}~\AgdaBound{j}~\AgdaSymbol{→}~\AgdaFunction{RLS}~\AgdaBound{n}~\AgdaSymbol{\{}\AgdaFunction{≤-refl}\AgdaSymbol{\}}~\AgdaBound{j}
+\end{displaymath}
+That is, we claim that after \AgdaBound{n} iterations of the algorithm on the adjacency matrix \AgdaBound{adj}, a Right Local Solution to the matrix fixpoint equation has been found.
+Above, we make use of the predicate \AgdaFunction{RLS} which captures the notion of a Right Local Solution.
+An estimate $r_j^{(n)}$ for node $j$ at step $n$ is a Right Local Solution iff the equation
+\begin{equation}
+\label{eqn.correctness.rls}
+r_j^{(n)} ≈ I_{i,j} + \bigoplus_{k ∈ V} r_k^{(n)} * A_{k,j}
+\end{equation}
 % leo: at this point it must be clear to the reader how this corresponds to solving the shortest path problem.
-where \(V\) is the set of all nodes (\AgdaFunction{⊤} in Agda).
-In Agda, we express this as follows:
-
+holds, where $V$ is the set of all nodes in the graph \AgdaBound{adj} (expressed as \AgdaFunction{⊤} in Agda).
+Concretely, in Agda we define this as follows:
 \AgdaHide{
 \begin{code}
   RLS : (step : ℕ) {s≤n : step N≤ n} → Pred (Fin (suc n)) _
 \end{code}
 }
 \begin{code}
-  RLS step {s≤n} j = let r = estimate step {s≤n} in
-    r j ≈ I[ i , j ] + (⨁[ k ← ⊤ ] r k * A[ k , j ])
+  RLS step {s≤n} j =
+    let r = estimate step {s≤n} in
+      r j ≈ I[ i , j ] + (⨁[ k ← ⊤ ] r k * A[ k , j ])
 \end{code}
 
-In order to prove this, we define an auxiliary predicate, \emph{partial right-local solution}:
-the estimate \(r_j^{(n)}\) for node \(j\) at step \(n\) is a partial right-local solution if
-\[r_j^{(n)} ≈ I_{i,j} + \bigoplus_{k ∈ S_n} r_k^{(n)} * A_{k,j}\]
-where \(S_n\) is the set of nodes that have been visited at step \(n\).
-This is expressed in Agda as follows:
-
+To prove Equation~\ref{eqn.correctness.rls} above, we first define an auxiliary, weaker predicate, capturing the notion of a Partial Right Local Solution.
+In particular, the estimate $r_j^{(n)}$ for node $j$ at step $n$ is a Partial Right Local Solution iff the equation
+\begin{displaymath}
+r_j^{(n)} ≈ I_{i,j} + \bigoplus_{k ∈ S_n} r_k^{(n)} * A_{k,j}
+\end{displaymath}
+holds, where $S_n$ is the set of visited nodes at step $n$.
+We express this in Agda as follows:
 \AgdaHide{
 \begin{code}
   pRLS : (step : ℕ) {s≤n : step N≤ n} → Pred (Fin (suc n)) _
 \end{code}
 }
 \begin{code}
-  pRLS step {s≤n} j = let r = estimate step {s≤n} in
-    r j ≈ I[ i , j ] + (⨁[ k ← seen step {s≤n} ] r k * A[ k , j ])
+  pRLS step {s≤n} j =
+    let r = estimate step {s≤n} in
+      r j ≈ I[ i , j ] + (⨁[ k ← seen step {s≤n} ] r k * A[ k , j ])
 \end{code}
 
-This second definition is useful because we expect to compute a partial right-local solution at every step, which allows us to prove by induction that the predicate \AgdaFunction{pRLS} holds for any \AgdaBound{step} and \AgdaBound{j}. We then show that \AgdaFunction{RLS}~\AgdaBound{n}~\AgdaBound{j} follows from \AgdaFunction{pRLS}~\AgdaBound{n}~\AgdaBound{j} and the fact that at step \AgdaBound{n}, all nodes have been visited.
+The definition of a Partial Right Local Solution, as captured by \AgdaFunction{pRLS}, is useful because we expect to compute a Partial Right Local Solution at every step.
+From this, we will then prove by induction that the predicate \AgdaFunction{pRLS} holds for any \AgdaBound{step} and \AgdaBound{j}.
+We then show that \AgdaFunction{RLS}~\AgdaBound{n}~\AgdaBound{j} follows from \AgdaFunction{pRLS}~\AgdaBound{n}~\AgdaBound{j} and the fact that at step \AgdaBound{n}, all graph nodes have been visited.
 
 In the base case (\AgdaBound{step}~\AgdaSymbol{=}~\AgdaInductiveConstructor{zero}), we perform a case split on whether \AgdaBound{j} is equal to the start node \AgdaBound{i}.
 
@@ -1334,7 +1343,7 @@ It can easily be shown that after \(n\) iterations, all \(n\) of the graph's nod
 
 \begin{code}
   correct : ∀ j → RLS n {≤-refl} j
-  correct j = 
+  correct j =
     begin
       r j                                                       ≈⟨ pcorrect n j ⟩
       I[ i , j ] + (⨁[ k ← seen n {≤-refl} ] r k * A[ k , j ])  ≡⟨ lemma ⟩
