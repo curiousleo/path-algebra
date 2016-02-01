@@ -143,7 +143,7 @@ module itp16-Adj {c ℓ} (alg : PathAlgebra c ℓ) where
       diag    : ∀ i → matrix [ i , i ] ≈ 1#
 \end{code}
 
-Here, a field of type \AgdaDatatype{Matrix}~\AgdaField{Carrier}~\AgdaBound{m}~\AgdaBound{m} is bundled with a proof that all diagonal elements of this matrix are equivalent to \AgdaField{1\#}.
+Here, we bundle a field of type \AgdaDatatype{Matrix}~\AgdaField{Carrier}~\AgdaBound{n}~\AgdaBound{n} with a proof that all diagonal elements of this matrix are equivalent to \AgdaField{1\#}.
 
 \subsection{Sums}
 \label{subsect.sums}
@@ -616,6 +616,8 @@ A comparison between Path Algebras and the more familiar notion of Semiring is p
 
 Following established convention, we capture the notion of a path algebra as an Agda record named \AgdaRecord{PathAlgebra}.
 We call the carrier type of a Path Algebra (the set $S$ in the definition above) \AgdaField{Carrier}, obtaining the closure properties mentioned above for `free' as a side-effect of Agda's typing discipline, and assume that there exists a decidable setoid equivalence relation on elements of this type, \AgdaField{\_≈\_}.
+
+\todo{finish this subsection}
 
 \subsection{Models}
 \label{subsect.models}
@@ -1190,14 +1192,14 @@ module itp16-Correctness
 \end{code}
 }
 
-In this Section we demonstrate that our algorithm computes a Right Local Solution to the matrix fixpoint equation of~\cref{subsect.algorithm}.
+In this Section we prove that our algorithm computes a Right Local Solution to the matrix fixpoint equation of~\cref{subsect.algorithm}.
 Throughout this Section, we fix \AgdaBound{alg}, an arbitrary inhabitant of \AgdaRecord{PathAlgebra}, and \AgdaBound{adj}, an arbitrary $n \times n$ adjacency matrix describing a graph.
 Ultimately in this Section we aim to show the following statement of correctness:
 \begin{displaymath}
 \AgdaFunction{correct}~\AgdaSymbol{:}~\AgdaSymbol{∀}~\AgdaBound{j}~\AgdaSymbol{→}~\AgdaFunction{RLS}~\AgdaBound{n}~\AgdaSymbol{\{}\AgdaFunction{≤-refl}\AgdaSymbol{\}}~\AgdaBound{j}
 \end{displaymath}
 That is, we claim that after \AgdaBound{n} iterations of the algorithm on the adjacency matrix \AgdaBound{adj}, a Right Local Solution to the matrix fixpoint equation has been found.
-Above, we make use of the predicate \AgdaFunction{RLS} which captures the notion of a Right Local Solution.
+Above, we make use of \AgdaFunction{RLS}, a predicate over graph nodes and steps of the algorithm, which captures the notion of a Right Local Solution.
 An estimate $r_j^{(n)}$ for node $j$ at step $n$ is a Right Local Solution iff the equation
 \begin{equation}
 \label{eqn.correctness.rls}
@@ -1235,16 +1237,33 @@ We express this in Agda as follows:
       r j ≈ I[ i , j ] + (⨁[ k ← seen step {s≤n} ] r k * A[ k , j ])
 \end{code}
 
-The definition of a Partial Right Local Solution, as captured by \AgdaFunction{pRLS}, is useful because we expect to compute a Partial Right Local Solution at every step.
-From this, we will then prove by induction that the predicate \AgdaFunction{pRLS} holds for any \AgdaBound{step} and \AgdaBound{j}.
-We then show that \AgdaFunction{RLS}~\AgdaBound{n}~\AgdaBound{j} follows from \AgdaFunction{pRLS}~\AgdaBound{n}~\AgdaBound{j} and the fact that at step \AgdaBound{n}, all graph nodes have been visited.
-
-In the base case (\AgdaBound{step}~\AgdaSymbol{=}~\AgdaInductiveConstructor{zero}), we perform a case split on whether \AgdaBound{j} is equal to the start node \AgdaBound{i}.
-
-\paragraph{Base case (\(i = j\)).} \AgdaFunction{estimate}~\AgdaInductiveConstructor{zero}~\AgdaBound{j} is defined as \AgdaFunction{A[}~\AgdaBound{i}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}, which equals \AgdaFunction{A[}~\AgdaBound{i}~\AgdaFunction{,}~\AgdaBound{i}~\AgdaFunction{]} by assumption. This is equivalent to \AgdaFunction{1\#} by the adjacency matrix diagonal property. The theorem follows by the identity matrix' diagonal property and the fact that \AgdaFunction{1\#} is a zero element for \AgdaFunction{+}:
-
+This definition of a Partial Right Local Solution, as captured by \AgdaFunction{pRLS}, is central to our proof of correctness.
+At each step of the algorithm, we will show that we have computed a Partial Right Local Solution.
+Using this fact, we will then prove by induction on the number of steps taken that the predicate \AgdaFunction{pRLS} holds for any \AgdaBound{step} and \AgdaBound{j}.
+We then show that \AgdaFunction{RLS}~\AgdaBound{n}~\AgdaBound{j} follows from \AgdaFunction{pRLS}~\AgdaBound{n}~\AgdaBound{j} and the fact that at step \AgdaBound{n} the algorithm has visited all graph nodes.
+Correctness, as defined above, immediately follows.
+The following lemma
 \begin{code}
   pcorrect : (step : ℕ) {s≤n : step N≤ n} → ∀ j → pRLS step {s≤n} j
+\end{code}
+implements the central argument of our correctness proof described above.
+We now step through its proof, which proceeds by induction on \AgdaBound{step}, the number of steps of the algorithm so far completed.
+
+\paragraph{Base case.}
+In the base case (\AgdaBound{step}~\AgdaSymbol{=}~\AgdaInductiveConstructor{zero}), we perform a case split on whether the node \AgdaBound{j} is equal to the start node, \AgdaBound{i}.
+For the base case we make the following definitions to conserve space: \todo{finish me}.
+
+%       r = estimate zero {z≤n}
+%      diag-lemma = diagonal-nondiag i j ¬i≡j
+%      l∘t = lookup∘tabulate {f = diagonal 0# 1#} i j
+%      I[i,j]≡0 = P.trans l∘t diag-lemma
+%      fold = fold-⁅i⁆ (λ k → estimate zero {z≤n} k * A[ k , j ]) i
+
+First, assume that $i = j$.
+By definition, we have \AgdaFunction{estimate}~\AgdaInductiveConstructor{zero}~\AgdaBound{j} is \AgdaFunction{A[}~\AgdaBound{i}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}, which equals \AgdaFunction{A[}~\AgdaBound{i}~\AgdaFunction{,}~\AgdaBound{i}~\AgdaFunction{]}, by assumption.
+This, in turn, is equivalent to \AgdaFunction{1\#} by the adjacency matrix diagonal property.
+The result follows by the identity matrix' diagonal property and the fact that \AgdaFunction{1\#} is a zero element for \AgdaFunction{\_+\_}:
+\begin{code}
   pcorrect zero {s≤n} j with i FP.≟ j
   ... | yes i≡j =
     begin
@@ -1265,10 +1284,10 @@ In the base case (\AgdaBound{step}~\AgdaSymbol{=}~\AgdaInductiveConstructor{zero
 \end{code}
 }
 
-\paragraph{Base case (\(i ≠ j\)).} We expand the definition of \AgdaFunction{estimate} and use the identity property of \AgdaFunction{+} to show that \AgdaFunction{estimate}~\AgdaInductiveConstructor{zero}~\AgdaBound{j} is equivalent to \AgdaFunction{0\#}~\AgdaFunction{+}~\AgdaFunction{A[}~\AgdaBound{i}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}.
-
-The left-hand side (\AgdaFunction{0\#}) is equal to \AgdaFunction{I[}~\AgdaBound{i}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]} by the definition of the identity matrix and the assumption \(i ≠ j\); the right-hand side (\AgdaFunction{A[}~\AgdaBound{i}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}) is transformed into \(\bigoplus_{k ∈ \{i\}} r_k * A_{k,j}\) using the left-identity property of \AgdaFunction{*} and the adjacency matrix diagonal property as follows:
-
+Next, assume that $i \not= j$.
+We expand the definition of \AgdaFunction{estimate} and use the identity property of \AgdaFunction{\_+\_} to show that \AgdaFunction{estimate}~\AgdaInductiveConstructor{zero}~\AgdaBound{j} is equivalent to \AgdaFunction{0\#}~\AgdaFunction{+}~\AgdaFunction{A[}~\AgdaBound{i}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}.
+The left-hand side (\AgdaFunction{0\#}) is equal to \AgdaFunction{I[}~\AgdaBound{i}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]} by the definition of the identity matrix and the assumption \(i ≠ j\).
+Further, the right-hand side (\AgdaFunction{A[}~\AgdaBound{i}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}) can be massaged into \(\bigoplus_{k ∈ \{i\}} r_k * A_{k,j}\) using the left-identity property of \AgdaFunction{*} and the adjacency matrix diagonal property, as follows:
 \begin{code}
   ... | no ¬i≡j =
     begin
@@ -1291,26 +1310,53 @@ The left-hand side (\AgdaFunction{0\#}) is equal to \AgdaFunction{I[}~\AgdaBound
       I[i,j]≡0 = P.trans l∘t diag-lemma
 
       fold = fold-⁅i⁆ (λ k → estimate zero {z≤n} k * A[ k , j ]) i
+\end{code}}
 
+\paragraph{Induction step.}
+Next, we have the induction step case (\AgdaBound{step} = \AgdaInductiveConstructor{suc}~\AgdaBound{step}) of the partial correctness proof.
+We make use of the following shorthands in the step case to preserve space:
+%       r′ = estimate (suc step) {s≤n}
+%      r  = estimate step {≤-step′ s≤n}
+%      q  = Sorted.head _ (queue step {s≤n})
+%      f  = λ k → r k * A[ k , j ]
+%      f′ = λ k → r′ k * A[ k , j ]
+%      vs = seen step {≤-step′ s≤n}
 
+%      lemma : ∀ k → k ∈ vs → f k ≈ f′ k
+%      lemma k k∈vs = *-cong (sym (estimate-lemma step k k∈vs)) refl
+
+%      fold = fold-cong f f′ vs (λ k k∈vs → lemma k k∈vs)
+To aid the reader, we present the formal proof, using Agda's equational reasoning mechanism, with explicative comments describing each equational reasoning step.
+\begin{code}
   pcorrect (suc step) {s≤n} j =
     begin
       r′ j
-    ≡⟨⟩
+      {- Definition of `estimate' -}
+        ≡⟨⟩
       r j + r q * A[ q , j ]
-    ≈⟨ +-cong (pcorrect step {≤-step′ s≤n} j) refl ⟩
+      {- Induction Hypothesis -}
+        ≈⟨ +-cong (pcorrect step {≤-step′ s≤n} j) refl ⟩
       (I[ i , j ] + (⨁[ k ← vs ] r k * A[ k , j ])) + r q * A[ q , j ]
-    ≈⟨ +-assoc _ _ _ ⟩
+      {- Associativity of _+_ -}
+        ≈⟨ +-assoc _ _ _ ⟩
       I[ i , j ] + ((⨁[ k ← vs ] r k * A[ k , j ]) + r q * A[ q , j ])
-    ≈⟨ +-cong refl (+-cong fold (*-cong (sym (+-absorbs-* _ _)) refl)) ⟩
+      {- Absorptivity -}
+        ≈⟨ +-cong refl (+-cong fold (*-cong (sym (+-absorbs-* _ _)) refl)) ⟩
       I[ i , j ] + ((⨁[ k ← vs ] r′ k * A[ k , j ]) + r′ q * A[ q , j ])
-    ≈⟨ +-cong refl (+-cong refl (sym (fold-⁅i⁆ f′ q))) ⟩
+      {- Singleton Fold -}
+        ≈⟨ +-cong refl (+-cong refl (sym (fold-⁅i⁆ f′ q))) ⟩
       I[ i , j ] + ((⨁[ k ← vs ] r′ k * A[ k , j ]) + (⨁[ k ← ⁅ q ⁆ ] r′ k * A[ k , j ]))
-    ≈⟨ +-cong refl (sym (fold-∪ +-idempotent f′ (seen step) ⁅ q ⁆)) ⟩
+      {- Commutativity and Associativity of _+_ -}
+        ≈⟨ +-cong refl (sym (fold-∪ +-idempotent f′ (seen step) ⁅ q ⁆)) ⟩
       I[ i , j ] + (⨁[ k ← vs ∪ ⁅ q ⁆ ] r′ k * A[ k , j ])
-    ≡⟨⟩
+      {- Definition of `seen` -}
+        ≡⟨⟩
       I[ i , j ] + (⨁[ k ← seen (suc step) {s≤n} ] r′ k * A[ k , j ])
     ∎
+\end{code}
+Above, we use the shorthands \AgdaBound{r} for \AgdaFunction{estimate}~(\AgdaInductiveConstructor{suc}~\AgdaBound{step})~\AgdaSymbol{\{}\AgdaBound{s≤n}\AgdaSymbol{\}}, \AgdaBound{r} for \AgdaFunction{estimate}~\AgdaBound{step}~\AgdaSymbol{\{}\AgdaInductiveConstructor{≤-step′}~\AgdaBound{s≤n}\AgdaSymbol{\}}, \AgdaBound{q} for \AgdaFunction{Sorted.head}~\_~(\AgdaFunction{queue}~\AgdaBound{step}~\AgdaSymbol{\{}\AgdaBound{s≤n}\AgdaSymbol{\}}), \todo{finish me}.
+\AgdaHide{
+\begin{code}
     where
       r′ = estimate (suc step) {s≤n}
       r  = estimate step {≤-step′ s≤n}
@@ -1323,23 +1369,22 @@ The left-hand side (\AgdaFunction{0\#}) is equal to \AgdaFunction{I[}~\AgdaBound
       lemma k k∈vs = *-cong (sym (estimate-lemma step k k∈vs)) refl
 
       fold = fold-cong f f′ vs (λ k k∈vs → lemma k k∈vs)
-\end{code}
-}
+\end{code}}
 
-\paragraph{Induction step.} This induction step of the partial correctness proof is more complex than the base cases. We provide the mathematical justification here and omit the equivalent Agda code for brevity.
+%\begin{align*}
+%r′_j
+%&≡ r_j + r_q * A_{q,j} && \text{Definition of \AgdaFunction{estimate}} \\
+%&≈ \left(I_{i,j} + \left(\bigoplus_{k ∈ S_n} r_k * A_{k,j}\right)\right) + r_q * A_{q,j} && \text{Induction Hypothesis} \\
+%&≈ I_{i,j} + \left(\left(\bigoplus_{k ∈ S_n} r_k * A_{k,j}\right) + r_q * A_{q,j}\right) && \text{Associativity} \\
+%&≈ I_{i,j} + \left(\left(\bigoplus_{k ∈ S_n} r′_k * A_{k,j}\right) + r′_q * A_{q,j}\right) && \text{Absorptivity} \\
+%&≈ I_{i,j} + \left(\left(\bigoplus_{k ∈ S_n} r′_k * A_{k,j}\right) + \left(\bigoplus_{k ∈ \{ q \}} r′_k * A_{k,j}\right)\right) && \text{Singleton fold} \\
+%&≈ I_{i,j} + \bigoplus_{k ∈ S_n ∪ \{ q \}} r′_k * A_{k,j} && \text{Commutativity and Associativity} \\
+%&≡ I_{i,j} + \bigoplus_{k ∈ S_{n+1}} r′_k * A_{k,j} && \text{Definition of \AgdaFunction{seen}}
+%\end{align*}
 
-\begin{align*}
-r′_j
-&≡ r_j + r_q * A_{q,j} && \text{\AgdaFunction{estimate} definition} \\
-&≈ \left(I_{i,j} + \left(\bigoplus_{k ∈ S_n} r_k * A_{k,j}\right)\right) + r_q * A_{q,j} && \text{induction hypothesis} \\
-&≈ I_{i,j} + \left(\left(\bigoplus_{k ∈ S_n} r_k * A_{k,j}\right) + r_q * A_{q,j}\right) && \text{associativity} \\
-&≈ I_{i,j} + \left(\left(\bigoplus_{k ∈ S_n} r′_k * A_{k,j}\right) + r′_q * A_{q,j}\right) && \text{absorptivity} \\
-&≈ I_{i,j} + \left(\left(\bigoplus_{k ∈ S_n} r′_k * A_{k,j}\right) + \left(\bigoplus_{k ∈ \{ q \}} r′_k * A_{k,j}\right)\right) && \text{singleton fold} \\
-&≈ I_{i,j} + \bigoplus_{k ∈ S_n ∪ \{ q \}} r′_k * A_{k,j} && \text{commutativity and associativity} \\
-&≡ I_{i,j} + \bigoplus_{k ∈ S_{n+1}} r′_k * A_{k,j} && \text{\AgdaFunction{seen} definition}
-\end{align*}
-
-It can easily be shown that after \(n\) iterations, all \(n\) of the graph's nodes have been visited, so \AgdaFunction{seen}~\AgdaBound{n}~\AgdaDatatype{≡}~\AgdaFunction{⊤}. We can use this to show that a partial right-local solution after \(n\) steps is the same as a complete right-local solution:
+This completes the proof of \AgdaFunction{pcorrect}.
+Now, we can show that after $n$ iterations all $n$ of the graph's nodes have been visited, so \AgdaFunction{seen}~\AgdaBound{n}~\AgdaDatatype{≡}~\AgdaFunction{⊤}.
+We omit the straightforward proof of this fact, which we refer to as \AgdaFunction{lemma} in the following proof that a Partial Right Local Solution after \(n\) steps is the same as a Right Local Solution:
 
 \begin{code}
   correct : ∀ j → RLS n {≤-refl} j
@@ -1359,6 +1404,8 @@ It can easily be shown that after \(n\) iterations, all \(n\) of the graph's nod
       lemma = P.cong₂ _+_ P.refl (P.cong₂ ⨁-syntax P.refl seen≡⊤)
 \end{code}
 }
+Above, we use the shorthands \todo{finish me}.
+This completes the correctness proof of the algorithm.
 
 \section{Example}
 \label{sect.example}
