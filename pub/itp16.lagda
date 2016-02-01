@@ -1237,16 +1237,15 @@ We express this in Agda as follows:
       r j ≈ I[ i , j ] + (⨁[ k ← seen step {s≤n} ] r k * A[ k , j ])
 \end{code}
 
-This definition of a Partial Right Local Solution, as captured by \AgdaFunction{pRLS}, is central to our proof of correctness, as at each step of the algorithm, we will show that we have computed a Partial Right Local Solution.
-Using this fact, we will then prove by induction on the number of steps taken that the predicate \AgdaFunction{pRLS} holds for any \AgdaBound{step} and \AgdaBound{j}.
-We then show that \AgdaFunction{RLS}~\AgdaBound{n}~\AgdaBound{j} follows from \AgdaFunction{pRLS}~\AgdaBound{n}~\AgdaBound{j} and the fact that at step \AgdaBound{n} the algorithm has visited all graph nodes.
-Correctness, as defined above, immediately follows.
+This definition of a Partial Right Local Solution, as captured by \AgdaFunction{pRLS}, is central to our proof of correctness, as we will prove by induction on the number of algorithm steps taken that the predicate \AgdaFunction{pRLS} holds for any \AgdaBound{step} and \AgdaBound{j}.
+We then show that \AgdaFunction{pRLS}~\AgdaBound{n}~\AgdaBound{j}, and the fact that at step \AgdaBound{n} the algorithm has visited all graph nodes, implies \AgdaFunction{RLS}~\AgdaBound{n}~\AgdaBound{j}.
+Correctness, as defined above, will follow.
 The following lemma
 \begin{code}
   pcorrect : (step : ℕ) {s≤n : step N≤ n} → ∀ j → pRLS step {s≤n} j
 \end{code}
-implements the central argument of our correctness proof described above.
-We now step through its proof, which proceeds by induction on \AgdaBound{step}, the number of steps of the algorithm so far completed.
+implements the central argument of our correctness proof, as previously described.
+We step through its proof, which proceeds by induction on \AgdaBound{step}, the number of steps of the algorithm so far completed.
 
 \paragraph{Base case.}
 In the base case (\AgdaBound{step}~\AgdaSymbol{=}~\AgdaInductiveConstructor{zero}), we perform a case split on whether the node \AgdaBound{j} is equal to the start node, \AgdaBound{i}.
