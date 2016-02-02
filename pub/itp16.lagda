@@ -1249,7 +1249,8 @@ We step through its proof, which proceeds by induction on \AgdaBound{step}, the 
 
 \paragraph{Base case.}
 In the base case (\AgdaBound{step}~\AgdaSymbol{=}~\AgdaInductiveConstructor{zero}), we perform a case split on whether the node \AgdaBound{j} is equal to the start node, \AgdaBound{i}.
-For the base case we make the following definitions to conserve space: \todo{finish me}.
+For the base case we use the following shorthands to conserve space: \AgdaBound{r} for \AgdaFunction{estimate}~\AgdaInductiveConstructor{zero}~\AgdaSymbol{\{}\AgdaBound{z≤n}\AgdaSymbol{\}}, \AgdaBound{diag-lemma} for \AgdaFunction{diagonal-nondiag}~\AgdaBound{i}~\AgdaBound{j}~\AgdaBound{¬i≡j}, \AgdaBound{l∘t} for \AgdaFunction{lookup∘tabulate}~\AgdaSymbol{\{}\AgdaBound{f}~\AgdaSymbol{=}~\AgdaFunction{diagonal}~\AgdaField{0\#}~\AgdaField{1\#}\AgdaSymbol{\}}~\AgdaBound{i}~\AgdaBound{j}, \AgdaBound{I[i,j]≡0} for \AgdaFunction{P.trans}~\AgdaBound{l∘t}~\AgdaFunction{diag-lemma}, and \AgdaBound{fold} for \AgdaFunction{fold-⁅i⁆}~(\AgdaSymbol{λ}~\AgdaBound{k}~\AgdaSymbol{→}~\AgdaFunction{estimate}~\AgdaInductiveConstructor{zero}~\AgdaSymbol{\{}\AgdaBound{z≤n}\AgdaSymbol{\}}~\AgdaBound{k}~\AgdaFunction{*}~\AgdaFunction{A[}~\AgdaBound{k}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]})~\AgdaBound{i}.
+Respectively, these are \todo{explain what these are, and ensure that all lemmas referenced here have been explained earlier in the paper.}
 
 %       r = estimate zero {z≤n}
 %      diag-lemma = diagonal-nondiag i j ¬i≡j
@@ -1312,19 +1313,11 @@ Further, the right-hand side (\AgdaFunction{A[}~\AgdaBound{i}~\AgdaFunction{,}~\
 
 \paragraph{Induction step.}
 Next, we have the induction step case (\AgdaBound{step} = \AgdaInductiveConstructor{suc}~\AgdaBound{step}) of the partial correctness proof.
-We make use of the following shorthands in the step case to preserve space:
-%       r′ = estimate (suc step) {s≤n}
-%      r  = estimate step {≤-step′ s≤n}
-%      q  = Sorted.head _ (queue step {s≤n})
-%      f  = λ k → r k * A[ k , j ]
-%      f′ = λ k → r′ k * A[ k , j ]
-%      vs = seen step {≤-step′ s≤n}
+We make use of the following shorthands to conserve space: \AgdaBound{r} for \AgdaFunction{estimate}~(\AgdaInductiveConstructor{suc}~\AgdaBound{step})~\AgdaSymbol{\{}\AgdaBound{s≤n}\AgdaSymbol{\}}, \AgdaBound{r} for \AgdaFunction{estimate}~\AgdaBound{step}~\AgdaSymbol{\{}\AgdaInductiveConstructor{≤-step′}~\AgdaBound{s≤n}\AgdaSymbol{\}}, \AgdaBound{q} for \AgdaFunction{Sorted.head}~\_~(\AgdaFunction{queue}~\AgdaBound{step}~\AgdaSymbol{\{}\AgdaBound{s≤n}\AgdaSymbol{\}}), \AgdaBound{f} for \AgdaSymbol{λ}~\AgdaBound{k}~\AgdaSymbol{→}~\AgdaBound{r}~\AgdaBound{k}~\AgdaFunction{*}~\AgdaFunction{A[}~\AgdaBound{k}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}, \AgdaBound{f′} for \AgdaSymbol{λ}~\AgdaBound{k}~\AgdaSymbol{→}~\AgdaBound{r′}~\AgdaBound{k}~\AgdaFunction{*}~\AgdaFunction{A[}~\AgdaBound{k}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}, \AgdaBound{vs} for \AgdaFunction{seen}~\AgdaBound{step}~\AgdaSymbol{\{}\AgdaInductiveConstructor{≤-step′}~\AgdaBound{s≤n}\AgdaSymbol{\}}, and \AgdaBound{fold} for \AgdaFunction{fold-cong}~\AgdaBound{f}~\AgdaBound{f′}~\AgdaBound{vs}~(\AgdaSymbol{λ}~\AgdaBound{k}~\AgdaBound{k∈vs}~\AgdaSymbol{→}~\AgdaFunction{lemma}~\AgdaBound{k}~\AgdaBound{k∈vs}).
+These are, respectively, \todo{explain what they are, ensure all lemmas are already explained above}.
+Note, in the definition of \AgdaBound{fold}, we make use of a small \AgdaFunction{lemma}, with type \AgdaSymbol{∀}~\AgdaBound{k}~\AgdaSymbol{→}~\AgdaBound{k}~\AgdaFunction{∈}~\AgdaBound{vs}~\AgdaSymbol{→}~\AgdaBound{f}~\AgdaBound{k}~\AgdaFunction{≈}~\AgdaBound{f′}~\AgdaBound{k}, which shows that \AgdaBound{f} and \AgdaBound{f′} agree on all visited graph vertices.
 
-%      lemma : ∀ k → k ∈ vs → f k ≈ f′ k
-%      lemma k k∈vs = *-cong (sym (estimate-lemma step k k∈vs)) refl
-
-%      fold = fold-cong f f′ vs (λ k k∈vs → lemma k k∈vs)
-To aid the reader, we present the formal proof, using Agda's equational reasoning mechanism, with explicative comments describing each equational reasoning step.
+Below, to aid the reader, we present the formal proof, using Agda's equational reasoning mechanism, with explicative comments describing each equational reasoning step:
 \begin{code}
   pcorrect (suc step) {s≤n} j =
     begin
@@ -1352,7 +1345,7 @@ To aid the reader, we present the formal proof, using Agda's equational reasonin
       I[ i , j ] + (⨁[ k ← seen (suc step) {s≤n} ] r′ k * A[ k , j ])
     ∎
 \end{code}
-Above, we use the shorthands \AgdaBound{r} for \AgdaFunction{estimate}~(\AgdaInductiveConstructor{suc}~\AgdaBound{step})~\AgdaSymbol{\{}\AgdaBound{s≤n}\AgdaSymbol{\}}, \AgdaBound{r} for \AgdaFunction{estimate}~\AgdaBound{step}~\AgdaSymbol{\{}\AgdaInductiveConstructor{≤-step′}~\AgdaBound{s≤n}\AgdaSymbol{\}}, \AgdaBound{q} for \AgdaFunction{Sorted.head}~\_~(\AgdaFunction{queue}~\AgdaBound{step}~\AgdaSymbol{\{}\AgdaBound{s≤n}\AgdaSymbol{\}}), \todo{finish me}.
+
 \AgdaHide{
 \begin{code}
     where
@@ -1402,7 +1395,8 @@ We omit the straightforward proof of this fact, which we refer to as \AgdaFuncti
       lemma = P.cong₂ _+_ P.refl (P.cong₂ ⨁-syntax P.refl seen≡⊤)
 \end{code}
 }
-Above, we use the shorthands \todo{finish me}.
+Above, we use the following shorthands to conserve space: \AgdaBound{r} for \AgdaFunction{estimate}~\AgdaBound{n}~\AgdaSymbol{\{}\AgdaInductiveConstructor{≤-refl}\AgdaSymbol{\}}, \AgdaBound{seen≡⊤} for \AgdaFunction{Sub.n→⊤}~(\AgdaFunction{seen}~\AgdaBound{n})~(\AgdaFunction{seen-size}~\AgdaBound{n}), and \AgdaBound{lemma} for \AgdaFunction{P.cong₂}~\AgdaFunction{\_+\_}~\AgdaInductiveConstructor{P.refl}~(\AgdaFunction{P.cong₂}~\AgdaFunction{⨁-syntax}~\AgdaInductiveConstructor{P.refl}~\AgdaBound{seen≡⊤}).
+These are, respectively: \todo{explain what these are, and any lemmas they depend on.}
 With this, we have Property~\ref{eqn.correctness.correct}, and have the correctness proof of the algorithm.
 
 \section{Example}
