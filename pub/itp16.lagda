@@ -579,20 +579,21 @@ module MoreFunctionProperties {a ℓ} {A : Set a} (_≈_ : Rel A ℓ) where
 \begin{figure}[t]
 \centering
 \begin{tabular}{c||l@{\;\;\;}|l}
-\textbf{Operation} & \textbf{Semiring} & \textbf{Path Algebra} \\
+\textbf{Operation} & \textbf{Semiring} & \textbf{Path Algebra} & \textbf{Selective Dioid} \\
 \midrule
-\AgdaFunction{\_+\_} & Associative & Associative \\
-                 & Commutative & Commutative \\
-                 & Identity: \AgdaField{0\#} & Identity: \AgdaField{0\#} \\
-                 & ---                      & Selective \\
-                 & ---                      & Zero: \AgdaField{1\#} \\
+\AgdaFunction{\_+\_} & Associative & Associative & Associative \\
+                 & Commutative & Commutative & Commutative \\
+                 & Identity: \AgdaField{0\#} & Identity: \AgdaField{0\#} & Identity: \AgdaField{0\#} \\
+                 & ---                      & Selective & Selective \\
+                 & ---                      & Zero: \AgdaField{1\#} & --- \\
 \midrule
-\AgdaFunction{\_*\_} & Associative & --- \\
-                 & Identity: \AgdaField{1\#} & Left identity: \AgdaField{1\#} \\
-                 & Zero: \AgdaField{0\#}     & --- \\
+\AgdaFunction{\_*\_} & Associative & --- & Associative \\
+                 & Identity: \AgdaField{1\#} & Left identity: \AgdaField{1\#} & Identity: \AgdaField{1\#} \\
+                 & Zero: \AgdaField{0\#}     & --- & Zero: \AgdaField{0\#} \\
 \midrule
 \AgdaFunction{\_*\_} and \AgdaFunction{\_+\_} & \AgdaFunction{\_*\_} distributes over \AgdaFunction{\_+\_} &
-                   \AgdaFunction{\_+\_} absorbs \AgdaFunction{\_*\_} \\
+                   \AgdaFunction{\_+\_} absorbs \AgdaFunction{\_*\_} &
+                   \AgdaFunction{\_*\_} distributes over \AgdaFunction{\_+\_} \\
 \bottomrule
 \end{tabular}
 \label{tab.path.algebra}
@@ -1196,13 +1197,13 @@ module itp16-Correctness
 In this section we show that our algorithm computes a right-local solution to the fixpoint equation in \cref{subsect.algorithm}.
 Throughout this section, a path algebra \AgdaBound{alg} and an \(n × n\) adjacency matrix \AgdaBound{adj} are taken as arbitrary, but fixed, free variables.
 
-The correctness proof \AgdaFunction{correct}~\AgdaSymbol{:}~\AgdaSymbol{∀}~\AgdaBound{j}~\AgdaSymbol{→}~\AgdaFunction{RLS}~\AgdaBound{n}~\AgdaSymbol{\{}\AgdaFunction{≤-refl}\AgdaSymbol{\}}~\AgdaBound{j} is expressed in terms of the predicate \AgdaFunction{RLS} (for right-local solution) defined below. In words, we claim that after \AgdaBound{n} iterations of the algorithm on the given \(n × n\) matrix, a right-local solution to the fixpoint equation has been found.
+The correctness proof \AgdaFunction{correct}~\AgdaSymbol{:}~\AgdaSymbol{∀}~\AgdaBound{j}~\AgdaSymbol{→}~\AgdaFunction{RLS}~\AgdaBound{n}~\AgdaSymbol{\{}\AgdaFunction{≤-refl}\AgdaSymbol{\}}~\AgdaBound{j} is expressed in terms of the predicate \AgdaFunction{RLS} (for \emph{right-local solution}) defined below. In words, we claim that after \AgdaBound{n} iterations of the algorithm on the given \(n × n\) matrix, a right-local solution to the fixpoint equation has been found.
 
-An estimate \(r_j^{(n)}\) for node \(j\) at step \(n\) is a right-local solution if
-\[r_j^{(n)} ≈ I_{i,j} + \bigoplus_{k ∈ V} r_k^{(n)} * A_{k,j}\]
+An estimate \(r_j^{(m)}\) for node \(j\) at step \(m\) is a right-local solution if
+\[r_j^{(m)} ≈ I_{i,j} + \bigoplus_{k ∈ V} r_k^{(m)} * A_{k,j}\]
 % leo: at this point it must be clear to the reader how this corresponds to solving the shortest path problem.
 where \(V\) is the set of all nodes (\AgdaFunction{⊤} in Agda).
-In Agda, we express this as follows:
+This predicate can be written in Agda as follows:
 
 \AgdaHide{
 \begin{code}
@@ -1213,11 +1214,10 @@ In Agda, we express this as follows:
   RLS step {s≤n} j = let r = estimate step {s≤n} in
     r j ≈ I[ i , j ] + (⨁[ k ← ⊤ ] r k * A[ k , j ])
 \end{code}
-
-In order to prove this, we define an auxiliary predicate, \emph{partial right-local solution}:
-the estimate \(r_j^{(n)}\) for node \(j\) at step \(n\) is a partial right-local solution if
-\[r_j^{(n)} ≈ I_{i,j} + \bigoplus_{k ∈ S_n} r_k^{(n)} * A_{k,j}\]
-where \(S_n\) is the set of nodes that have been visited at step \(n\).
+In order to prove that it holds, we define an auxiliary predicate, \AgdaFunction{pRLS} (for \emph{partial right-local solution}):
+the estimate \(r_j^{(m)}\) for node \(j\) at step \(m\) is a partial right-local solution if
+\[r_j^{(m)} ≈ I_{i,j} + \bigoplus_{k ∈ S_m} r_k^{(m)} * A_{k,j}\]
+where \(S_m\) (\AgdaFunction{seen}~\AgdaBound{m} in Agda) is the set of nodes that have been visited at step \(n\).
 This is expressed in Agda as follows:
 
 \AgdaHide{
