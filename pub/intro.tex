@@ -1,0 +1,125 @@
+Shortest path algorithms are of central importance in Computer Science. 
+A particularly fascinating aspect of these algorithms is 
+that they can often be generalized to rather exotic algebraic structures
+such as \emph{semirings}~\cite{gondran_graphs_2008}.  
+A semiring $(S,\ \oplus,\ \otimes,\ \overline{0},\ \overline{1})$ is 
+comprised of a commutative monoid $(S,\ \oplus,\ \overline{0})$ 
+and a monoid $(S,\ \otimes,\ \overline{1})$ such that 
+two \emph{distributivity axioms} hold: 
+for all $a, b, c \in S$, 
+\begin{equation}
+\label{eq:left:distributivity}
+    a\otimes (b \oplus c) = (a\otimes b) \oplus (a\otimes c), 
+\end{equation}
+\begin{equation}
+\label{eq:right:distributivity}
+    (b \oplus c) \otimes a = (b\otimes a) \oplus (c\otimes a). 
+\end{equation}
+A directed graph having $n$ nodes and arc weights in $S$ 
+can be represented as a $n\times n$-matrix $\mathbf{A}$ over $S$. 
+Given a path $p = v_0, v_1, \cdots,\ v_k$ (a sequence of nodes), 
+its {\em weight} is defined as 
+\begin{equation}
+\label{eq:def:weight}
+    w_{\mathbf{A}}(p) 
+    \equiv 
+    \mathbf{A}(v_0,\ v_1) 
+    \otimes \mathbf{A}(v_0,\ v_1) 
+    \otimes \cdots 
+    \otimes \mathbf{A}(v_{k-1},\ v_k),  
+\end{equation}
+with the empty path given the weight $\overline{1}$. 
+
+The generalized shortest-path problem is then to find 
+a matrix $\mathbf{A}^*$ such that 
+\begin{equation}
+\label{eq:global}
+\mathbf{A}^*(i,\ j) = \displaystyle\bigoplus_{p \in \pi(i,\ j)} w_{\mathbf{A}}(p) 
+\end{equation}
+where $\pi(i,\ j)$ represents the set of all paths from node $i$ to node $j$. 
+Such solutions do not always exist, and SAY SOMETHING 
+
+
+For the reader not familiar with this generalization 
+we define the \emph{shortest paths semiring} as 
+\begin{equation}
+\label{eq:def:sp}
+\mathbb{sp} \equiv (\mathbb{N},\ \min,\ +, \infty,\ 0),
+\end{equation}
+where path weight is just the sum of arc weights
+To get some feeling for the power of the 
+algebraic approach consider the semiring 
+\begin{equation}
+\label{eq:def:cap}
+\mathbb{cap} \equiv (\mathbb{N},\ \max,\ \min,\ 0,\ \infty),
+\end{equation}
+which can be used to compute \emph{maximum capacity paths}. 
+The weight of a path is determined by $\min$ to be the 
+weight of a bottleneck arc.  
+The key here is that a generic implementation of a shortest
+paths algorithm can be developed and then instantiated with 
+different semirings. 
+
+The interested reader can find a thorough treatment of 
+this material in~\cite{gondran_graphs_2008}.   
+
+\subsection{Dropping distributivity} 
+
+It is well known that if $\mathbf{A}^*$ exists, then it 
+is a solution of the (left) equation 
+\begin{equation}
+\label{eq:left:local}
+\mathbf{L} = (\mathbf{A}\otimes \mathbf{L}) \oplus \mathbf{I}
+\end{equation}
+as well as the (right) equation 
+\begin{equation}
+\label{eq:right:local}
+\mathbf{R} = (\mathbf{R}\otimes \mathbf{A}) \oplus \mathbf{I}. 
+\end{equation}
+
+The distributivity axioms, 
+Equations~\ref{eq:left:distributivity} and~\ref{eq:left:distributivity}, 
+are essential in the semiring theory outlined above. 
+Thus it may seem suprising that recent research has shown that
+the matrix equations ~\ref{eq:left:local} and ~\ref{eq:right:local} 
+can sometimes be solved even if when 
+distributivity axioms do not hold in the algebraic structure employed. 
+Much of this work was originally motivated 
+by investigations of the Border Gageway Protocol (BGP), 
+the Internet routing protocol which has evolved to 
+maintains global connectivity between Internet Service Providers (ISPs). 
+In BGP the anologue of the weight of a path 
+$p = v_0, v_1, \cdots,\ v_k$ at node $v_0$ 
+is dominated by the contractural relationships between 
+the networks associated with nodes $v_0$ and $v_1$.
+The typical relationships involve those between customers 
+and providers and between competing ISPs (that must exchange
+routing information in order to provide connectivty to 
+the global Internet).  
+
+But how can we interpret such solutions? 
+Take Equation~\ref{eq:left:local} for example. 
+If we assume that $\mathbf{L}$ solves this equation 
+and that $i \neq j$, then we have 
+\begin{equation}
+\label{eq:left:local:at:i}
+\mathbf{L}(i,\ j) = \displaystyle\bigoplus_{q \in N(i)} \mathbf{A}(i,\ q) \otimes \mathbf{L}(q,\ j), 
+\end{equation}
+where $N(i)$ is the set of neighbors of node $i$. 
+We can interpret this from node $i$'s perspective as 
+the best path weight available given the paths its neighbors 
+have obtained. 
+That is, $\mathbf{L}$ does not represent the globally optimal 
+path weights, but rather an equilibrium point that we will 
+call \emph{locally optimal}. 
+
+
+%\paragraph{Contributions and map of paper}
+%\subsection{Map of Paper}
+%\label{subsect.map.of.paper}
+%In Section~\ref{sect.basic.definitions} we cover some definitions needed to define Dijkstra's algorithm and its correctness proof.
+%In Section~\ref{sect.path.algebras.their.properties.and.models} we discuss `path algebras', a variety of algebraic structure central to our proof of correctness, also providing three models of path algebras to demonstrate that models exist and that path algebras are not categorical.
+%In Section~\ref{sect.dijkstras.algorithm.and.its.correctness} we discuss the imperative Dijkstra algorithm, our functional implementation, and main body of the correctness proof leading up to our main theorem: Dijkstra's algorithm computes a right-local solution.
+%In Section~\ref{sect.example} we demonstrate the algorithm in action with an example execution inside Agda.
+%In Section~\ref{sect.conclusions} we conclude.
+
