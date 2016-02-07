@@ -32,7 +32,9 @@ $(LLNCSZIP):
 	echo $(LAGDATARGETS) | tr ' ' '\n' > $@
 
 clean:
-	rm -f itp16.{tex,aux,bbl,blg,fls,log,out,agdai,fdb_latexmk,pdf,ptb}
+	rm -f itp16.{aux,bbl,blg,fls,log,out,agdai,fdb_latexmk,pdf,ptb}
+	rm -f $(LAGDATARGETS)
+	rm -f *.agdai
 
 purge: clean
 	rm -f agda.sty $(LLNCSFILES) $(LLNCSZIP)
