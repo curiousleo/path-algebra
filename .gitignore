@@ -1,8 +1,8 @@
 .dir-locals.el
-pub/itp16.tex
 pub/llncs.cls
 pub/splncs03.bst
 pub/llncs2e.zip
+pub/.gitignore
 src/Everything.agda
 
 # Emacs
