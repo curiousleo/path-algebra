@@ -1,0 +1,122 @@
+\documentclass{llncs}
+
+\usepackage{agda}
+\usepackage{amsmath}
+\usepackage[british]{babel}
+\usepackage{booktabs}
+\usepackage{cite}
+\usepackage{color}
+\usepackage{csquotes}
+\usepackage{graphics}
+\usepackage[colorlinks]{hyperref}
+\usepackage[noabbrev,capitalise]{cleveref}
+\usepackage{microtype}
+\usepackage{stmaryrd}
+\usepackage{textgreek}
+
+\setlength{\tabcolsep}{6pt}
+
+\bibliographystyle{splncs03}
+
+\DeclareUnicodeCharacter{ 8261}{\ensuremath{\llbracket}} % ⟦ (really ⁅)
+\DeclareUnicodeCharacter{ 8262}{\ensuremath{\rrbracket}} % ⟧ (really ⁆)
+\DeclareUnicodeCharacter{ 8718}{\ensuremath{\square}} % □ (really ∎)
+\DeclareUnicodeCharacter{ 8760}{\ensuremath{\overset{\cdot}{\vphantom{.}\smash{-}}}} % -} ∸
+\DeclareUnicodeCharacter{ 8799}{\ensuremath{\overset{?}{\vphantom{o}\smash{=}}}} % ≟
+\DeclareUnicodeCharacter{ 8759}{\ensuremath{::}} % ∷
+\DeclareUnicodeCharacter{10753}{\ensuremath{\bigoplus}}
+\DeclareUnicodeCharacter{  737}{\ensuremath{{}^{l}}} % ˡ
+\DeclareUnicodeCharacter{ 7522}{\ensuremath{{}_{i}}} % ᵢ
+\DeclareUnicodeCharacter{11388}{\ensuremath{{}_{j}}} % ⱼ
+\DeclareUnicodeCharacter{ 7524}{\ensuremath{{}_{u}}} % ᵤ
+\DeclareUnicodeCharacter{ 7480}{\ensuremath{{}^{\textsf{L}}}} % ᴸ
+
+\newcommand{\todo}[1]{{\color{red}{\ensuremath{\texttt{[TODO: #1]}}}}}
+
+\begin{document}
+
+\AgdaHide{
+\begin{code}
+module itp16 where
+
+open import Algebra.Path.Structure
+import Data.Matrix.Adjacency as MAdj
+
+open import Data.Fin using (Fin; zero; suc)
+open import Data.Nat
+  using (ℕ; zero; suc; _∸_; z≤n)
+  renaming (_≤_ to _N≤_)
+\end{code}
+}
+
+\title{On the Correctness of a Generalised Shortest Path Algorithm}
+\titlerunning{Generalised Shortest Path Algorithm}
+\author{Leonhard D.~Markert \and Timothy G.~Griffin \and Dominic P.~Mulligan}
+\authorrunning{Leonhard Markert et al.}
+\institute{Computer Laboratory, University of Cambridge}
+
+\maketitle
+
+\begin{abstract}
+\input{abstract.tex}
+\end{abstract}
+
+\section{Introduction}
+\label{sect.introduction}
+
+\input{intro.tex}
+
+\section{Basic definitions}
+\label{sect.basic.definitions}
+
+\input{basics.tex}
+
+\section{Path Algebras, their properties and models}
+\label{sect.path.algebras.their.properties.and.models}
+
+\subsection{Path Algebras}
+\label{subsect.path.algebras}
+
+\input{path-algebras.tex}
+
+\subsection{Models}
+\label{subsect.models}
+
+\input{path-models.tex}
+
+\subsection{Properties}
+\label{subsect.properties}
+
+\input{path-properties.tex}
+
+\section{Dijkstra's Algorithm and its correctness}
+\label{sect.dijkstras.algorithm.and.its.correctness}
+
+In this Section we discuss the generalised imperative Dijkstra's algorithm (Subsection~\ref{subsect.algorithm}), our functional implementation (Subsection~\ref{subsect.functional.implementation}), and the proof of correctness of this implementation (Subsection~\ref{subsect.correctness}).
+
+\subsection{Algorithm}
+\label{subsect.algorithm}
+
+\input{dijkstras-algorithm.tex}
+
+\subsection{A functional implementation}
+\label{subsect.functional.implementation}
+
+\input{dijkstra-impl.tex}
+
+\subsection{Correctness}
+\label{subsect.correctness}
+
+\input{dijkstra-correct.tex}
+
+\section{Example}
+\label{sect.example}
+
+\section{Conclusions}
+\label{sect.conclusions}
+
+\input{conclusions.tex}
+
+\bibliography{path-algebra}
+
+\end{document}

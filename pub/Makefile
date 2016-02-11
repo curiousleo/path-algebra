@@ -4,13 +4,18 @@ AFLAGS += --latex --latex-dir=.
 LATEX = latexmk
 LFLAGS = -pdf -silent
 
+LAGDACHAPTERS = $(sort $(wildcard *.lagda))
+LAGDATARGETS = $(patsubst %.lagda, %.tex, $(LAGDACHAPTERS))
+
 LLNCSFILES = llncs.cls splncs03.bst
 LLNCSZIP = llncs2e.zip
 
-itp16.pdf: itp16.tex agda.sty llncs
+all: itp16.pdf .gitignore
+
+itp16.pdf: itp16.tex $(LAGDATARGETS) agda.sty llncs
 	$(LATEX) $(LFLAGS) $<
 
-itp16.tex: itp16.lagda
+%.tex: %.lagda
 	$(AGDA) $(AFLAGS) $<
 
 llncs: $(LLNCSFILES)
@@ -23,8 +28,13 @@ $(LLNCSZIP):
 	curl -s ftp://ftp.springer.de/pub/tex/latex/llncs/latex2e/llncs2e.zip \
 	     -o $(LLNCSZIP)
 
+.gitignore:
+	echo $(LAGDATARGETS) | tr ' ' '\n' > $@
+
 clean:
-	rm -f itp16.{tex,aux,bbl,blg,fls,log,out,agdai,fdb_latexmk,pdf,ptb}
+	rm -f itp16.{aux,bbl,blg,fls,log,out,agdai,fdb_latexmk,pdf,ptb}
+	rm -f $(LAGDATARGETS)
+	rm -f *.agdai
 
 purge: clean
 	rm -f agda.sty $(LLNCSFILES) $(LLNCSZIP)
