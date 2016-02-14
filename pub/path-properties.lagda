@@ -50,16 +50,39 @@ module itp16-requires-commutative-monoid
   infix 4 _⊴ᴸ_ _⊴ᴿ_ _⊲ᴸ_ _⊲ᴿ_
 
   _⊴ᴸ_ _⊴ᴿ_ _⊲ᴸ_ _⊲ᴿ_ : Rel Carrier _
+--  _⊴ᴸ_ = leftCanonicalOrder _≈_ _∙_
+--  _⊴ᴿ_ = rightCanonicalOrder _≈_ _∙_
+\end{code}}
 
-  _⊴ᴸ_ = leftCanonicalOrder _≈_ _∙_
-  _⊴ᴿ_ = rightCanonicalOrder _≈_ _∙_
+We define the left and right canonical orders (\AgdaFunction{\_⊴ᴸ\_} and \AgdaFunction{\_⊴ᴿ\_}) as follows:\footnote{The literature variously refers to either of the two definitions as \emph{the} canonical order. Gondran and Minoux, for example, use only the right canonical order \cite[p.~18]{gondran_graphs_2008}.}
 
+% Gondran and Minoux, p.18
+
+\begin{code}
+  a ⊴ᴸ b = ∃ λ c → a ≈ (b ∙ c)
+  a ⊴ᴿ b = ∃ λ c → b ≈ (a ∙ c)
+\end{code}
+
+\AgdaHide{
+\begin{code}
   a ⊲ᴸ b = a ⊴ᴸ b × ¬ a ≈ b
   a ⊲ᴿ b = a ⊴ᴿ b × ¬ a ≈ b
 \end{code}}
 
+Note that \AgdaFunction{∃} is defined in Agda's standard library as a shortcut for a dependent pair where the type of the first element (\AgdaField{Carrier} in this case) is left implicit.
+In the following, we will show some of the properties of left canonical orders. We omit their analogues for right canonical orders.
+
 \begin{code}
-  ⊴ᴸ-transitive : Transitive _⊴ᴸ_
+  ⊴ᴸ-reflexive : ∀ {a b} → a ≈ b → a ⊴ᴸ b
+  ⊴ᴸ-reflexive {a} {b} a≈b = ε , sym (trans (proj₂ identity b) (sym a≈b))
+\end{code}
+
+As noted above, the proof comes in the form of a dependent pair. Its first element is \AgdaField{ε}, the monoid's unit. The second element shows that given \AgdaBound{a}~\AgdaField{≈}~\AgdaBound{b}, the equivalence \AgdaBound{a}~\AgdaField{≈}~\AgdaSymbol{(}\AgdaBound{b}~\AgdaField{∙}~\AgdaField{ε}\AgdaSymbol{)} holds.
+
+By the definition of \AgdaFunction{\_⊴ᴸ\_}, this is equivalent to \AgdaBound{a}~\AgdaFunction{⊴ᴸ}~\AgdaBound{b}, so the left canonical order is reflexive.
+
+\begin{code}
+  ⊴ᴸ-transitive : ∀ {a b c} → a ⊴ᴸ b → b ⊴ᴸ c → a ⊴ᴸ c
   ⊴ᴸ-transitive {a} {b} {c} (x , a≈b∙x) (y , b≈c∙y) = x ∙ y , eq
     where
       eq =
@@ -71,6 +94,46 @@ module itp16-requires-commutative-monoid
           c ∙ (x ∙ y)
         ∎
 \end{code}
+
+The transivitiy proof is slightly more involved. Using the algebra's associativity and commutativity laws, we show that \AgdaBound{a}~\AgdaField{≈}~\AgdaBound{c}~\AgdaField{∙}~\AgdaSymbol{(}\AgdaBound{x}~\AgdaField{∙}~\AgdaBound{y}\AgdaSymbol{)} which implies \AgdaBound{a}~\AgdaFunction{⊴ᴸ}~\AgdaBound{c}. We use the constructs \AgdaFunction{begin\_}, \AgdaFunction{\_≈⟨\_⟩\_} and \AgdaFunction{\_∎} from Agda's equational reasoning library here and in the rest of the paper to structure proofs.
+
+The left canonical order is also total, as the next proof shows. This means that for any \AgdaBound{a} and \AgdaBound{b}, \AgdaBound{a}~\AgdaFunction{⊴ᴸ}~\AgdaBound{b} or \AgdaBound{b}~\AgdaFunction{⊴ᴸ}~\AgdaBound{a}.
+The proof rests on the assumption that \AgdaField{\_∙\_} is selective, i.e.~\AgdaBound{a}~\AgdaField{∙}~\AgdaBound{b} is equivalent to either \AgdaBound{a} or \AgdaBound{b}. It proceeds by a case split on the two possible results of \AgdaBound{a}~\AgdaField{∙}~\AgdaBound{b}.
+
+\begin{code}
+  ⊴ᴸ-total : Selective _∙_ → Total _⊴ᴸ_
+  ⊴ᴸ-total selective a b with selective a b
+  ... | inj₁ a∙b≈a  = inj₁ (a , (sym (trans (comm _ _) a∙b≈a)))
+  ... | inj₂ a∙b≈b  = inj₂ (b , (sym a∙b≈b))
+\end{code}
+
+The next proof shows that \AgdaFunction{\_⊴ᴸ\_} is antisymmetric, that is, \AgdaBound{a}~\AgdaFunction{⊴ᴸ}~\AgdaBound{b} and \AgdaBound{b}~\AgdaFunction{⊴ᴸ}~\AgdaBound{a} together imply \AgdaBound{a}~\AgdaField{≈}~\AgdaBound{b}. Again, we assume that \AgdaField{\_∙\_} is selective and proceed by a case split on the results of \AgdaBound{a}~\AgdaField{∙}~\AgdaBound{y} and \AgdaBound{b}~\AgdaField{∙}~\AgdaBound{x}.
+
+\begin{code}
+  ⊴ᴸ-antisym : Selective _∙_ → Antisymmetric _≈_ _⊴ᴸ_
+  ⊴ᴸ-antisym selective {a} {b} (x , a≈b∙x) (y , b≈a∙y) with selective a y | selective b x
+  ... | _           | inj₁ b∙x≈b  = trans a≈b∙x b∙x≈b
+  ... | inj₁ a∙y≈a  | _           = sym (trans b≈a∙y a∙y≈a)
+  ... | inj₂ a∙y≈y  | inj₂ b∙x≈x  = a≈b
+    where
+      a≈x = trans a≈b∙x b∙x≈x
+      b≈y = trans b≈a∙y a∙y≈y
+      a≈b =
+        begin
+          a      ≈⟨ a≈x ⟩
+          x      ≈⟨ sym b∙x≈x ⟩
+          b ∙ x  ≈⟨ ∙-cong b≈y refl ⟩
+          y ∙ x  ≈⟨ comm _ _ ⟩
+          x ∙ y  ≈⟨ ∙-cong (sym a≈x) refl ⟩
+          a ∙ y  ≈⟨ a∙y≈y ⟩
+          y      ≈⟨ sym b≈y ⟩
+          b
+        ∎
+\end{code}
+
+Taken together, these four properties -- reflexivitiy, transitivity, totality and antisymmetry -- imply that the left canonical order on a selective commutative monoid is a total order.
+
+%leo: also mention non-irreflexivity and non-trichotomy?
 
 %\AgdaHide{
 %\begin{code}
@@ -84,12 +147,9 @@ module itp16-requires-commutative-monoid
 %  ... | tri> ¬a ¬b c = ¬b refl
 %\end{code}}
 
-\begin{code}
-  isTotalOrderᴸ : Selective _∙_ → IsTotalOrder _≈_ _⊴ᴸ_
-\end{code}
-
 \AgdaHide{
 \begin{code}
+  isTotalOrderᴸ : Selective _∙_ → IsTotalOrder _≈_ _⊴ᴸ_
   isTotalOrderᴸ selective =
     record
       { isPartialOrder =
@@ -100,89 +160,14 @@ module itp16-requires-commutative-monoid
               ; reflexive = ⊴ᴸ-reflexive
               ; trans = ⊴ᴸ-transitive
               }
-          ; antisym = ⊴ᴸ-antisym
+          ; antisym = ⊴ᴸ-antisym selective
           }
-      ; total = total
+      ; total = ⊴ᴸ-total selective
     }
-    where
-      ⊴ᴸ-reflexive : _≈_ ⇒ _⊴ᴸ_
-      ⊴ᴸ-reflexive {a} {b} a≈b = ε , sym (trans (proj₂ identity b) (sym a≈b))
-
-      ⊴ᴸ-antisym : Antisymmetric _≈_ _⊴ᴸ_
-      ⊴ᴸ-antisym {a} {b} (x , a≈b∙x) (y , b≈a∙y) with selective a y | selective b x
-      ... | _          | inj₁ b∙x≈b = trans a≈b∙x b∙x≈b
-      ... | inj₁ a∙y≈a | _          = sym (trans b≈a∙y a∙y≈a)
-      ... | inj₂ a∙y≈y | inj₂ b∙x≈x = a≈b
-        where
-          a≈x = trans a≈b∙x b∙x≈x
-          b≈y = trans b≈a∙y a∙y≈y
-          a≈b =
-            begin
-              a ≈⟨ a≈x ⟩
-              x ≈⟨ sym b∙x≈x ⟩
-              b ∙ x ≈⟨ ∙-cong b≈y refl ⟩
-              y ∙ x ≈⟨ comm _ _ ⟩
-              x ∙ y ≈⟨ ∙-cong (sym a≈x) refl ⟩
-              a ∙ y ≈⟨ a∙y≈y ⟩
-              y ≈⟨ sym b≈y ⟩
-              b
-            ∎
-
-      total : Total _⊴ᴸ_
-      total x y with selective x y
-      ... | inj₁ ≈x = inj₁ (x , (sym (trans (comm _ _) ≈x)))
-      ... | inj₂ ≈y = inj₂ (y , (sym ≈y))
-
-  isTotalOrderᴿ : Selective _∙_ → IsTotalOrder _≈_ _⊴ᴿ_
-  isTotalOrderᴿ selective =
-    record
-      { isPartialOrder =
-        record
-          { isPreorder =
-            record
-              { isEquivalence = isEquivalence
-              ; reflexive = ⊴ᴿ-reflexive
-              ; trans = ⊴ᴿ-transitive
-              }
-          ; antisym = ⊴ᴿ-antisym
-          }
-      ; total = total
-    }
-    where
-      ⊴ᴿ-reflexive : _≈_ ⇒ _⊴ᴿ_
-      ⊴ᴿ-reflexive {a} {b} a≈b = ε , sym (trans (proj₂ identity a) a≈b)
-
-      ⊴ᴿ-transitive : Transitive _⊴ᴿ_
-      ⊴ᴿ-transitive {a} {b} {c} (x , b≈a∙x) (y , c≈b∙y) =
-        x ∙ y , trans c≈b∙y (trans (∙-cong b≈a∙x refl) (assoc _ _ _))
-
-      ⊴ᴿ-antisym : Antisymmetric _≈_ _⊴ᴿ_
-      ⊴ᴿ-antisym {a} {b} (x , b≈a∙x) (y , a≈b∙y) with selective a x | selective b y
-      ... | _          | inj₁ b∙y≈b = trans a≈b∙y b∙y≈b
-      ... | inj₁ a∙x≈a | _          = sym (trans b≈a∙x a∙x≈a)
-      ... | inj₂ a∙x≈x | inj₂ b∙y≈y = a≈b
-        where
-          a≈y = trans a≈b∙y b∙y≈y
-          b≈x = trans b≈a∙x a∙x≈x
-          a≈b =
-            begin
-              a      ≈⟨ a≈y ⟩
-              y      ≈⟨ sym b∙y≈y ⟩
-              b ∙ y  ≈⟨ ∙-cong b≈x refl ⟩
-              x ∙ y  ≈⟨ comm _ _ ⟩
-              y ∙ x  ≈⟨ ∙-cong (sym a≈y) refl ⟩
-              a ∙ x  ≈⟨ sym b≈a∙x ⟩
-              b
-            ∎
-
-      total : Total _⊴ᴿ_
-      total x y with selective x y
-      ... | inj₁ ≈x = inj₂ (x , (trans (sym ≈x) (comm _ _)))
-      ... | inj₂ ≈y = inj₁ (y , (sym ≈y))
 \end{code}
 }
 
-Next, we show that the left canonical order of a path algebra's addition operator is a decidable total order.
+Next, we show that the left canonical order of a path algebra's addition operator is a decidable total order. Given that the left canonical order over a selective commutative monoid is already a total order, we only need to show that in a path algebra, it is also decidable.
 
 \AgdaHide{
 \begin{code}
@@ -202,52 +187,38 @@ module itp16-requires-path-algebra
 
   +-idempotent : Idempotent _+_
   +-idempotent = sel⟶idp _+_ +-selective
+\end{code}
+}
 
-  equivalentᴸ : ∀ a b → b + a ≈ a ⇔ a ⊴ᴸ b
-  equivalentᴸ a b = equivalence to from
-    where
-      to : b + a ≈ a → a ⊴ᴸ b
-      to a≈b+b = a , sym a≈b+b
+We require two lemmas. The first, \AgdaFunction{+-selective′}, is a direct consequence of selectivity. It says that given \AgdaBound{a}~\AgdaField{≈}~\AgdaBound{b}~\AgdaField{+}~\AgdaBound{c}, one of \AgdaBound{a}~\AgdaField{≈}~\AgdaBound{b} or \AgdaBound{a}~\AgdaField{≈}~\AgdaBound{c} must hold.
 
-      from : a ⊴ᴸ b → b + a ≈ a
-      from (x , a≈b+x) with +-selective b x
-      ... | inj₁ b+x≈b = b+a≈a
-        where
-          a≈b = trans a≈b+x b+x≈b
-          b+a≈a =
-            begin
-              b + a ≈⟨ +-cong (sym a≈b) refl ⟩
-              a + a ≈⟨ +-idempotent a ⟩
-              a
-            ∎
-      ... | inj₂ b+x≈x = b+a≈a
-        where
-          a≈x = trans a≈b+x b+x≈x
-          b+a≈a =
-            begin
-              b + a ≈⟨ +-cong refl a≈x ⟩
-              b + x ≈⟨ sym a≈b+x ⟩
-              a
-            ∎
-
-  lem₀ : ∀ {a b c} → a ≈ b + c → a ≈ b ⊎ a ≈ c
-  lem₀ {a} {b} {c} a≈b+c with +-selective b c
+\begin{code}
+  +-selective′ : ∀ {a b c} → a ≈ b + c → a ≈ b ⊎ a ≈ c
+  +-selective′ {a} {b} {c} a≈b+c with +-selective b c
   ... | inj₁ b+c≈b = inj₁ (trans a≈b+c b+c≈b)
   ... | inj₂ b+c≈c = inj₂ (trans a≈b+c b+c≈c)
+\end{code}
 
-  equivalentᴸ-¬ : ∀ a b → (¬ b + a ≈ a) ⇔ (¬ a ⊴ᴸ b)
-  equivalentᴸ-¬ a b = equivalence to from
-    where
-      to : ¬ b + a ≈ a → ¬ a ⊴ᴸ b
-      to ¬b+a≈a (x , a≈b+x) with lem₀ a≈b+x
-      ... | inj₁ a≈b = ¬b+a≈a (trans (+-cong (sym a≈b) refl) (+-idempotent a))
-      ... | inj₂ a≈x = ¬b+a≈a (trans (+-cong refl a≈x) (sym a≈b+x))
+TODO
 
-      from : ¬ a ⊴ᴸ b → ¬ b + a ≈ a
-      from ¬a⊴ᴸb b+a≈a = ¬a⊴ᴸb (b+a≈a⟶a⊴ᴸb ⟨$⟩ b+a≈a)
-        where
-          open Equivalence (equivalentᴸ a b) renaming (to to b+a≈a⟶a⊴ᴸb)
+\begin{code}
+  ≉⇒⋬ᴸ : ∀ {a b} → ¬ b + a ≈ a → ¬ a ⊴ᴸ b
+  ≉⇒⋬ᴸ {a} {b} ¬b+a≈a (x , a≈b+x) with +-selective′ a≈b+x
+  ... | inj₁ a≈b = ¬b+a≈a (trans (+-cong (sym a≈b) refl) (+-idempotent a))
+  ... | inj₂ a≈x = ¬b+a≈a (trans (+-cong refl a≈x) (sym a≈b+x))
+\end{code}
 
+TODO
+
+\begin{code}
+  _⊴ᴸ?_ : Decidable _⊴ᴸ_
+  a ⊴ᴸ? b with (b + a) ≟ a
+  ... | yes b+a≈a = yes (a , sym b+a≈a)
+  ... | no ¬b+a≈a = no (≉⇒⋬ᴸ ¬b+a≈a)
+\end{code}
+
+\AgdaHide{
+\begin{code}
   isDecTotalOrderᴸ : IsDecTotalOrder _≈_ _⊴ᴸ_
   isDecTotalOrderᴸ =
     record {
@@ -255,13 +226,6 @@ module itp16-requires-path-algebra
       ; _≟_        = _≟_
       ; _≤?_       = _⊴ᴸ?_
       }
-    where
-      _⊴ᴸ?_ : Decidable _⊴ᴸ_
-      a ⊴ᴸ? b with (b + a) ≟ a
-      ... | yes b+a≈a = yes (a , sym b+a≈a)
-      ... | no ¬b+a≈a = no (¬b+a≈a⟶¬a⊴ᴸb ⟨$⟩ ¬b+a≈a)
-        where
-          open Equivalence (equivalentᴸ-¬ a b) renaming (to to ¬b+a≈a⟶¬a⊴ᴸb)
 
   decTotalOrderᴸ : DecTotalOrder _ _ _
   decTotalOrderᴸ =
