@@ -1,4 +1,9 @@
-In this section we first introduce the left and right canonical orders of commutative monoids and show that both give rise to total orders when selectivity is assumed.
+In this section we introduce the Left and Right Canonical Orders of commutative monoids and show some of their properties, culminating in a proof that the Left and Right Canonical Orders are both total orders whenever the monoid's binary operation is selective.
+For reasons of brevity, we only present cases for the Left Canonical Order, leaving aside the obvious analgous proofs and definitions for the Right Canonical Order.
+Throughout this section we fix an inhabitant of \AgdaRecord{CommutativeMonoid}, and use \AgdaField{Carrier}, \AgdaField{\_≈\_}, \AgdaField{ε}, and \AgdaField{\_∙\_} to denote the monoid's underlying carrier type, supplied equivalence relation, neutral element, and binary operation, respectively.
+
+Note, the wider algebraic routing literature variously refers to either of the two definitions we will introduce below as \emph{the} Canonical Order; Gondran and Minoux~\cite[p.~18]{gondran_graphs_2008}, for example, exclusively use the Right Canonical Order in their work.
+\todo{why do we need both, then?}
 
 \AgdaHide{
 \begin{code}
@@ -54,7 +59,7 @@ module itp16-requires-commutative-monoid
 --  _⊴ᴿ_ = rightCanonicalOrder _≈_ _∙_
 \end{code}}
 
-We define the left and right canonical orders (\AgdaFunction{\_⊴ᴸ\_} and \AgdaFunction{\_⊴ᴿ\_}) as follows:\footnote{The literature variously refers to either of the two definitions as \emph{the} canonical order. Gondran and Minoux, for example, use only the right canonical order \cite[p.~18]{gondran_graphs_2008}.}
+We define the Left and Right Canonical Orders (\AgdaFunction{\_⊴ᴸ\_} and \AgdaFunction{\_⊴ᴿ\_}) as follows:
 
 % Gondran and Minoux, p.18
 
@@ -69,17 +74,18 @@ We define the left and right canonical orders (\AgdaFunction{\_⊴ᴸ\_} and \Ag
   a ⊲ᴿ b = a ⊴ᴿ b × ¬ a ≈ b
 \end{code}}
 
-Note that \AgdaFunction{∃} is defined in Agda's standard library as a shortcut for a dependent pair where the type of the first element (\AgdaField{Carrier} in this case) is left implicit.
-In the following, we will show some of the properties of left canonical orders. We omit their analogues for right canonical orders.
+Note that \AgdaFunction{∃} is defined in Agda's standard library as a shorthand for a dependent pair where the type of the first element (\AgdaField{Carrier} in this case) is inferred automatically.
+First, both Left and Right Canonical Orders are reflexive:
 
 \begin{code}
   ⊴ᴸ-reflexive : ∀ {a b} → a ≈ b → a ⊴ᴸ b
   ⊴ᴸ-reflexive {a} {b} a≈b = ε , sym (trans (proj₂ identity b) (sym a≈b))
 \end{code}
 
-As noted above, the proof comes in the form of a dependent pair. Its first element is \AgdaField{ε}, the monoid's unit. The second element shows that given \AgdaBound{a}~\AgdaField{≈}~\AgdaBound{b}, the equivalence \AgdaBound{a}~\AgdaField{≈}~\AgdaSymbol{(}\AgdaBound{b}~\AgdaField{∙}~\AgdaField{ε}\AgdaSymbol{)} holds.
-
-By the definition of \AgdaFunction{\_⊴ᴸ\_}, this is equivalent to \AgdaBound{a}~\AgdaFunction{⊴ᴸ}~\AgdaBound{b}, so the left canonical order is reflexive.
+As noted above, the definition of \AgdaFunction{\_⊴ᴸ\_} is an existential statement, so our proof above consists of a dependent pair with explicit witness and proof.
+Here, our witness is \AgdaField{ε}, the monoid's unit, and the second component of the dependent pair is a proof that given \AgdaBound{a}~\AgdaField{≈}~\AgdaBound{b}, the equivalence \AgdaBound{a}~\AgdaField{≈}~\AgdaSymbol{(}\AgdaBound{b}~\AgdaField{∙}~\AgdaField{ε}\AgdaSymbol{)} holds.
+By definition this is equivalent to \AgdaBound{a}~\AgdaFunction{⊴ᴸ}~\AgdaBound{b}.
+We also have transitivity of \AgdaFunction{\_⊴ᴸ\_}:
 
 \begin{code}
   ⊴ᴸ-transitive : ∀ {a b c} → a ⊴ᴸ b → b ⊴ᴸ c → a ⊴ᴸ c
@@ -95,10 +101,13 @@ By the definition of \AgdaFunction{\_⊴ᴸ\_}, this is equivalent to \AgdaBound
         ∎
 \end{code}
 
-The transivitiy proof is slightly more involved. Using the algebra's associativity and commutativity laws, we show that \AgdaBound{a}~\AgdaField{≈}~\AgdaBound{c}~\AgdaField{∙}~\AgdaSymbol{(}\AgdaBound{x}~\AgdaField{∙}~\AgdaBound{y}\AgdaSymbol{)} which implies \AgdaBound{a}~\AgdaFunction{⊴ᴸ}~\AgdaBound{c}. We use the constructs \AgdaFunction{begin\_}, \AgdaFunction{\_≈⟨\_⟩\_} and \AgdaFunction{\_∎} from Agda's equational reasoning library here and in the rest of the paper to structure proofs.
+The proof of transitivity is slightly more involved.
+Using the monoid's associative and commutative laws, we show that \AgdaBound{a}~\AgdaField{≈}~\AgdaBound{c}~\AgdaField{∙}~\AgdaSymbol{(}\AgdaBound{x}~\AgdaField{∙}~\AgdaBound{y}\AgdaSymbol{)} which implies \AgdaBound{a}~\AgdaFunction{⊴ᴸ}~\AgdaBound{c}.
+We use the Agda standard library's equational reasoning constructs---\AgdaFunction{begin\_}, \AgdaFunction{\_≈⟨\_⟩\_} and \AgdaFunction{\_∎}---here and in the rest of the paper to structure proofs.
 
-The left canonical order is also total, as the next proof shows. This means that for any \AgdaBound{a} and \AgdaBound{b}, \AgdaBound{a}~\AgdaFunction{⊴ᴸ}~\AgdaBound{b} or \AgdaBound{b}~\AgdaFunction{⊴ᴸ}~\AgdaBound{a}.
-The proof rests on the assumption that \AgdaField{\_∙\_} is selective, i.e.~\AgdaBound{a}~\AgdaField{∙}~\AgdaBound{b} is equivalent to either \AgdaBound{a} or \AgdaBound{b}. It proceeds by a case split on the two possible results of \AgdaBound{a}~\AgdaField{∙}~\AgdaBound{b}.
+The Left Canonical Order is also total---that is, for any \AgdaBound{a} and \AgdaBound{b}, \AgdaBound{a}~\AgdaFunction{⊴ᴸ}~\AgdaBound{b} or \AgdaBound{b}~\AgdaFunction{⊴ᴸ}~\AgdaBound{a}---whenever \AgdaField{\_∙\_} is selective, as we show next.
+We remind the reader that \AgdaField{\_∙\_} is \emph{selective} when~\AgdaBound{a}~\AgdaField{∙}~\AgdaBound{b} is equivalent to either \AgdaBound{a} or \AgdaBound{b}.
+Accordingly, our proof proceeds by a case split on the two possible results of \AgdaBound{a}~\AgdaField{∙}~\AgdaBound{b}:
 
 \begin{code}
   ⊴ᴸ-total : Selective _∙_ → Total _⊴ᴸ_
@@ -107,7 +116,8 @@ The proof rests on the assumption that \AgdaField{\_∙\_} is selective, i.e.~\A
   ... | inj₂ a∙b≈b  = inj₂ (b , (sym a∙b≈b))
 \end{code}
 
-The next proof shows that \AgdaFunction{\_⊴ᴸ\_} is antisymmetric, that is, \AgdaBound{a}~\AgdaFunction{⊴ᴸ}~\AgdaBound{b} and \AgdaBound{b}~\AgdaFunction{⊴ᴸ}~\AgdaBound{a} together imply \AgdaBound{a}~\AgdaField{≈}~\AgdaBound{b}. Again, we assume that \AgdaField{\_∙\_} is selective and proceed by a case split on the results of \AgdaBound{a}~\AgdaField{∙}~\AgdaBound{y} and \AgdaBound{b}~\AgdaField{∙}~\AgdaBound{x}.
+The next proof shows that \AgdaFunction{\_⊴ᴸ\_} is antisymmetric---that is, \AgdaBound{a}~\AgdaFunction{⊴ᴸ}~\AgdaBound{b} and \AgdaBound{b}~\AgdaFunction{⊴ᴸ}~\AgdaBound{a} together imply \AgdaBound{a}~\AgdaField{≈}~\AgdaBound{b}---again, whenever \AgdaField{\_∙\_} is selective.
+Again, we proceed by a case split on the results of \AgdaBound{a}~\AgdaField{∙}~\AgdaBound{y} and \AgdaBound{b}~\AgdaField{∙}~\AgdaBound{x}.
 
 \begin{code}
   ⊴ᴸ-antisym : Selective _∙_ → Antisymmetric _≈_ _⊴ᴸ_
@@ -131,7 +141,12 @@ The next proof shows that \AgdaFunction{\_⊴ᴸ\_} is antisymmetric, that is, \
         ∎
 \end{code}
 
-Taken together, these four properties -- reflexivitiy, transitivity, totality and antisymmetry -- imply that the left canonical order on a selective commutative monoid is a total order.
+Taken together, these four properties---reflexivitiy, transitivity, totality and antisymmetry---imply that the Left Canonical Order on a selective commutative monoid is a total order.
+Next, we show that the Left Canonical Order of a path algebra's addition operator is a decidable total order.
+
+From this point on we fix \AgdaFunction{∙-selective}, a proof that the monoid's binary operation is selective, and \AgdaField{\_≟\_}, a proof that the monoid's equivalence relation is decidable.
+Any Sobrinho Algebra possesses both of these properties, so assuming them here is `safe' for our purposes.
+Further, as selectivity implies idempotence, we also have \AgdaFunction{∙-idempotent}, a proof that the monoid's binary operation is idempotent whenever it is selective.
 
 %leo: also mention non-irreflexivity and non-trichotomy?
 
@@ -167,54 +182,56 @@ Taken together, these four properties -- reflexivitiy, transitivity, totality an
 \end{code}
 }
 
-Next, we show that the left canonical order of a path algebra's addition operator is a decidable total order. Given that the left canonical order over a selective commutative monoid is already a total order, we only need to show that in a path algebra, it is also decidable.
-
 \AgdaHide{
 \begin{code}
 module itp16-requires-path-algebra
        {c ℓ} (dijkstra : PathAlgebra c ℓ) where
 
   open PathAlgebra dijkstra
+    renaming (_+_ to _∙_; +-selective to ∙-selective; +-cong to ∙-cong)
   open FunctionProperties _≈_
   open MFP _≈_
   open import Relation.Binary.EqReasoning setoid
 
   open itp16-requires-commutative-monoid +-commutativeMonoid public
-  open IsTotalOrder (isTotalOrderᴸ +-selective) using (antisym)
+  open IsTotalOrder (isTotalOrderᴸ ∙-selective) using (antisym)
 
   _≉_ : _ → _ → Set _
   x ≉ y = ¬ (x ≈ y)
 
-  +-idempotent : Idempotent _+_
-  +-idempotent = sel⟶idp _+_ +-selective
+  ∙-idempotent : Idempotent _∙_
+  ∙-idempotent = sel⟶idp _∙_ ∙-selective
 \end{code}
 }
 
-We require two lemmas. The first, \AgdaFunction{+-selective′}, is a direct consequence of selectivity. It says that given \AgdaBound{a}~\AgdaField{≈}~\AgdaBound{b}~\AgdaField{+}~\AgdaBound{c}, one of \AgdaBound{a}~\AgdaField{≈}~\AgdaBound{b} or \AgdaBound{a}~\AgdaField{≈}~\AgdaBound{c} must hold.
+Before demonstrating decidability, we first require two auxiliary lemmas.
+The first lemma, \AgdaFunction{∙-selective′}, is a direct consequence of selectivity.
+It states that, given \AgdaBound{a}~\AgdaField{≈}~\AgdaBound{b}~\AgdaField{∙}~\AgdaBound{c}, one of \AgdaBound{a}~\AgdaField{≈}~\AgdaBound{b} or \AgdaBound{a}~\AgdaField{≈}~\AgdaBound{c} must hold:
 
 \begin{code}
-  +-selective′ : ∀ {a b c} → a ≈ b + c → a ≈ b ⊎ a ≈ c
-  +-selective′ {a} {b} {c} a≈b+c with +-selective b c
-  ... | inj₁ b+c≈b = inj₁ (trans a≈b+c b+c≈b)
-  ... | inj₂ b+c≈c = inj₂ (trans a≈b+c b+c≈c)
+  ∙-selective′ : ∀ {a b c} → a ≈ b ∙ c → a ≈ b ⊎ a ≈ c
+  ∙-selective′ {a} {b} {c} a≈b∙c with ∙-selective b c
+  ... | inj₁ b∙c≈b = inj₁ (trans a≈b∙c b∙c≈b)
+  ... | inj₂ b∙c≈c = inj₂ (trans a≈b∙c b∙c≈c)
 \end{code}
 
-TODO
+The second lemma, \AgdaFunction{≉⇒⋬ᴸ}, states that if \AgdaBound{b}~\AgdaField{∙}~\AgdaBound{a}~\AgdaField{≈}~\AgdaBound{a} does \emph{not} hold, then \AgdaBound{a}~\AgdaFunction{⊴ᴸ}~\AgdaBound{b} also does not hold, neither:
 
 \begin{code}
-  ≉⇒⋬ᴸ : ∀ {a b} → ¬ b + a ≈ a → ¬ a ⊴ᴸ b
-  ≉⇒⋬ᴸ {a} {b} ¬b+a≈a (x , a≈b+x) with +-selective′ a≈b+x
-  ... | inj₁ a≈b = ¬b+a≈a (trans (+-cong (sym a≈b) refl) (+-idempotent a))
-  ... | inj₂ a≈x = ¬b+a≈a (trans (+-cong refl a≈x) (sym a≈b+x))
+  ≉⇒⋬ᴸ : ∀ {a b} → ¬ b ∙ a ≈ a → ¬ a ⊴ᴸ b
+  ≉⇒⋬ᴸ {a} {b} ¬b∙a≈a (x , a≈b∙x) with ∙-selective′ a≈b∙x
+  ... | inj₁ a≈b = ¬b∙a≈a (trans (∙-cong (sym a≈b) refl) (∙-idempotent a))
+  ... | inj₂ a≈x = ¬b∙a≈a (trans (∙-cong refl a≈x) (sym a≈b∙x))
 \end{code}
 
-TODO
+Using these two lemmas, we may finally prove decidability of the Left Canonical Order.
+We proceed by splitting on whether \AgdaBound{b}~\AgdaField{∙}~\AgdaBound{a} is equivalent to \AgdaBound{a}, or not, with the only interesting case being the second, where we make use of both of our auxiliary lemmas above:
 
 \begin{code}
   _⊴ᴸ?_ : Decidable _⊴ᴸ_
-  a ⊴ᴸ? b with (b + a) ≟ a
-  ... | yes b+a≈a = yes (a , sym b+a≈a)
-  ... | no ¬b+a≈a = no (≉⇒⋬ᴸ ¬b+a≈a)
+  a ⊴ᴸ? b with (b ∙ a) ≟ a
+  ... | yes b∙a≈a = yes (a , sym b∙a≈a)
+  ... | no ¬b∙a≈a = no (≉⇒⋬ᴸ ¬b∙a≈a)
 \end{code}
 
 \AgdaHide{
@@ -222,7 +239,7 @@ TODO
   isDecTotalOrderᴸ : IsDecTotalOrder _≈_ _⊴ᴸ_
   isDecTotalOrderᴸ =
     record {
-      isTotalOrder = isTotalOrderᴸ +-selective
+      isTotalOrder = isTotalOrderᴸ ∙-selective
       ; _≟_        = _≟_
       ; _≤?_       = _⊴ᴸ?_
       }
@@ -231,3 +248,6 @@ TODO
   decTotalOrderᴸ =
     record { Carrier = Carrier ; _≈_ = _≈_ ; _≤_ = _⊴ᴸ_ ; isDecTotalOrder = isDecTotalOrderᴸ }
 \end{code}}
+
+We therefore have that the Left and Right Canonical Orders form a decidable total order in an arbitrary commutative monoid whenever the monoid's binary operation is selective and its equivalence relation is decidable.
+As Sobrinho Algebras are a superstructure of commutative selective monoids with a decidable equivalence relation, we have that the Left and Right Canonical Orders in an arbitrary Sobrinho Algebra are decidable total orders.
