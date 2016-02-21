@@ -109,8 +109,22 @@ We step through its proof, which proceeds by induction on \AgdaBound{step}, the 
 
 \paragraph{Base case.}
 In the base case (\AgdaBound{step}~\AgdaSymbol{=}~\AgdaInductiveConstructor{zero}), we perform a case split on whether the node \AgdaBound{j} is equal to the start node, \AgdaBound{i}.
-For the base case we use the following shorthands to conserve space: \AgdaBound{r} for \AgdaFunction{estimate}~\AgdaInductiveConstructor{zero}~\AgdaSymbol{\{}\AgdaBound{z≤n}\AgdaSymbol{\}}, \AgdaBound{diag-lemma} for \AgdaFunction{diagonal-nondiag}~\AgdaBound{i}~\AgdaBound{j}~\AgdaBound{¬i≡j}, \AgdaBound{l∘t} for \AgdaFunction{lookup∘tabulate}~\AgdaSymbol{\{}\AgdaBound{f}~\AgdaSymbol{=}~\AgdaFunction{diagonal}~\AgdaField{0\#}~\AgdaField{1\#}\AgdaSymbol{\}}~\AgdaBound{i}~\AgdaBound{j}, \AgdaBound{I[i,j]≡0} for \AgdaFunction{P.trans}~\AgdaBound{l∘t}~\AgdaFunction{diag-lemma}, and \AgdaBound{fold} for \AgdaFunction{fold-⁅i⁆}~(\AgdaSymbol{λ}~\AgdaBound{k}~\AgdaSymbol{→}~\AgdaFunction{estimate}~\AgdaInductiveConstructor{zero}~\AgdaSymbol{\{}\AgdaBound{z≤n}\AgdaSymbol{\}}~\AgdaBound{k}~\AgdaFunction{*}~\AgdaFunction{A[}~\AgdaBound{k}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]})~\AgdaBound{i}.
-Respectively, these are \todo{explain what these are, and ensure that all lemmas referenced here have been explained earlier in the paper.}
+For the base case we use the following shorthands to conserve space:
+
+\begin{itemize}
+\item
+\AgdaFunction{r} for \AgdaFunction{estimate}~\AgdaInductiveConstructor{zero}~\AgdaSymbol{\{}\AgdaBound{z≤n}\AgdaSymbol{\}}. For any node \AgdaBound{j}, \AgdaFunction{r}~\AgdaBound{j} stands for the initial distance estimate from the start node to \AgdaBound{j}.
+\item
+\AgdaFunction{diag-lemma} for \AgdaFunction{diagonal-nondiag}~\AgdaBound{i}~\AgdaBound{j}~\AgdaBound{¬i≡j} proves that elements of the identity matrix that are not on the diagonal are equal to the Sobrinho Algebra's unit for \AgdaFunction{\_+\_}.
+\item
+\AgdaBound{l∘t} for \AgdaFunction{lookup∘tabulate}~\AgdaSymbol{\{}\AgdaBound{f}~\AgdaSymbol{=}~\AgdaFunction{diagonal}~\AgdaField{0\#}~\AgdaField{1\#}\AgdaSymbol{\}}~\AgdaBound{i}~\AgdaBound{j} is an instance of the proof that looking up the element at row \AgdaBound{r} and column \AgdaBound{c} of a matrix generated using \AgdaFunction{tabulate}~\AgdaBound{f} is propositionally equal to \AgdaBound{f}~\AgdaBound{r}~\AgdaBound{c}.
+\item
+\AgdaFunction{I[i,j]≡0} for \AgdaFunction{P.trans}~\AgdaBound{l∘t}~\AgdaFunction{diag-lemma} shows that looking up an element of the identity matrix of the Sobrinho Algebra over \(ℕ∪\{∞\}\) is propositionally equal to \AgdaNumber{0}.
+\item
+\AgdaFunction{fold} for \AgdaFunction{fold-⁅i⁆}~(\AgdaSymbol{λ}~\AgdaBound{k}~\AgdaSymbol{→}~\AgdaFunction{estimate}~\AgdaInductiveConstructor{zero}~\AgdaSymbol{\{}\AgdaBound{z≤n}\AgdaSymbol{\}}~\AgdaBound{k}~\AgdaFunction{*}~\AgdaFunction{A[}~\AgdaBound{k}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]})~\AgdaBound{i} proves a particular case of the fact that a fold over a singleton set is just the inner expression of the fold with the only element of the singleton set as the bound variable.
+\end{itemize}
+
+\todo{ensure that all lemmas referenced here have been explained earlier in the paper.}
 
 %       r = estimate zero {z≤n}
 %      diag-lemma = diagonal-nondiag i j ¬i≡j
@@ -173,8 +187,27 @@ Further, the right-hand side (\AgdaFunction{A[}~\AgdaBound{i}~\AgdaFunction{,}~\
 
 \paragraph{Induction step.}
 Next, we have the induction step case (\AgdaBound{step} = \AgdaInductiveConstructor{suc}~\AgdaBound{step}) of the partial correctness proof.
-We make use of the following shorthands to conserve space: \AgdaBound{r} for \AgdaFunction{estimate}~(\AgdaInductiveConstructor{suc}~\AgdaBound{step})~\AgdaSymbol{\{}\AgdaBound{s≤n}\AgdaSymbol{\}}, \AgdaBound{r} for \AgdaFunction{estimate}~\AgdaBound{step}~\AgdaSymbol{\{}\AgdaInductiveConstructor{≤-step′}~\AgdaBound{s≤n}\AgdaSymbol{\}}, \AgdaBound{q} for \AgdaFunction{Sorted.head}~\_~(\AgdaFunction{queue}~\AgdaBound{step}~\AgdaSymbol{\{}\AgdaBound{s≤n}\AgdaSymbol{\}}), \AgdaBound{f} for \AgdaSymbol{λ}~\AgdaBound{k}~\AgdaSymbol{→}~\AgdaBound{r}~\AgdaBound{k}~\AgdaFunction{*}~\AgdaFunction{A[}~\AgdaBound{k}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}, \AgdaBound{f′} for \AgdaSymbol{λ}~\AgdaBound{k}~\AgdaSymbol{→}~\AgdaBound{r′}~\AgdaBound{k}~\AgdaFunction{*}~\AgdaFunction{A[}~\AgdaBound{k}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}, \AgdaBound{vs} for \AgdaFunction{seen}~\AgdaBound{step}~\AgdaSymbol{\{}\AgdaInductiveConstructor{≤-step′}~\AgdaBound{s≤n}\AgdaSymbol{\}}, and \AgdaBound{fold} for \AgdaFunction{fold-cong}~\AgdaBound{f}~\AgdaBound{f′}~\AgdaBound{vs}~(\AgdaSymbol{λ}~\AgdaBound{k}~\AgdaBound{k∈vs}~\AgdaSymbol{→}~\AgdaFunction{lemma}~\AgdaBound{k}~\AgdaBound{k∈vs}).
-These are, respectively, \todo{explain what they are, ensure all lemmas are already explained above}.
+We make use of the following shorthands to conserve space:
+
+\begin{itemize}
+\item
+\AgdaFunction{r} for \AgdaFunction{estimate}~\AgdaBound{step}~\AgdaSymbol{\{}\AgdaInductiveConstructor{≤-step′}~\AgdaBound{s≤n}\AgdaSymbol{\}}, so \AgdaFunction{r}~\AgdaBound{j} stands for the distance estimate from the start node to node \AgdaBound{j} at step \AgdaInductiveConstructor{suc}~\AgdaBound{step}.
+\item
+\AgdaFunction{r′} for \AgdaFunction{estimate}~(\AgdaInductiveConstructor{suc}~\AgdaBound{step})~\AgdaSymbol{\{}\AgdaBound{s≤n}\AgdaSymbol{\}}, so \AgdaFunction{r}~\AgdaBound{j} stands for the distance estimate to node \AgdaBound{j} at step \AgdaBound{step}.
+\item
+\AgdaBound{q} for \AgdaFunction{Sorted.head}~\_~(\AgdaFunction{queue}~\AgdaBound{step}~\AgdaSymbol{\{}\AgdaBound{s≤n}\AgdaSymbol{\}}), i.e.~the node whose current estimated distance from the start node is the smallest of all nodes that have not yet been visited.
+\item
+\AgdaFunction{f} for \AgdaSymbol{λ}~\AgdaBound{k}~\AgdaSymbol{→}~\AgdaBound{r}~\AgdaBound{k}~\AgdaFunction{*}~\AgdaFunction{A[}~\AgdaBound{k}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}.
+\item
+\AgdaFunction{f′} for \AgdaSymbol{λ}~\AgdaBound{k}~\AgdaSymbol{→}~\AgdaBound{r′}~\AgdaBound{k}~\AgdaFunction{*}~\AgdaFunction{A[}~\AgdaBound{k}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}.
+\item
+\AgdaBound{vs} for \AgdaFunction{seen}~\AgdaBound{step}~\AgdaSymbol{\{}\AgdaInductiveConstructor{≤-step′}~\AgdaBound{s≤n}\AgdaSymbol{\}}, the list of nodes that have been visited at step \AgdaBound{step}.
+\item
+\AgdaBound{fold} for \AgdaFunction{fold-cong}~\AgdaFunction{f}~\AgdaFunction{f′}~\AgdaBound{vs}~(\AgdaSymbol{λ}~\AgdaBound{k}~\AgdaBound{k∈vs}~\AgdaSymbol{→}~\AgdaFunction{lemma}~\AgdaBound{k}~\AgdaBound{k∈vs}) is a special case of the theorem that given \AgdaBound{f}~\AgdaBound{i}~\AgdaField{≈}~\AgdaBound{f′}~\AgdaBound{i} for all \AgdaBound{i}~\AgdaFunction{∈}~\AgdaBound{xs} it follows that the fold over \AgdaBound{xs} using \AgdaBound{f} is equivalent to the fold over \AgdaBound{xs} using \AgdaBound{f′} as the fold expresssion.
+\end{itemize}
+
+\todo{ensure all lemmas are already explained above}.
+
 Note, in the definition of \AgdaBound{fold}, we make use of a small \AgdaFunction{lemma}, with type \AgdaSymbol{∀}~\AgdaBound{k}~\AgdaSymbol{→}~\AgdaBound{k}~\AgdaFunction{∈}~\AgdaBound{vs}~\AgdaSymbol{→}~\AgdaBound{f}~\AgdaBound{k}~\AgdaFunction{≈}~\AgdaBound{f′}~\AgdaBound{k}, which shows that \AgdaBound{f} and \AgdaBound{f′} agree on all visited graph vertices.
 
 Below, to aid the reader, we present the formal proof, using Agda's equational reasoning mechanism, with explicative comments describing each equational reasoning step:
