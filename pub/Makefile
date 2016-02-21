@@ -28,7 +28,7 @@ $(LLNCSZIP):
 	curl -s ftp://ftp.springer.de/pub/tex/latex/llncs/latex2e/llncs2e.zip \
 	     -o $(LLNCSZIP)
 
-.gitignore:
+.gitignore: $(LAGDATARGETS)
 	echo $(LAGDATARGETS) | tr ' ' '\n' > $@
 
 clean:
