@@ -53,7 +53,7 @@ module dijkstra-correct
 }
 
 In this Section we prove that our algorithm computes a Right Local Solution to the matrix fixpoint equation of~\cref{subsect.algorithm}.
-Throughout this Section, we fix \AgdaBound{alg}, an arbitrary inhabitant of \AgdaRecord{PathAlgebra}, and \AgdaBound{adj}, an arbitrary $n \times n$ adjacency matrix describing a graph.
+Throughout this Section, we fix \AgdaBound{alg}, an arbitrary inhabitant of \AgdaRecord{SobrinhoAlgebra}, and \AgdaBound{adj}, an arbitrary $n \times n$ adjacency matrix describing a graph.
 Ultimately we aim to show the following statement of correctness:
 \begin{equation}
 \label{eqn.correctness.correct}

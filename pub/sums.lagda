@@ -1,5 +1,5 @@
 By `sum' we refer to the lifting of a binary operator over an indexed set, like $\bigoplus_{x ∈ X} f(x)$~\cite{bertot_canonical_2008}.
-The properties of the Path Algebra addition operator, \AgdaFunction{\_+\_}, include associativity, commutative and idempotence.
+The properties of the Sobrinho Algebra addition operator, \AgdaFunction{\_+\_}, include associativity, commutative and idempotence.
 In combination, these properties allow us to make strong claims about the behaviour of edge weight sums.
 
 For convenience, we define path weight sums over commutative monoids since they are well supported by the standard library.

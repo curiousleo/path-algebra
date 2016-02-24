@@ -46,7 +46,7 @@ module dijkstra-impl
 
 
 Our purely functional implementation of this algorithm in Agda consists of nine mutually recursive definitions, the most important of which are \AgdaFunction{order}, \AgdaFunction{estimate}, \AgdaFunction{seen} and \AgdaFunction{queue}.
-Throughout this section we maintain the invariant that $i$ is the start node of the graph search, and use the suggestive name \AgdaFunction{Weight} to refer to the carrier set of our Path Algebra.
+Throughout this section we maintain the invariant that $i$ is the start node of the graph search, and use the suggestive name \AgdaFunction{Weight} to refer to the carrier set of our Sobrinho Algebra.
 
 At each \AgdaBound{step} of the algorithm graph nodes are totally ordered.
 This total order is constructed using the \AgdaFunction{order} function, which is parameterised by the \AgdaBound{step} of the algorithm:
@@ -69,7 +69,7 @@ The base case for the \AgdaFunction{estimate} function is a lookup in the adjace
 Note that in the imperative algorithm of Figure~\ref{fig.algorithm}, the base case is equivalent to a lookup in the identity matrix instead of the adjacency matrix.
 Our base case here therefore corresponds to the \emph{second} iteration of the imperative algorithm.
 %dpm: why is that?
-Note also that since the addition operation, \AgdaFunction{\_+\_}, of a Path Algebra is selective, the inductive case of \AgdaFunction{estimate} encodes a \emph{choice} between \AgdaFunction{r}~\AgdaBound{j} and \AgdaFunction{r}~\AgdaFunction{q}~\AgdaFunction{*}~\AgdaFunction{A[}~\AgdaFunction{q}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}.
+Note also that since the addition operation, \AgdaFunction{\_+\_}, of a Sobrinho Algebra is selective, the inductive case of \AgdaFunction{estimate} encodes a \emph{choice} between \AgdaFunction{r}~\AgdaBound{j} and \AgdaFunction{r}~\AgdaFunction{q}~\AgdaFunction{*}~\AgdaFunction{A[}~\AgdaFunction{q}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}.
 The former is simply the previous distance estimate to $j$, whilst the latter represents the option of going from the start node to \AgdaFunction{q} via the best known path from the previous step, and then directly from \AgdaFunction{q} to $j$ (where \AgdaFunction{q} is the head of the priority queue of nodes that have not yet been visited).
 
 We keep track of the set of visited nodes at a given \AgdaBound{step} using the function \AgdaFunction{seen}, which is defined as follows:

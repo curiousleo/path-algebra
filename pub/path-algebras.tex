@@ -1,7 +1,7 @@
 \begin{figure}[t]
 \centering
 \begin{tabular}{c||l@{\;\;\;}|l}
-\textbf{Operation} & \textbf{Semiring} & \textbf{Path Algebra} \\
+\textbf{Operation} & \textbf{Semiring} & \textbf{Sobrinho Algebra} \\
 \midrule
 \AgdaFunction{\_+\_} & Associative & Associative \\
                  & Commutative & Commutative \\
@@ -19,13 +19,13 @@
 \end{tabular}
 \label{tab.path.algebra}
 \vspace{6pt}
-\caption{Comparing the algebraic properties of a Semiring and a Path Algebra.}
+\caption{Comparing the algebraic properties of a Semiring and a Sobrinho Algebra.}
 \label{fig.path.algebra}
 \end{figure}
 
 Fix a set $S$ and an equivalence relation $- ≈ -$.
 Call a binary operation on $S$, $- \bullet -$, \emph{selective} when for all $x, y \in S$ either $x \bullet y ≈ x$ or $x \bullet y ≈ y$.
-With this definition in mind, we call a structure $\langle S, +, *, 0, 1 \rangle$ a `Path Algebra' when:
+With this definition in mind, we call a structure $\langle S, +, *, 0, 1 \rangle$ a `Sobrinho Algebra' when:
 \begin{itemize}
 \item
 $\langle S, +, 0 \rangle$ forms a commutative monoid,
@@ -36,9 +36,9 @@ addition is selective, and addition absorbs multiplication,
 \item
 the usual closure properties for the unit elements and operations apply.
 \end{itemize}
-A comparison between Path Algebras and the more familiar notion of Semiring is presented in Figure~\ref{fig.path.algebra}.
+A comparison between Sobrinho Algebras and the more familiar notion of Semiring is presented in Figure~\ref{fig.path.algebra}.
 
-Following established convention, we capture the notion of a path algebra as an Agda record named \AgdaRecord{PathAlgebra}.
-We call the carrier type of a Path Algebra (the set $S$ in the definition above) \AgdaField{Carrier}, obtaining the closure properties mentioned above for `free' as a side-effect of Agda's typing discipline, and assume that there exists a decidable setoid equivalence relation on elements of this type, \AgdaField{\_≈\_}.
+Following established convention, we capture the notion of a Sobrinho Algebra as an Agda record named \AgdaRecord{SobrinhoAlgebra}.
+We call the carrier type of a Sobrinho Algebra (the set $S$ in the definition above) \AgdaField{Carrier}, obtaining the closure properties mentioned above for `free' as a side-effect of Agda's typing discipline, and assume that there exists a decidable setoid equivalence relation on elements of this type, \AgdaField{\_≈\_}.
 
 \todo{finish this subsection}
