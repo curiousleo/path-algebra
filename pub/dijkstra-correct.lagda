@@ -119,7 +119,9 @@ For the base case we use the following shorthands to conserve space:
 % for \AgdaFunction{diagonal-nondiag}~\AgdaBound{i}~\AgdaBound{j}~\AgdaBound{¬i≡j}
 proves that elements of the identity matrix that are not on the diagonal are equal to the Sobrinho Algebra's unit for \AgdaFunction{\_+\_}.
 \item
-\AgdaBound{l∘t} for \AgdaFunction{lookup∘tabulate}~\AgdaSymbol{\{}\AgdaBound{f}~\AgdaSymbol{=}~\AgdaFunction{diagonal}~\AgdaField{0\#}~\AgdaField{1\#}\AgdaSymbol{\}}~\AgdaBound{i}~\AgdaBound{j} is an instance of the proof that looking up the element at row \AgdaBound{r} and column \AgdaBound{c} of a matrix generated using \AgdaFunction{tabulate}~\AgdaBound{f} is propositionally equal to \AgdaBound{f}~\AgdaBound{r}~\AgdaBound{c}.
+\AgdaBound{l∘t}~\AgdaSymbol{:}~\AgdaFunction{lookup}~\AgdaBound{i}~\AgdaBound{j}~\AgdaSymbol{(}\AgdaFunction{tabulate}~\AgdaSymbol{(}\AgdaFunction{diagonal}~\AgdaField{0\#}~\AgdaField{1\#}\AgdaSymbol{))}~\AgdaInductiveConstructor{≡}~\AgdaFunction{diagonal}~\AgdaField{0\#}~\AgdaField{1\#}~\AgdaBound{i}~\AgdaBound{j}
+%for \AgdaFunction{lookup∘tabulate}~\AgdaSymbol{\{}\AgdaBound{f}~\AgdaSymbol{=}~\AgdaFunction{diagonal}~\AgdaField{0\#}~\AgdaField{1\#}\AgdaSymbol{\}}~\AgdaBound{i}~\AgdaBound{j}
+is an instance of the proof that looking up the element at row \AgdaBound{r} and column \AgdaBound{c} of a matrix generated using \AgdaFunction{tabulate}~\AgdaBound{f} is propositionally equal to \AgdaBound{f}~\AgdaBound{r}~\AgdaBound{c}.
 \item
 \AgdaFunction{I[i,j]≡0} for \AgdaFunction{P.trans}~\AgdaBound{l∘t}~\AgdaFunction{diag-lemma} shows that looking up an element of the identity matrix of the Sobrinho Algebra over \(ℕ∪\{∞\}\) is propositionally equal to \AgdaNumber{0}.
 \item
