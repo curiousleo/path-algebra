@@ -113,15 +113,19 @@ For the base case we use the following shorthands to conserve space:
 
 \begin{itemize}
 \item
-\AgdaFunction{r} for \AgdaFunction{estimate}~\AgdaInductiveConstructor{zero}~\AgdaSymbol{\{}\AgdaBound{z≤n}\AgdaSymbol{\}}. For any node \AgdaBound{j}, \AgdaFunction{r}~\AgdaBound{j} stands for the initial distance estimate from the start node to \AgdaBound{j}.
+\AgdaFunction{r}~\AgdaSymbol{=}~\AgdaFunction{estimate}~\AgdaInductiveConstructor{zero}~\AgdaSymbol{\{}\AgdaBound{z≤n}\AgdaSymbol{\}}~\AgdaSymbol{:}~\AgdaFunction{Fin}~\AgdaSymbol{(}\AgdaInductiveConstructor{suc}~\AgdaBound{n}\AgdaSymbol{)}~\AgdaSymbol{→}~\AgdaFunction{Weight}. For any node \AgdaBound{j}, \AgdaFunction{r}~\AgdaBound{j} stands for the initial distance estimate from the start node to \AgdaBound{j}.
 \item
-\AgdaFunction{diag-lemma} for \AgdaFunction{diagonal-nondiag}~\AgdaBound{i}~\AgdaBound{j}~\AgdaBound{¬i≡j} proves that elements of the identity matrix that are not on the diagonal are equal to the Sobrinho Algebra's unit for \AgdaFunction{\_+\_}.
+\AgdaFunction{diag-lemma}~\AgdaSymbol{:}~\AgdaFunction{I[}~\AgdaBound{i}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}~\AgdaInductiveConstructor{≡}~\AgdaField{0\#}
+% for \AgdaFunction{diagonal-nondiag}~\AgdaBound{i}~\AgdaBound{j}~\AgdaBound{¬i≡j}
+proves that elements of the identity matrix that are not on the diagonal are equal to the Sobrinho Algebra's unit for \AgdaFunction{\_+\_}.
 \item
 \AgdaBound{l∘t} for \AgdaFunction{lookup∘tabulate}~\AgdaSymbol{\{}\AgdaBound{f}~\AgdaSymbol{=}~\AgdaFunction{diagonal}~\AgdaField{0\#}~\AgdaField{1\#}\AgdaSymbol{\}}~\AgdaBound{i}~\AgdaBound{j} is an instance of the proof that looking up the element at row \AgdaBound{r} and column \AgdaBound{c} of a matrix generated using \AgdaFunction{tabulate}~\AgdaBound{f} is propositionally equal to \AgdaBound{f}~\AgdaBound{r}~\AgdaBound{c}.
 \item
 \AgdaFunction{I[i,j]≡0} for \AgdaFunction{P.trans}~\AgdaBound{l∘t}~\AgdaFunction{diag-lemma} shows that looking up an element of the identity matrix of the Sobrinho Algebra over \(ℕ∪\{∞\}\) is propositionally equal to \AgdaNumber{0}.
 \item
-\AgdaFunction{fold} for \AgdaFunction{fold-⁅i⁆}~(\AgdaSymbol{λ}~\AgdaBound{k}~\AgdaSymbol{→}~\AgdaFunction{estimate}~\AgdaInductiveConstructor{zero}~\AgdaSymbol{\{}\AgdaBound{z≤n}\AgdaSymbol{\}}~\AgdaBound{k}~\AgdaFunction{*}~\AgdaFunction{A[}~\AgdaBound{k}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]})~\AgdaBound{i} proves a particular case of the fact that a fold over a singleton set is just the inner expression of the fold with the only element of the singleton set as the bound variable.
+\AgdaFunction{fold}~\AgdaSymbol{:}~\AgdaFunction{⨁[}~\AgdaBound{k}~\AgdaFunction{→}~\AgdaFunction{r}~\AgdaBound{k}~\AgdaField{*}~\AgdaFunction{A[}~\AgdaBound{k}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}~\AgdaFunction{]}~\AgdaFunction{⁅}~\AgdaBound{i}~\AgdaFunction{⁆}~\AgdaField{≈}~\AgdaFunction{r}~\AgdaBound{i}~\AgdaField{*}~\AgdaFunction{A[}~\AgdaBound{i}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}
+%for \AgdaFunction{fold-⁅i⁆}~(\AgdaSymbol{λ}~\AgdaBound{k}~\AgdaSymbol{→}~\AgdaFunction{estimate}~\AgdaInductiveConstructor{zero}~\AgdaSymbol{\{}\AgdaBound{z≤n}\AgdaSymbol{\}}~\AgdaBound{k}~\AgdaFunction{*}~\AgdaFunction{A[}~\AgdaBound{k}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]})~\AgdaBound{i}
+proves a particular case of the fact that a fold over a singleton set is just the inner expression of the fold with the only element of the singleton set as the bound variable.
 \end{itemize}
 
 \todo{ensure that all lemmas referenced here have been explained earlier in the paper.}
