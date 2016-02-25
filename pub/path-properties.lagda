@@ -4,6 +4,7 @@ Throughout this section we fix an inhabitant of \AgdaRecord{CommutativeMonoid}, 
 
 Note, the wider algebraic routing literature variously refers to either of the two definitions we will introduce below as \emph{the} Canonical Order; Gondran and Minoux~\cite[p.~18]{gondran_graphs_2008}, for example, exclusively use the Right Canonical Order in their work.
 \todo{why do we need both, then?}
+%leo: we don't ... the choice is arbitrary and all proofs are analogous.
 
 \AgdaHide{
 \begin{code}
