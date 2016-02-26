@@ -1,28 +1,3 @@
-\begin{figure}[t]
-\centering
-\begin{tabular}{c||l@{\;\;\;}|l}
-\textbf{Operation} & \textbf{Semiring} & \textbf{Sobrinho Algebra} \\
-\midrule
-\AgdaFunction{\_+\_} & Associative & Associative \\
-                 & Commutative & Commutative \\
-                 & Identity: \AgdaField{0\#} & Identity: \AgdaField{0\#} \\
-                 & ---                      & Selective \\
-                 & ---                      & Zero: \AgdaField{1\#} \\
-\midrule
-\AgdaFunction{\_*\_} & Associative & --- \\
-                 & Identity: \AgdaField{1\#} & Left identity: \AgdaField{1\#} \\
-                 & Zero: \AgdaField{0\#}     & --- \\
-\midrule
-\AgdaFunction{\_*\_} and \AgdaFunction{\_+\_} & \AgdaFunction{\_*\_} distributes over \AgdaFunction{\_+\_} &
-                   \AgdaFunction{\_+\_} absorbs \AgdaFunction{\_*\_} \\
-\bottomrule
-\end{tabular}
-\label{tab.path.algebra}
-\vspace{6pt}
-\caption{Comparing the algebraic properties of a Semiring and a Sobrinho Algebra.}
-\label{fig.path.algebra}
-\end{figure}
-
 Fix a carrier set $S$ and an equivalence relation $\_{≈}\_$.
 We call a binary operation on $S$ \emph{selective} whenever $x \bullet y ≈ x$ or $x \bullet y ≈ y$ for any $x$ and $y$.
 Intuitively, a selective binary operation denotes a `choice' between any two elements.
@@ -37,7 +12,28 @@ Addition is selective, and addition absorbs multiplication,
 \item
 The usual closure and congruence properties for the unit elements and operations apply.
 \end{itemize}
-In Figure~\ref{fig.path.algebra}, we provide a comparison between the operations and laws of a Sobrinho Algebra and the more familiar notion of a Semiring, algebraic structures themselves often used in work on algebraic routing.
+
+For the reader's benefit, in the table below we compare the operations and laws of a Sobrinho Algebra with the more familiar notion of a Semiring---algebraic structures themselves often used in work on algebraic routing:
+
+\begin{center}
+  \begin{tabular}{c||l@{\;\;\;}|l}
+  \textbf{Operation} & \textbf{Semiring} & \textbf{Sobrinho Algebra} \\
+  \midrule
+$\_{+}\_$ & Associative & Associative \\
+                   & Commutative & Commutative \\
+                   & Identity: $0$ & Identity: $0$ \\
+                   & ---                      & Selective \\
+                   & ---                      & Zero: $1$ \\
+  \midrule
+  $\_{*}\_$ & Associative & --- \\
+                   & Identity: $1$ & Left identity: $1$ \\
+                   & Zero: $0$     & --- \\
+  \midrule
+  $\_{*}\_$ and $\_{+}\_$ & $\_{*}\_$ distributes over $\_{+}\_$ &
+                     $\_{+}\_$ absorbs $\_{*}\_$ \\
+  \midrule
+  \end{tabular}
+\end{center}
 
 Following established convention, we capture the notion of a Sobrinho Algebra as an Agda record named \AgdaRecord{SobrinhoAlgebra}.
 We call the carrier type, corresponding to the carrier set $S$ above, of a Sobrinho Algebra, \AgdaField{Carrier}, obtaining the closure properties mentioned above for `free' as a side-effect of Agda's typing discipline, and assume that there exists a decidable setoid equivalence relation on elements of this type, \AgdaField{\_≈\_}.
