@@ -3,8 +3,7 @@ For reasons of brevity, we only present cases for the Left Canonical Order, leav
 Throughout this section we fix an inhabitant of \AgdaRecord{CommutativeMonoid}, and use \AgdaField{Carrier}, \AgdaField{\_≈\_}, \AgdaField{ε}, and \AgdaField{\_∙\_} to denote the monoid's underlying carrier type, supplied equivalence relation, neutral element, and binary operation, respectively.
 
 Note, the wider algebraic routing literature variously refers to either of the two definitions we will introduce below as \emph{the} Canonical Order; Gondran and Minoux~\cite[p.~18]{gondran_graphs_2008}, for example, exclusively use the Right Canonical Order in their work.
-\todo{why do we need both, then?}
-%leo: we don't ... the choice is arbitrary and all proofs are analogous.
+We define the Left and Right Canonical Orders (\AgdaFunction{\_⊴ᴸ\_} and \AgdaFunction{\_⊴ᴿ\_}) as follows:
 
 \AgdaHide{
 \begin{code}
@@ -59,8 +58,6 @@ module itp16-requires-commutative-monoid
 --  _⊴ᴸ_ = leftCanonicalOrder _≈_ _∙_
 --  _⊴ᴿ_ = rightCanonicalOrder _≈_ _∙_
 \end{code}}
-
-We define the Left and Right Canonical Orders (\AgdaFunction{\_⊴ᴸ\_} and \AgdaFunction{\_⊴ᴿ\_}) as follows:
 
 % Gondran and Minoux, p.18
 
