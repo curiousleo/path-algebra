@@ -1,11 +1,11 @@
-By `sum' we refer to the lifting of a binary operator over an indexed set, like $\bigoplus_{x ∈ X} f(x)$~\cite{bertot_canonical_2008}.
-The properties of the Sobrinho Algebra addition operator, \AgdaFunction{\_+\_}, include associativity, commutative and idempotence.
-In combination, these properties allow us to make strong claims about the behaviour of edge weight sums.
+We introduce a notion of lightweight `big sum' that will be used in our algorithm and proof of correctness when calculating path weights.
+By `big sum' we refer to the lifting of a binary operator over an indexed set, like $\bigoplus_{x ∈ X} f(x)$~\cite{bertot_canonical_2008}.
 
-For convenience, we define path weight sums over commutative monoids since they are well supported by the standard library.
-A proof of idempotency is required explicitly whenever needed.
+As we will discuss in Section~\ref{sect.path.algebras.their.properties.and.models}, the properties of the Sobrinho Algebra addition operator, \AgdaFunction{\_+\_}, include associativity, commutativity, and idempotence, and in combination these properties allow us to make strong claims about the behaviour of path weight sums.
+For convenience here we define path weight sums over commutative monoids since they are well supported by the standard library and a commutative monoid can always be obtained from any Sobrinho Algebra.
+We explicitly require a proof of idempotency whenever needed.
 
-Key to understanding this section is knowledge of the family of types, \AgdaFunction{Subset}~\AgdaBound{n}, describing subsets of finite sets of size \AgdaBound{n}, and implemented in the \AgdaModule{Data.Fin.Subset} module of the Agda standard library.
+Key to understanding this subsection is knowledge of the family of types, \AgdaFunction{Subset}~\AgdaBound{n}, describing subsets of finite sets of size \AgdaBound{n}, and implemented in the \AgdaModule{Data.Fin.Subset} module of the Agda standard library.
 \AgdaFunction{Subset}~\AgdaBound{n} is a fixed-length list of length \AgdaBound{n}.
 At each index \AgdaBound{i} of the vector are one of two flags---\AgdaInductiveConstructor{inside} or \AgdaInductiveConstructor{outside}---denotating whether the $i^\mathrm{th}$ element of the finite set in question is inside or outside the described subset, i.e. a partitioning of a finite set into two new sets.
 

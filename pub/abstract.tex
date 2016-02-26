@@ -1,7 +1,7 @@
 We present a purely-functional implementation and mechanised correctness proof of a variant of Dijkstra's algorithm which computes locally-optimal shortest paths between graph nodes.
 Algorithms of this form are used by Internet Service Providers to ensure global connectivity of the Internet.
 Our proof of correctness is algebraic in character, and depends crucially on a novel class of semiring-like structures we call `Sobrinho Algebras'.
-In particular, we present Sobrinho Algebras, discuss some of their models, and develop their properties before demonstrating that our algorithm computes one row of the Right Local Solution to a matrix fixpoint equation when supplied a graph's adjacency matrix over a Sobrinho Algebra.
+In particular, we present Sobrinho Algebras, discuss some of their models, and develop their properties, before demonstrating that our algorithm computes one row of the Right Local Solution to a matrix fixpoint equation when supplied a graph's adjacency matrix over a Sobrinho Algebra.
 We use the proof assistant Agda for our implementation and proof of correctness, making essential use of dependent types, indexed families of types, and some of Agda's more cutting-edge features, such as induction-recursion, to structure the implementation and proof.
 
 \keywords{Dijkstra's algorithm, shortest paths, Semirings, Sobrinho Algebras, internet routing, interactive theorem proving, Agda}

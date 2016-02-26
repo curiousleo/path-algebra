@@ -23,22 +23,22 @@
 \label{fig.path.algebra}
 \end{figure}
 
-Fix a set $S$ and an equivalence relation $- ≈ -$.
-Call a binary operation on $S$, $- \bullet -$, \emph{selective} when for all $x, y \in S$ either $x \bullet y ≈ x$ or $x \bullet y ≈ y$.
-With this definition in mind, we call a structure $\langle S, +, *, 0, 1 \rangle$ a `Sobrinho Algebra' when:
+Fix a carrier set $S$ and an equivalence relation $\_{≈}\_$.
+We call a binary operation on $S$ \emph{selective} whenever $x \bullet y ≈ x$ or $x \bullet y ≈ y$ for any $x$ and $y$.
+Intuitively, a selective binary operation denotes a `choice' between any two elements.
+With this definition in mind, we call a 6-tuple $\langle S, \_{≈}\_, \_{+}\_, \_{*}\_, 0, 1 \rangle$ a `Sobrinho Algebra' whenever:
 \begin{itemize}
 \item
-$\langle S, +, 0 \rangle$ forms a commutative monoid,
+$\langle S, \_{≈}\_, \_{+}\_, 0 \rangle$ forms a commutative monoid,
 \item
 $1$ is a left identity for multiplication, and a left- and right zero for addition,
 \item
-addition is selective, and addition absorbs multiplication,
+Addition is selective, and addition absorbs multiplication,
 \item
-the usual closure properties for the unit elements and operations apply.
+The usual closure and congruence properties for the unit elements and operations apply.
 \end{itemize}
-A comparison between Sobrinho Algebras and the more familiar notion of Semiring is presented in Figure~\ref{fig.path.algebra}.
+In Figure~\ref{fig.path.algebra}, we provide a comparison between the operations and laws of a Sobrinho Algebra and the more familiar notion of a Semiring, algebraic structures themselves often used in work on algebraic routing.
 
 Following established convention, we capture the notion of a Sobrinho Algebra as an Agda record named \AgdaRecord{SobrinhoAlgebra}.
-We call the carrier type of a Sobrinho Algebra (the set $S$ in the definition above) \AgdaField{Carrier}, obtaining the closure properties mentioned above for `free' as a side-effect of Agda's typing discipline, and assume that there exists a decidable setoid equivalence relation on elements of this type, \AgdaField{\_≈\_}.
-
-\todo{finish this subsection}
+We call the carrier type, corresponding to the carrier set $S$ above, of a Sobrinho Algebra, \AgdaField{Carrier}, obtaining the closure properties mentioned above for `free' as a side-effect of Agda's typing discipline, and assume that there exists a decidable setoid equivalence relation on elements of this type, \AgdaField{\_≈\_}.
+We use the names \AgdaField{1\#} and \AgdaField{0\#} for our two identity elements of the algebra within Agda, in order to avoid clashing with Agda's in-built numeral parsing notation for natural numbers.
