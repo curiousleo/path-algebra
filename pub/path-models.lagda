@@ -35,21 +35,17 @@ module InfinityExtension where
 \end{code}
 
 The natural numbers, \AgdaDatatype{ℕ}, can be embedded into \AgdaDatatype{ℕ∞} in the obvious way, using the constructor \AgdaInductiveConstructor{↑}.
-Define addition, multiplication, minimum and maximum functions, \AgdaFunction{\_+\_}, \AgdaFunction{\_*\_}, \AgdaFunction{\_⊓\_}, and \AgdaFunction{\_⊔\_}, respectively, so that \AgdaInductiveConstructor{∞} is fixed as the largest element of \AgdaDatatype{ℕ∞}, and the following properties of addition and multiplication hold for all \AgdaBound{m}:
+Define addition, multiplication, minimum and maximum functions, \AgdaFunction{\_{+}\_}, \AgdaFunction{\_{*}\_}, \AgdaFunction{\_{⊓}\_}, and \AgdaFunction{\_{⊔}\_}, respectively, so that \AgdaInductiveConstructor{∞} is fixed as the largest element of \AgdaDatatype{ℕ∞}, and the following properties of addition and multiplication hold for all \AgdaBound{m}:
 \begin{gather*}
 \AgdaInductiveConstructor{∞}\; \AgdaFunction{+}\; \AgdaBound{m}\; \AgdaDatatype{≡}\; \AgdaInductiveConstructor{∞}\; \AgdaDatatype{≡}\; \AgdaBound{m}\; \AgdaFunction{+}\; \AgdaInductiveConstructor{∞}\; \quad\text{and}\quad \AgdaInductiveConstructor{∞}\; \AgdaFunction{*}\; \AgdaBound{m}\; \AgdaDatatype{≡}\; \AgdaInductiveConstructor{∞}\; \AgdaDatatype{≡}\; \AgdaBound{m}\; \AgdaFunction{*}\; \AgdaInductiveConstructor{∞}
 \end{gather*}
 In all other cases addition and multiplication behave in the `obvious way'.
-Using these definitions we can provide two different models for \AgdaRecord{SobrinhoAlgebra}:
-\begin{enumerate}
+Using these definitions we can provide two different inhabitants for \AgdaRecord{SobrinhoAlgebra}, and hence two different non-trivial models for a Sobrinho Algebra:
+\begin{itemize}
 \item
-The \emph{shortest path Sobrinho Algebra} is obtained as follows.
-Take the algebra's addition and multiplication functions to be \AgdaFunction{\_⊓\_} and \AgdaFunction{\_+\_} on \AgdaDatatype{ℕ∞}, respectively.
-Take the unit for addition to be \AgdaInductiveConstructor{∞} and the unit for multiplication to be \AgdaInductiveConstructor{↑}~\AgdaInductiveConstructor{0}.
+The \emph{shortest path} Sobrinho Algebra is obtained by taking the algebra's addition and multiplication functions to be \AgdaFunction{\_{⊓}\_} and \AgdaFunction{\_{+}\_} on \AgdaDatatype{ℕ∞}, respectively, the unit for addition to be \AgdaInductiveConstructor{∞}, and the unit for multiplication to be \AgdaInductiveConstructor{↑}~\AgdaInductiveConstructor{0}.
 \item
-The \emph{widest path Sobrinho Algebra} is obtained as follows.
-Take the algebra's addition and multiplication functions to be \AgdaFunction{\_⊓\_} and \AgdaFunction{\_⊔\_} on \AgdaDatatype{ℕ∞}, respectively.
-Take the unit for addition to be \AgdaInductiveConstructor{∞} and the unit for multiplication to be \AgdaInductiveConstructor{↑}~\AgdaInductiveConstructor{0}.
-\end{enumerate}
+The \emph{widest path} Sobrinho Algebra is obtained by taking the algebra's addition and multiplication functions to be \AgdaFunction{\_{⊓}\_} and \AgdaFunction{\_{⊔}\_} on \AgdaDatatype{ℕ∞}, respectively, the unit for addition to be \AgdaInductiveConstructor{∞}, and the unit for multiplication to be \AgdaInductiveConstructor{↑}~\AgdaInductiveConstructor{0}.
+\end{itemize}
+As the names suggest, executing our generalised shortest path algorithm with adjacency matrix coefficients taken from a shortest path Sobrinho Algebra will compute the shortest path through the graph described by the matrix, whilst taking matrix coefficients from a widest path Sobrinho Algebra will compute the widest path, or maximum bottleneck capacity.
 In both cases, it is routine to check that the axioms for a \AgdaRecord{SobrinhoAlgebra} can be satisfied.
-As the names suggest, executing our generalised Dijkstra algorithm with adjacency matrix coefficients taken from a shortest path Sobrinho Algebra will compute the shortest path through the graph described by the matrix, whilst taking matrix coefficients from a widest path Sobrinho Algebra will compute the widest path, or maximum bottleneck capacity.

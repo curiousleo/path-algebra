@@ -80,7 +80,7 @@ Concretely, in Agda we define this as follows:
 \end{code}
 
 To prove Property~\ref{eqn.correctness.correct} above, we define an auxiliary, weaker predicate, capturing the notion of a \emph{Partial Right Local Solution}.
-In particular, the estimate $r_j^{(n)}$ for node $j$ at step $n$ is a Partial Right Local Solution iff the equation
+In particular, the estimate $r_j^{(n)}$ for node $j$ at step $n$ is a Partial Right Local Solution if and only if the equation
 \begin{displaymath}
 r_j^{(n)} ≈ I_{i,j} + \bigoplus_{k ∈ S_n} r_k^{(n)} * A_{k,j}
 \end{displaymath}

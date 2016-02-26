@@ -16,8 +16,8 @@ The usual closure and congruence properties for the unit elements and operations
 For the reader's benefit, in the table below we compare the operations and laws of a Sobrinho Algebra with the more familiar notion of a Semiring---algebraic structures themselves often used in work on algebraic routing:
 
 \begin{center}
-  \begin{tabular}{c||l@{\;\;\;}|l}
-  \textbf{Operation} & \textbf{Semiring} & \textbf{Sobrinho Algebra} \\
+  \begin{tabular}{l||l@{\;\;\;}|l}
+  \emph{Operation} & \emph{Semiring} & \emph{Sobrinho Algebra} \\
   \midrule
 $\_{+}\_$ & Associative & Associative \\
                    & Commutative & Commutative \\
@@ -36,5 +36,5 @@ $\_{+}\_$ & Associative & Associative \\
 \end{center}
 
 Following established convention, we capture the notion of a Sobrinho Algebra as an Agda record named \AgdaRecord{SobrinhoAlgebra}.
-We call the carrier type, corresponding to the carrier set $S$ above, of a Sobrinho Algebra, \AgdaField{Carrier}, obtaining the closure properties mentioned above for `free' as a side-effect of Agda's typing discipline, and assume that there exists a decidable setoid equivalence relation on elements of this type, \AgdaField{\_≈\_}.
+We use the name \AgdaField{Carrier} for the carrier type of a Sobrinho Algebra, corresponding to the carrier set $S$ above, obtaining the closure properties mentioned above for `free' as a side-effect of Agda's typing discipline, and assume that there exists a decidable setoid equivalence relation on elements of this type, \AgdaField{\_≈\_}.
 We use the names \AgdaField{1\#} and \AgdaField{0\#} for our two identity elements of the algebra within Agda, in order to avoid clashing with Agda's in-built numeral parsing notation for natural numbers.
