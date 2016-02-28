@@ -273,7 +273,7 @@ We omit the straightforward proof of this fact, which we refer to as \AgdaFuncti
   correct j =
     begin
       r j                                                       ≈⟨ pcorrect n j ⟩
-      I[ i , j ] + (⨁[ k ← seen n {≤-refl} ] r k * A[ k , j ])  ≡⟨ lemma ⟩
+      I[ i , j ] + (⨁[ k ← seen n {≤-refl} ] r k * A[ k , j ])  ≡⟨ P.cong₂ _+_ P.refl lemma ⟩
       I[ i , j ] + (⨁[ k ← ⊤ ] r k * A[ k , j ])
     ∎
 \end{code}
@@ -283,9 +283,15 @@ We omit the straightforward proof of this fact, which we refer to as \AgdaFuncti
       r = estimate n {≤-refl}
 
       seen≡⊤ = Sub.n→⊤ (seen n) (seen-size n)
-      lemma = P.cong₂ _+_ P.refl (P.cong₂ ⨁-syntax P.refl seen≡⊤)
+      lemma = P.cong₂ ⨁-syntax P.refl seen≡⊤
 \end{code}
 }
-Above, we use the following shorthands to conserve space: \AgdaBound{r} for \AgdaFunction{estimate}~\AgdaBound{n}~\AgdaSymbol{\{}\AgdaInductiveConstructor{≤-refl}\AgdaSymbol{\}}, \AgdaBound{seen≡⊤} for \AgdaFunction{Sub.n→⊤}~(\AgdaFunction{seen}~\AgdaBound{n})~(\AgdaFunction{seen-size}~\AgdaBound{n}), and \AgdaBound{lemma} for \AgdaFunction{P.cong₂}~\AgdaFunction{\_+\_}~\AgdaInductiveConstructor{P.refl}~(\AgdaFunction{P.cong₂}~\AgdaFunction{⨁-syntax}~\AgdaInductiveConstructor{P.refl}~\AgdaBound{seen≡⊤}).
-These are, respectively: \todo{explain what these are, and any lemmas they depend on.}
+
+Above, we have omitted the definition of \AgdaFunction{lemma}, which proves that \AgdaFunction{seen}~\AgdaBound{n} can be replaced by \AgdaFunction{⊤} (the set containing all naturals up to \AgdaBound{n}) as the index set expression of the fold: \(%
+\AgdaFunction{lemma}~\AgdaSymbol{:}~\AgdaFunction{⨁[}~\AgdaBound{k}~\AgdaFunction{←}~\AgdaFunction{seen}~\AgdaBound{n}~\AgdaFunction{]}~\AgdaFunction{r}~\AgdaBound{k}~\AgdaField{*}~\AgdaFunction{A[}~\AgdaBound{k}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}~%
+\AgdaField{≈}~%
+\AgdaFunction{⨁[}~\AgdaBound{k}~\AgdaFunction{←}~\AgdaFunction{⊤}~\AgdaFunction{]}~\AgdaFunction{r}~\AgdaBound{k}~\AgdaField{*}~\AgdaFunction{A[}~\AgdaBound{k}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}%
+\) %
+using the fact that after \AgdaBound{n} steps, all nodes have been visited, that is, \AgdaFunction{seen}~\AgdaBound{n}~\AgdaInductiveConstructor{≡}~\AgdaFunction{⊤}.
+
 With this, we have Property~\ref{eqn.correctness.correct}, and have the correctness proof of the algorithm.
