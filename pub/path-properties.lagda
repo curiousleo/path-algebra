@@ -140,25 +140,11 @@ Again, we proceed by a case split on the results of \AgdaBound{a}~\AgdaField{∙
 \end{code}
 
 Taken together, these four properties---reflexivitiy, transitivity, totality and antisymmetry---imply that the Left Canonical Order on a selective commutative monoid is a total order.
-Next, we show that the Left Canonical Order of a path algebra's addition operator is a decidable total order.
+Next, we show that the Left Canonical Order of a Sobrinho Algebra's addition operator is a decidable total order.
 
 From this point on we fix \AgdaFunction{∙-selective}, a proof that the monoid's binary operation is selective, and \AgdaField{\_≟\_}, a proof that the monoid's equivalence relation is decidable.
 Any Sobrinho Algebra possesses both of these properties, so assuming them here is `safe' for our purposes.
 Further, as selectivity implies idempotence, we also have \AgdaFunction{∙-idempotent}, a proof that the monoid's binary operation is idempotent whenever it is selective.
-
-%leo: also mention non-irreflexivity and non-trichotomy?
-
-%\AgdaHide{
-%\begin{code}
-%  ⊴ᴸ‿¬irrefl : ¬ Irreflexive _≈_ _⊴ᴸ_
-%  ⊴ᴸ‿¬irrefl irrefl = irrefl (proj₁ identity ε) (ε , refl)
-%
-%  ⊴ᴸ‿¬tri : ¬ Trichotomous _≈_ _⊴ᴸ_
-%  ⊴ᴸ‿¬tri tri with tri ε ε
-%  ... | tri< a ¬b ¬c = ¬b refl
-%  ... | tri≈ ¬a b ¬c = ¬a (ε , (sym (proj₁ identity ε)))
-%  ... | tri> ¬a ¬b c = ¬b refl
-%\end{code}}
 
 \AgdaHide{
 \begin{code}
