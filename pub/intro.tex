@@ -1,6 +1,6 @@
 Shortest path algorithms are of central importance in Computer Science.
 A particularly fascinating aspect of these algorithms is
-that they can often be generalised to rather exotic algebraic structures
+that they can often be generalized to rather exotic algebraic structures
 such as \emph{semirings}~\cite{gondran_graphs_2008}.
 A semiring $\langle S, \oplus, \otimes, 0, 1 \rangle$ is
 comprised of a commutative monoid $\langle S, \oplus, 0\rangle$
@@ -16,22 +16,22 @@ for all $a, b, c \in S$,
     (b \oplus c) \otimes a = (b\otimes a) \oplus (c\otimes a).
 \end{equation}
 
-In this generalised, algebraic setting a directed graph having $n$ nodes and arc weights in $S$
+In this generalized, algebraic setting a directed graph having $n$ nodes and arc weights in $S$
 can be represented as a $n\times n$-matrix $\mathbf{A}$ over $S$, the graph's
-adjacency matrix.
-Given a path $p = v_0, v_1, \ldots, v_k$---a sequence of nodes--- its \emph{weight}
+adjacency matrix where \(\mathbf{A}_{i,j}\) is the weight of the arc from node \(i\) to node \(j\).
+Given a path $p = v_0, v_1, \ldots, v_k$ -- a sequence of nodes -- its \emph{weight}
 is defined as
 \begin{equation}
 \label{eq:def:weight}
     w_{\mathbf{A}}(p)
     \equiv
     \mathbf{A}(v_0,\ v_1)
-    \otimes \mathbf{A}(v_0,\ v_1)
+    \otimes \mathbf{A}(v_1,\ v_2)
     \otimes \cdots
     \otimes \mathbf{A}(v_{k-1},\ v_k),
 \end{equation}
 with the empty path assigned the weight $1$.
-The generalised shortest-path problem is then to find
+The generalized shortest-path problem is then to find
 a matrix $\mathbf{A}^*$ such that
 \begin{equation}
 \label{eq:global}
@@ -40,22 +40,22 @@ a matrix $\mathbf{A}^*$ such that
 where $\pi(i,\ j)$ represents the set of all paths from node $i$ to node $j$.
 Such solutions do not always exist, and \todo{SAY SOMETHING}
 
-A nice feature of working in this generalised, algebraic setting is
-the ability to vary the semiring that parameterises the algorithm.
-In particular, for the reader not familiar with this generalisation,
+A nice feature of working in this generalized, algebraic setting is
+the ability to vary the semiring that parameterizes the algorithm.
+In particular, for the reader not familiar with this generalization,
 we define the \emph{shortest path semiring} as
 \begin{equation}
 \label{eq:def:sp}
-\mathbb{sp} \equiv \langle\mathbb{N}{\infty}, min, +, \infty, 0\rangle,
+\mathbf{sp} \equiv \langle\mathbb{N}_{\infty}, min, +, \infty, 0\rangle,
 \end{equation}
 where path weight is `just' the sum of arc weights.
-Here, $\mathbb{N}{\infty}$ is the set of natural numbers extended with a `point
+Here, $\mathbb{N}_{\infty}$ is the set of natural numbers extended with a `point
 at infinity', $\infty$.
 To get some feeling for the power of the
 algebraic approach consider another semiring
 \begin{equation}
 \label{eq:def:cap}
-\mathbb{cap} \equiv \langle\mathbb{N}{\infty}, max, min, 0, \infty\rangle,
+\mathbf{cap} \equiv \langle\mathbb{N}_{\infty}, max, min, 0, \infty\rangle,
 \end{equation}
 which can be used to compute \emph{maximum capacity paths}.
 The weight of a path is determined by $min$ to be the
@@ -83,23 +83,23 @@ as well as the (right) equation
 \end{equation}
 
 The distributivity axioms,
-Equations~\ref{eq:left:distributivity} and~\ref{eq:left:distributivity},
+Equations~\ref{eq:left:distributivity} and~\ref{eq:right:distributivity},
 are essential in the semiring theory outlined above.
 Thus it may seem suprising that recent research has shown that
 the matrix equations ~\ref{eq:left:local} and ~\ref{eq:right:local}
-can sometimes be solved even if when
+can sometimes be solved even when
 distributivity axioms do not hold in the algebraic structure employed.
 Much of this work was originally motivated
 by investigations of the Border Gateway Protocol (BGP),
 the Internet routing protocol which has evolved to
-maintains global connectivity between Internet Service Providers (ISPs).
+maintain global connectivity between Internet Service Providers (ISPs).
 In BGP the anologue of the weight of a path
 $p = v_0, v_1, \cdots,\ v_k$ at node $v_0$
-is dominated by the contractural relationships between
+is dominated by the contractual relationships between
 the networks associated with nodes $v_0$ and $v_1$.
 The typical relationships involve those between customers
 and providers and between competing ISPs (that must exchange
-routing information in order to provide connectivty to
+routing information in order to provide connectivity to
 the global Internet).
 
 But how can we interpret such solutions?
@@ -122,7 +122,7 @@ call \emph{locally optimal}.
 
 \begin{figure}[ht]
 \includegraphics{algorithm.pdf}
-\caption{Dynerowicz and Griffin's imperative generalised Dijkstra's algorithm}
+\caption{Dynerowicz and Griffin's imperative generalized Dijkstra's algorithm}
 \label{fig.algorithm}
 \end{figure}
 
