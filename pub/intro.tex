@@ -31,59 +31,57 @@ The matrix $\mathbf{A}^*$ need not always exist, but it is well known that if it
 \end{gather*}
 where $\mathbf{I}$ is the identity matrix and the multiplication and addition operations of the semiring have been lifted to matrix multiplication and addition in the obvious manner.
 
-A nice feature of working in this algebraic setting is that the semiring parameterising the algorithm can be varied: some semirings cause the algorithm to compute shortest paths through the graph, \emph{a la} traditional presentations of Dijkstra, whereas other cause the algorithm to compute maximum bottleneck capacity, or some other feature of the graph.
-The key idea here is that a generic, parametric implementation of a shortest path algorithm can be developed and then instantiated with different semirings, and thereafter uniformly used to calculate different properties of graphs.
-The interested reader can find a thorough treatment of this material in~\cite{gondran_graphs_2008}.
-
-The distributivity axioms,
-Equations~\ref{eq:left:distributivity} and~\ref{eq:right:distributivity},
-are essential in the semiring theory outlined above.
-Thus it may seem suprising that recent research has shown that
-the matrix equations ~\ref{eq:left:local} and ~\ref{eq:right:local}
-can sometimes be solved even when
-distributivity axioms do not hold in the algebraic structure employed.
-Much of this work was originally motivated
-by investigations of the Border Gateway Protocol (BGP),
-the Internet routing protocol which has evolved to
-maintain global connectivity between Internet Service Providers (ISPs).
-In BGP the anologue of the weight of a path
-$p = v_0, v_1, \cdots,\ v_k$ at node $v_0$
-is dominated by the contractual relationships between
-the networks associated with nodes $v_0$ and $v_1$.
-The typical relationships involve those between customers
-and providers and between competing ISPs (that must exchange
-routing information in order to provide connectivity to
-the global Internet).
-
-But how can we interpret such solutions?
-Take Equation~\ref{eq:left:local} for example.
-If we assume that $\mathbf{L}$ solves this equation
-and that $i \neq j$, then we have
-\begin{equation}
-\label{eq:left:local:at:i}
-\mathbf{L}(i,\ j) = \displaystyle\bigoplus_{q \in N(i)} \mathbf{A}(i,\ q) \otimes \mathbf{L}(q,\ j),
-\end{equation}
-where $N(i)$ is the set of neighbors of node $i$.
-We can interpret this from node $i$'s perspective as
-the best path weight available given the paths its neighbors
-have obtained.
-That is, $\mathbf{L}$ does not represent the globally optimal
-path weights, but rather an equilibrium point that we will
-call \emph{locally optimal}.
-
-\subsection{Generalising Dijkstra's algorithm}
-
-\begin{figure}[ht]
-\includegraphics{algorithm.pdf}
-\caption{Dynerowicz and Griffin's imperative generalized Dijkstra's algorithm}
-\label{fig.algorithm}
-\end{figure}
+% A nice feature of working in this algebraic setting is that the semiring parameterising the algorithm can be varied: some semirings cause the algorithm to compute shortest paths through the graph, \emph{a la} traditional presentations of Dijkstra, whereas other cause the algorithm to compute maximum bottleneck capacity, or some other feature of the graph.
+% The key idea here is that a generic, parametric implementation of a shortest path algorithm can be developed and then instantiated with different semirings, and thereafter uniformly used to calculate different properties of graphs.
+% The interested reader can find a thorough treatment of this material in~\cite{gondran_graphs_2008}.
+%
+% The distributivity axioms,
+% Equations~\ref{eq:left:distributivity} and~\ref{eq:right:distributivity},
+% are essential in the semiring theory outlined above.
+% Thus it may seem suprising that recent research has shown that
+% the matrix equations ~\ref{eq:left:local} and ~\ref{eq:right:local}
+% can sometimes be solved even when
+% distributivity axioms do not hold in the algebraic structure employed.
+% Much of this work was originally motivated
+% by investigations of the Border Gateway Protocol (BGP),
+% the Internet routing protocol which has evolved to
+% maintain global connectivity between Internet Service Providers (ISPs).
+% In BGP the anologue of the weight of a path
+% $p = v_0, v_1, \cdots,\ v_k$ at node $v_0$
+% is dominated by the contractual relationships between
+% the networks associated with nodes $v_0$ and $v_1$.
+% The typical relationships involve those between customers
+% and providers and between competing ISPs (that must exchange
+% routing information in order to provide connectivity to
+% the global Internet).
+%
+% But how can we interpret such solutions?
+% Take Equation~\ref{eq:left:local} for example.
+% If we assume that $\mathbf{L}$ solves this equation
+% and that $i \neq j$, then we have
+% \begin{equation}
+% \label{eq:left:local:at:i}
+% \mathbf{L}(i,\ j) = \displaystyle\bigoplus_{q \in N(i)} \mathbf{A}(i,\ q) \otimes \mathbf{L}(q,\ j),
+% \end{equation}
+% where $N(i)$ is the set of neighbors of node $i$.
+% We can interpret this from node $i$'s perspective as
+% the best path weight available given the paths its neighbors
+% have obtained.
+% That is, $\mathbf{L}$ does not represent the globally optimal
+% path weights, but rather an equilibrium point that we will
+% call \emph{locally optimal}.
+%
+% \begin{figure}[ht]
+% \includegraphics{algorithm.pdf}
+% \caption{Dynerowicz and Griffin's imperative generalized Dijkstra's algorithm}
+% \label{fig.algorithm}
+% \end{figure}
 
 \todo{finish me}
 
 \paragraph{Agda}
 
-Agda~\cite{norell_dependently_2009} is a dependently-typed functional programming language \emph{cum} proof assistant for higher-order intuitionistic logic.
+Agda~\cite{norell_dependently_2009} is a dependently-typed programming language \emph{cum} proof assistant for higher-order intuitionistic logic.
 In contrast to similar systems, such as Coq~\cite{bertot_short_2008} and Matita~\cite{asperti_matita_2011}, proof terms are constructed by hand via a process of type-directed refinement, rather than being constructed via tactic-assisted metaprogramming.
 
 Agda has a uniform syntax that should be familiar to Haskell programmers and users of other dependently-typed proof assistants.
@@ -95,7 +93,7 @@ Dependent sums are constructed using the comma constructor: \AgdaBound{x}~\AgdaI
 We sometimes write \AgdaFunction{∃}~\AgdaSymbol{λ}~\AgdaBound{x}~\AgdaSymbol{→}~\AgdaBound{P} for the dependent sum type when the type of the first projection can be inferred.
 Propositional equality between two types is written \AgdaBound{A}~\AgdaDatatype{≡}~\AgdaBound{B} and has a single canonical inhabitant, \AgdaInductiveConstructor{refl}.
 Lastly, we write \AgdaBound{A}~\AgdaDatatype{⊎}~\AgdaBound{B} for the disjoint union type with constructors \AgdaInductiveConstructor{inj₁} and \AgdaInductiveConstructor{inj₂} and \AgdaFunction{¬}~\AgdaBound{A} for constructive negation.
-Agda is a predicative type theory with an infinite universe hierarchy, \AgdaPrimitiveType{Setᵢ}, with \AgdaPrimitiveType{Set}---the type of small types---being identified with \AgdaPrimitiveType{Set₀}, the base universe in Agda's hierarchy.
+Agda is a predicative type theory with an infinite universe hierarchy, \AgdaPrimitiveType{Setᵢ}, with \AgdaPrimitiveType{Set} being identified with \AgdaPrimitiveType{Set₀}, the base universe in Agda's hierarchy.
 Universe polymorphism is used extensively throughout our development, with explicit quantification over universe levels that will henceforth be ignored.
 
 %\paragraph{Contributions and map of paper}
