@@ -1,7 +1,7 @@
 % Need to mention AVL trees in standard library
 
-Dijkstra's algorithm fixes the order that nodes in a graph are visited by maintaining a priority queue of previously unvisited nodes---the node with the lowest priority in this queue is the node that will be considered next by the algorithm.\footnote{How these priorities are assigned to a node in our particular implementation of Dijkstra's algorithm will be further discussed in Section~\ref{sect.dijkstras.algorithm.and.its.correctness}.}
-In this Subsection we define an indexed family of types of sorted vectors that we will use in Section~\ref{sect.dijkstras.algorithm.and.its.correctness} to implement this priority queue of unvisited nodes.
+%Dijkstra's algorithm fixes the order that nodes in a graph are visited by maintaining a priority queue of previously unvisited nodes---the node with the lowest priority in this queue is the node that will be considered next by the algorithm.\footnote{How these priorities are assigned to a node in our particular implementation of Dijkstra's algorithm will be further discussed in Section~\ref{sect.dijkstras.algorithm.and.its.correctness}.}
+We define an indexed family of types of sorted vectors that we will use in Section~\ref{sect.dijkstras.algorithm.and.its.correctness} to implement a priority queue of unvisited nodes.
 Here, for generality we keep the particular type used to implement priorties abstract, and any type with a decidable total order structure defined over them will suffice.
 
 Note that we prefer working with a linear sorted data structure, compared to a balanced binary tree such as Agda's existing implementation of AVL trees in \AgdaModule{Data.AVL}, to simplify proofs.
@@ -44,7 +44,6 @@ module sorted-vectors
   open DecTotalOrder totalOrder
     renaming (trans to ≤-trans; refl to ≤-refl)
 \end{code}}
-
 \begin{code}
   mutual
     data SortedVec : ℕ → Set (ℓ₂ ⊔ a) where
@@ -56,12 +55,9 @@ module sorted-vectors
     x ≼ []                = Lift ⊤
     x ≼ (y ∷ ys ⟨ prf ⟩)  = (x ≤ y) × (x ≼ ys)
 \end{code}
-
-Compared to a standard vector, our `cons' constructor, \AgdaInductiveConstructor{\_∷\_⟨\_⟩}, takes an additional proof that the head element \emph{dominates} the tail of the list.
-The domination relation, \AgdaFunction{\_≼\_}, is defined mutually with the declaration of our sorted vector type via induction-recursion~\cite{dybjer_general_2000} making it impossible to construct a vector that is not sorted.
-The relation is decidable and also \emph{quasi-transitive} in the sense that if $x$ dominates $xs$ and $y$ is less than $x$ according to our total order then $y$ also dominates $xs$.
-We state the lemma here, but omit the trivial proof by induction on $xs$, for brevity:
-
+Our `cons' constructor, \AgdaInductiveConstructor{\_∷\_⟨\_⟩}, takes a proof that the head element \emph{dominates} the tail of the list.
+The domination relation, \AgdaFunction{\_≼\_}, is defined mutually our type definition via induction-recursion~\cite{dybjer_general_2000} making it impossible to construct a vector that is not sorted.
+The relation is decidable and also \emph{quasi-transitive} in the sense that if $x$ dominates $xs$ and $y$ is less than $x$ according to our total order then $y$ also dominates $xs$ (proof omitted):
 \begin{code}
   ≼-trans : ∀ {n y x} → (xs : SortedVec n) → x ≼ xs → y ≤ x → y ≼ xs
 \end{code}
@@ -70,7 +66,6 @@ We state the lemma here, but omit the trivial proof by induction on $xs$, for br
   ≼-trans []               xsDomx         y≤x = lift tt
   ≼-trans (z ∷ zs ⟨ prf ⟩) (x≤z , zsDomx) y≤x = ≤-trans y≤x x≤z , ≼-trans zs zsDomx y≤x
 \end{code}}
-
 \AgdaHide{
 \begin{code}
   ¬x≤y→y≤x : ∀ {x y} → ¬ (x ≤ y) → y ≤ x
@@ -82,10 +77,8 @@ We state the lemma here, but omit the trivial proof by induction on $xs$, for br
   head (x ∷ xs ⟨ prf ⟩) = x
 \end{code}}
 % $
-
 The insertion of an element into an existing sorted vector is defined by mutual recursion between two functions \AgdaFunction{insert} and \AgdaFunction{≼-insert}.
 The function \AgdaFunction{insert} places the inserted element in the correct position in the vector, `bumping up' the length index, whilst \AgdaFunction{≼-insert} constructs the required domination proof for the new element:
-
 \begin{code}
   mutual
     insert : ∀ {n} → Carrier → SortedVec n → SortedVec (ℕ.suc n)
@@ -101,7 +94,6 @@ The function \AgdaFunction{insert} places the inserted element in the correct po
     ... | yes lt  = y≤x , y≤z , zsDomy
     ... | no ¬lt  = y≤z , ≼-insert zs y≤x zsDomy
 \end{code}
-
 Here, \AgdaFunction{¬x≤y→y≤x} is a proof that $x \not\le y$ implies $y \le x$ in a total order.
 We use \AgdaFunction{≼-trans} to construct the domination proof in the `cons' case of \AgdaFunction{insert}.
 
@@ -118,9 +110,8 @@ We use \AgdaFunction{≼-trans} to construct the domination proof in the `cons' 
   (x ∷ xs ⟨ x≼xs ⟩) ++ ys = insert x (xs ++ ys)
 \end{code}}
 
-Functions that take the head of a vector, \AgdaFunction{head}, append two vectors together, \AgdaFunction{\_++\_}, and so on, can be given the precise types one usually expects when working with vectors.
-Vector membership, \AgdaDatatype{\_∈\_}, is defined using an inductive relation, only complicated slightly by the need to quantify over explicit domination proofs:
-
+Typical list functions may be given the precise types one usually expects when working with vectors.
+Vector membership, \AgdaDatatype{\_∈\_}, used throughout the paper, is defined using an inductive relation with two constructors, \AgdaInductiveConstructor{here} and \AgdaInductiveConstructor{there}, as usual only complicated slightly by the need to quantify over explicit domination proofs:
 \begin{code}
   data _∈_ (x : Carrier) : ∀ {n} → SortedVec n → Set (ℓ₁ ⊔ a ⊔ ℓ₂) where
     here   : ∀ {n} →  (xs : SortedVec n) → ∀ prf → x ∈ (x ∷ xs ⟨ prf ⟩)
@@ -128,7 +119,7 @@ Vector membership, \AgdaDatatype{\_∈\_}, is defined using an inductive relatio
                       ∀ prf → x ∈ ys → x ∈ (y ∷ ys ⟨ prf ⟩)
 \end{code}
 
-Using this definition, we may show that the head of a vector is indeed the smallest element contained therein:
+Using this definition, we may show by case analysis that the head of a vector is indeed the smallest element contained therein:
 
 \begin{code}
   head-≤ : ∀ {m} {x} {xs : SortedVec (ℕ.suc m)} → x ∈ xs → head xs ≤ x
@@ -142,5 +133,3 @@ Using this definition, we may show that the head of a vector is indeed the small
   head-≤ (there _  (_ ∷ _ ⟨ _ ⟩)  (z≤y , _)  x∈y∷ys  )  =
     ≤-trans z≤y (head-≤ x∈y∷ys)
 \end{code}}
-
-The proof proceeds by analysing the cases under which \AgdaBound{x}~\AgdaFunction{∈}~\AgdaBound{xs}, and affirms the suitability of \AgdaDatatype{SortedVec} as a priority queue implementation.

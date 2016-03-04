@@ -1,13 +1,6 @@
-We introduce a notion of lightweight `big sum' that will be used in our algorithm and proof of correctness when calculating path weights.
-By `big sum' we refer to the lifting of a binary operator over an indexed set, like $\bigoplus_{x ∈ X} f(x)$~\cite{bertot_canonical_2008}.
-
-As we will discuss in Section~\ref{sect.path.algebras.their.properties.and.models}, the properties of the Sobrinho Algebra addition operator, \AgdaFunction{\_+\_}, include associativity, commutativity, and idempotence, and in combination these properties allow us to make strong claims about the behaviour of path weight sums.
-For convenience here we define path weight sums over commutative monoids since they are well supported by the standard library and a commutative monoid can always be obtained from any Sobrinho Algebra.
+We introduce a notion of lightweight `big sum'~\cite{bertot_canonical_2008} that will be used in our algorithm and proof of correctness when calculating path weights.
+Though in the rest of the paper they will be used over Sobrinho Algebras, we here define path weight sums over commutative monoids for convenience as they are well supported by the standard library and Sobrinho Algebras subsume commutative monoids.
 We explicitly require a proof of idempotency whenever needed.
-
-Key to understanding this subsection is knowledge of the family of types, \AgdaFunction{Subset}~\AgdaBound{n}, describing subsets of finite sets of size \AgdaBound{n}, and implemented in the \AgdaModule{Data.Fin.Subset} module of the Agda standard library.
-\AgdaFunction{Subset}~\AgdaBound{n} is a fixed-length list of length \AgdaBound{n}.
-At each index \AgdaBound{i} of the vector are one of two flags---\AgdaInductiveConstructor{inside} or \AgdaInductiveConstructor{outside}---denotating whether the $i^\mathrm{th}$ element of the finite set in question is inside or outside the described subset, i.e. a partitioning of a finite set into two new sets.
 
 We use the function \AgdaFunction{fold} to define sums over subsets of finite sets using the underlying monoid's identity element \AgdaField{ε} and binary operator \AgdaField{\_∙\_}:
 
@@ -62,15 +55,14 @@ For convenience we provide a \AgdaKeyword{syntax} declaration for \AgdaFunction{
   open P using (_≡_)
 \end{code}}
 
-We now show that sums over commutative monoids have certain properties, of which we present only a selection of the most useful or interesting.
-We omit proofs, all of which proceed by straightforward case analysis or induction, unless otherwise stated.
-Trivially, we have that folding over an empty set is equivalent to the neutral element of the monoid, and folding over a singleton set containing an element \AgdaBound{i} is equivalent to applying the function \AgdaBound{f} to \AgdaBound{i}.
-These facts are expressed as the lemmas \AgdaFunction{fold-⊥} and \AgdaFunction{fold-⁅i⁆}, respectively:
+Trivially, we have that folding over an empty set (written \AgdaFunction{⊥}) is equivalent to the neutral element of the monoid, and folding over a singleton set containing an element, written \AgdaFunction{⁅}~\AgdaBound{i}~\AgdaFunction{⁆} for each element \AgdaBound{i}, is equivalent to applying the function \AgdaBound{f} to \AgdaBound{i}.
+These facts are expressed as the lemmas \AgdaFunction{fold-⊥} and \AgdaFunction{fold-⁅i⁆}, respectively, which we omit here.
+\AgdaHide{
 \begin{code}
   fold-⊥ : ∀ {n} f → fold f (⊥ {n}) ≈ ε
 
   fold-⁅i⁆ : ∀ {n} f (i : Fin n) → fold f ⁅ i ⁆ ≈ f i
-\end{code}
+\end{code}}
 \AgdaHide{
 \begin{code}
   fold-⊥ {zero}   f = refl
@@ -86,7 +78,6 @@ These facts are expressed as the lemmas \AgdaFunction{fold-⊥} and \AgdaFunctio
     ∎
   fold-⁅i⁆ f (suc i) = fold-⁅i⁆ (f ∘ suc) i
 \end{code}}
-Here, \AgdaFunction{⊥} is the empty set, and $\AgdaFunction{⁅}~\AgdaBound{i}~\AgdaFunction{⁆}$ is a singleton set containing only \AgdaBound{i}.
 Folding a function \AgdaBound{f} over a union of two subsets, \AgdaBound{xs} and \AgdaBound{ys}, is equivalent to folding over \AgdaBound{xs} and \AgdaBound{ys} separately and combining the two results with the commutative monoid's binary operator, \AgdaField{\_∙\_}, whenever the operator is idempotent, as expressed by the following lemma, \AgdaFunction{fold-∪}:
 
 \begin{code}
@@ -96,12 +87,11 @@ Folding a function \AgdaBound{f} over a union of two subsets, \AgdaBound{xs} and
 
 The proof proceeds by simultaneous induction on both subsets, combined with equational reasoning.
 For each element of the two sets we must consider whether it lies inside or outside of the subsets being described by \AgdaBound{xs} and \AgdaBound{ys}.
-We present a single case, \AgdaInductiveConstructor{inside}-\AgdaInductiveConstructor{inside}:
 
 \AgdaHide{
 \begin{code}
   fold-∪ idp f []             []             = sym (proj₁ identity _)
-\end{code}}
+\end{code}
 \begin{code}
   fold-∪ idp f (inside ∷ xs)  (inside ∷ ys)  =
     begin
@@ -119,7 +109,7 @@ We present a single case, \AgdaInductiveConstructor{inside}-\AgdaInductiveConstr
     ≈⟨ sym (assoc _ _ _) ⟩
       (f zero ∙ fold (f ∘ suc) xs) ∙ (f zero ∙ fold (f ∘ suc) ys)
     ∎
-\end{code}
+\end{code}}
 
 \AgdaHide{
 \begin{code}
@@ -158,8 +148,8 @@ We present a single case, \AgdaInductiveConstructor{inside}-\AgdaInductiveConstr
   fold-cong-lemma f g x (outside ∷ ys) eq (suc i) (there i∈y∷ys) = fold-cong-lemma (f ∘ suc) (g ∘ suc) outside ys (λ i x → eq (suc i) (there x)) i i∈y∷ys
 \end{code}}
 
-Here, \AgdaFunction{assoc}, \AgdaFunction{sym}, and \AgdaFunction{∙-cong} are the associativity, symmetry, and congruence with respect to setoid-equivalence properties of the underlying commutative monoid, respectively.
-Finally, we demonstrate an extensionality property, namely that folding two different functions across the same set results in equivalent values if the functions agree pointwise on all elements in the set.
+%Here, \AgdaFunction{assoc}, \AgdaFunction{sym}, and \AgdaFunction{∙-cong} are the associativity, symmetry, and congruence with respect to setoid-equivalence properties of the underlying commutative monoid, respectively.
+Finally, we have an extensionality property, namely that folding two different functions across the same set results in equivalent values if the functions agree pointwise on all elements in the set.
 This is expressed in the lemma \AgdaFunction{fold-cong}:
 
 \begin{code}
