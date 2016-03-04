@@ -1,9 +1,8 @@
-Dijkstra's algorithm is often presented using numeric path weights.
-However, it has been known for decades that Dijkstra's algorithm can be generalised to find the best paths over graphs having arc weights in a large class of semirings.
+Dijkstra's Algorithm is typically presented using numeric path weights, but it is well established that the algorithm can be generalised to work over graphs having path weights drawn from a large class of semirings.
 Traditional correctness proofs rely on the distributivity property of semirings and show that Dijkstra's algorithm computes the best path weights over all possible paths from a single source to all destinations.
-Such a solution can also be seen as a fixed point of a certain matrix equation.
-Here we present a proof in Agda that Dijkstra's Algorithm can solve such matrix equations, even when distributivity does not hold.
+Algebraically, such a solution can also be seen as a fixed point of a certain matrix equation.
+In this paper, we present a formal proof that Dijkstra's Algorithm can solve these matrix equations, even when distributivity does not hold.
 Fixed points to matrix equations for non-distributive algebras can be interpreted as representing `locally optimal' solutions.
-We make extensive use of dependent types, indexed families of types, and some of Agda's more cutting edge features---such as induction-recursion---to structure our algorithm and proof of correctness.
+Our proof is carried out in Agda, and we make extensive use of dependent types and some of Agda's more cutting edge features---such as induction-recursion---to structure our algorithm and correctness proof.
 
 \keywords{Dijkstra's algorithm, shortest paths, Semirings, Sobrinho Algebras, internet routing, interactive theorem proving, Agda}

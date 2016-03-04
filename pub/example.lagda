@@ -22,25 +22,28 @@ module example where
   open DecTotalOrder Nat.decTotalOrder using () renaming (refl to ≤-refl)
 \end{code}}
 
-In this Section we provide a short demonstration of our algorithm in action, checking that our algorithm correctly computes the shortest paths through a graph defined by the adjacency matrix
-\begin{displaymath}
+We provide a short demonstration of our shortest path algorithm in action by executing it within Agda, showing that executing our algorithm on an adjacency matrix produces the expected matrix encoding shortest paths.
+All matrix coefficients are taken from the shortest path algebra---the algebra over \AgdaDatatype{ℕ∞} with \AgdaFunction{\_⊓\_} as addition and \AgdaFunction{\_+\_} as multiplication---described in Section~\ref{subsect.models}.
+We will suggestively refer to the carrier of this algebra as \AgdaFunction{Weight}.
+The two matrices are:
+\begin{gather*}
+\text{Adjacency} =
 \begin{pmatrix}
 0 & 4 & 1 \\
 ∞ & 0 & 2 \\
 1 & 2 & 0
 \end{pmatrix}
-\end{displaymath}
-\noindent
-by checking that it computes the following matrix of path weights, which can be straightforwardly hand-verified as being correct, when evaluated inside Agda:
-
-\begin{displaymath}
+\qquad\qquad
+\text{Expected} =
 \begin{pmatrix}
 0 & 3 & 1 \\
 3 & 0 & 2 \\
 1 & 2 & 0
 \end{pmatrix}
-\end{displaymath}
-
+\end{gather*}
+The fact that the right-hand matrix is correct can easily be established by hand.
+We implement both matrices using our matrix library, calling the first matrix \AgdaFunction{adj} and the second \AgdaFunction{rls-expected}.
+For convenience we define the following function \AgdaFunction{rls} that computes the entire Right Local Solution for a given adjacency matrix:
 \AgdaHide{
 \begin{code}
   adj : Adj 3
@@ -69,17 +72,12 @@ by checking that it computes the following matrix of path weights, which can be 
                 ∷  []
 \end{code}}
 
-We capture both matrices using our matrix library, calling the first matrix \AgdaFunction{adj} and the second \AgdaFunction{rls-expected}.
-The coefficients of both matrices are taken from the carrier of \AgdaRecord{alg}, the shortest path Sobrinho Algebra defined in Subsection~\ref{subsect.models}, the algebra over \AgdaDatatype{ℕ∞} with \AgdaFunction{\_⊓\_} as addition and \AgdaFunction{\_+\_} as multiplication.
-We refer to the carrier of this algebra as \AgdaFunction{Weight}.
-For convenience we define the following function \AgdaFunction{rls} that computes the entire Right Local Solution for a given adjacency matrix:
-
 \begin{code}
   rls : ∀ {n} → Adj (suc n) → Matrix Weight (suc n) (suc n)
   rls adj = M.tabulate (λ i → let open Algo alg i adj in estimate _ {≤-refl})
 \end{code}
 
-The Right Local Solution computed by our algorithm and the expected result are pointwise propositionally equal, as can be routinely checked by evaluating the algorithm within Agda itself and checking for equality:
+The Right Local Solution computed by our algorithm and the expected result are pointwise propositionally equal, with the execution time (within Agda) being on the order of seconds:
 
 \begin{code}
   rls-correct : Pointwise _≡_ (rls adj) rls-expected

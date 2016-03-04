@@ -52,8 +52,8 @@ module dijkstra-correct
 \end{code}
 }
 
-In this Section we prove that our algorithm computes a Right Local Solution to the matrix fixpoint equation of~\cref{subsect.algorithm}.
-Throughout this Section, we fix \AgdaBound{alg}, an arbitrary inhabitant of \AgdaRecord{SobrinhoAlgebra}, and \AgdaBound{adj}, an arbitrary $n \times n$ adjacency matrix describing a graph.
+We now prove that our algorithm computes a Right Local Solution to the matrix fixpoint equation described in the Introduction.
+Henceforth, we fix \AgdaBound{alg}, an arbitrary inhabitant of \AgdaRecord{SobrinhoAlgebra}, and \AgdaBound{adj}, an arbitrary $n \times n$ adjacency matrix describing a graph whose coefficients are taken from the \AgdaField{Carrier} type of \AgdaBound{alg}.
 Ultimately we aim to show the following statement of correctness:
 \begin{equation}
 \label{eqn.correctness.correct}
@@ -191,11 +191,11 @@ We make use of the following shorthands to conserve space:
 
 \begin{itemize}
 \item
-\AgdaFunction{r}~\AgdaSymbol{=}~\AgdaFunction{estimate}~\AgdaBound{step}~\AgdaSymbol{\{}\AgdaInductiveConstructor{≤-step′}~\AgdaBound{s≤n}\AgdaSymbol{\}}~\AgdaSymbol{:}~\AgdaFunction{Fin}~\AgdaSymbol{(}\AgdaInductiveConstructor{suc}~\AgdaBound{n}\AgdaSymbol{)}~\AgdaSymbol{→}~\AgdaFunction{Weight}, so \AgdaFunction{r}~\AgdaBound{j} stands for the distance estimate from the start node to node \AgdaBound{j} at step \AgdaBound{step}.
+\AgdaFunction{r}~\AgdaSymbol{=}~\AgdaFunction{estimate}~\AgdaBound{step}~\AgdaSymbol{\{}\AgdaInductiveConstructor{≤-step′}~\AgdaBound{s≤n}\AgdaSymbol{\}}~\AgdaSymbol{:}~\AgdaFunction{Fin}~\AgdaSymbol{(}\AgdaInductiveConstructor{suc}~\AgdaBound{n}\AgdaSymbol{)}~\AgdaSymbol{→}~\AgdaFunction{Weight}, so \AgdaFunction{r}~\AgdaBound{j} stands for the distance estimate from the start node to node \AgdaBound{j} at step `\AgdaBound{step}'.
 \item
-\AgdaFunction{r′}~\AgdaSymbol{=}~\AgdaFunction{estimate}~(\AgdaInductiveConstructor{suc}~\AgdaBound{step})~\AgdaSymbol{\{}\AgdaBound{s≤n}\AgdaSymbol{\}}~\AgdaSymbol{:}~\AgdaFunction{Fin}~\AgdaSymbol{(}\AgdaInductiveConstructor{suc}~\AgdaBound{n}\AgdaSymbol{)}~\AgdaSymbol{→}~\AgdaFunction{Weight}, so \AgdaFunction{r}~\AgdaBound{j} stands for the distance estimate to node \AgdaBound{j} at step \AgdaInductiveConstructor{suc}~\AgdaBound{step}.
+\AgdaFunction{r′}~\AgdaSymbol{=}~\AgdaFunction{estimate}~(\AgdaInductiveConstructor{suc}~\AgdaBound{step})~\AgdaSymbol{\{}\AgdaBound{s≤n}\AgdaSymbol{\}}~\AgdaSymbol{:}~\AgdaFunction{Fin}~\AgdaSymbol{(}\AgdaInductiveConstructor{suc}~\AgdaBound{n}\AgdaSymbol{)}~\AgdaSymbol{→}~\AgdaFunction{Weight}, so \AgdaFunction{r}~\AgdaBound{j} stands for the distance estimate to node \AgdaBound{j} at step `\AgdaInductiveConstructor{suc}~\AgdaBound{step}'.
 \item
-\AgdaFunction{q}~\AgdaSymbol{=}~\AgdaFunction{Sorted.head}~\_~(\AgdaFunction{queue}~\AgdaBound{step}~\AgdaSymbol{\{}\AgdaBound{s≤n}\AgdaSymbol{\}})~\AgdaSymbol{:}~\AgdaFunction{Fin}~\AgdaSymbol{(}\AgdaInductiveConstructor{suc}~\AgdaBound{n}\AgdaSymbol{)}, i.e.~the node whose current estimated distance from the start node is the smallest of all nodes that have not yet been visited.
+\AgdaFunction{q}~\AgdaSymbol{=}~\AgdaFunction{Sorted.head}~\_~(\AgdaFunction{queue}~\AgdaBound{step}~\AgdaSymbol{\{}\AgdaBound{s≤n}\AgdaSymbol{\}})~\AgdaSymbol{:}~\AgdaFunction{Fin}~\AgdaSymbol{(}\AgdaInductiveConstructor{suc}~\AgdaBound{n}\AgdaSymbol{)}, is the node whose current estimated distance from the start node is the smallest of all unvisited nodes.
 \item
 \AgdaFunction{f}~\AgdaSymbol{=}~\AgdaSymbol{λ}~\AgdaBound{k}~\AgdaSymbol{→}~\AgdaBound{r}~\AgdaBound{k}~\AgdaFunction{*}~\AgdaFunction{A[}~\AgdaBound{k}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}~\AgdaSymbol{:}~\AgdaFunction{Fin}~\AgdaSymbol{(}\AgdaInductiveConstructor{suc}~\AgdaBound{n}\AgdaSymbol{)}~\AgdaSymbol{→}~\AgdaFunction{Weight}.
 \item
@@ -203,12 +203,11 @@ We make use of the following shorthands to conserve space:
 \item
 \AgdaFunction{vs}~\AgdaSymbol{=}~\AgdaFunction{seen}~\AgdaBound{step}~\AgdaSymbol{\{}\AgdaInductiveConstructor{≤-step′}~\AgdaBound{s≤n}\AgdaSymbol{\}}~\AgdaSymbol{:}~\AgdaFunction{Subset}~\AgdaSymbol{(}\AgdaInductiveConstructor{suc}~\AgdaBound{n}\AgdaSymbol{)}, the list of nodes that have been visited at step \AgdaBound{step}.
 \item
-\AgdaFunction{fold}~\AgdaSymbol{=}~\AgdaFunction{fold-cong}~\AgdaFunction{f}~\AgdaFunction{f′}~\AgdaBound{vs}~(\AgdaSymbol{λ}~\AgdaBound{k}~\AgdaBound{k∈vs}~\AgdaSymbol{→}~\AgdaFunction{lemma}~\AgdaBound{k}~\AgdaBound{k∈vs})~\AgdaSymbol{:}~\AgdaFunction{⨁[}~\AgdaBound{k}~\AgdaFunction{←}~\AgdaBound{vs}~\AgdaFunction{]}~\AgdaFunction{f}~\AgdaBound{k}~\AgdaField{≈}~\AgdaFunction{⨁[}~\AgdaBound{k}~\AgdaFunction{←}~\AgdaBound{vs}~\AgdaFunction{]}~\AgdaFunction{f′}~\AgdaBound{k} is a special case of the theorem that given \AgdaFunction{f}~\AgdaBound{i}~\AgdaField{≈}~\AgdaFunction{f′}~\AgdaBound{i} for all \AgdaBound{i}~\AgdaFunction{∈}~\AgdaBound{xs} it follows that the fold over \AgdaBound{xs} using \AgdaFunction{f} is equivalent to the fold over \AgdaBound{xs} using \AgdaFunction{f′} as the fold expresssion (see \cref{subsect.sums}).
+\AgdaFunction{fold}~\AgdaSymbol{=}~\AgdaFunction{fold-cong}~\AgdaFunction{f}~\AgdaFunction{f′}~\AgdaBound{vs}~(\AgdaSymbol{λ}~\AgdaBound{k}~\AgdaBound{k∈vs}~\AgdaSymbol{→}~\AgdaFunction{lemma}~\AgdaBound{k}~\AgdaBound{k∈vs}), with type \AgdaFunction{⨁[}~\AgdaBound{k}~\AgdaFunction{←}~\AgdaBound{vs}~\AgdaFunction{]}~\AgdaFunction{f}~\AgdaBound{k}~\AgdaField{≈} \AgdaFunction{⨁[}~\AgdaBound{k}~\AgdaFunction{←}~\AgdaBound{vs}~\AgdaFunction{]}~\AgdaFunction{f′}~\AgdaBound{k} is a special case of the theorem that given \AgdaFunction{f}~\AgdaBound{i}~\AgdaField{≈}~\AgdaFunction{f′}~\AgdaBound{i} for all \AgdaBound{i}~\AgdaFunction{∈}~\AgdaBound{xs} it follows that the fold over \AgdaBound{xs} using \AgdaFunction{f} is equivalent to the fold over \AgdaBound{xs} using \AgdaFunction{f′} as the fold expresssion (see \cref{subsect.sums}).
 \end{itemize}
 
 Note, in the definition of \AgdaFunction{fold}, we make use of a small \AgdaFunction{lemma}, with type \AgdaSymbol{∀}~\AgdaBound{k}~\AgdaSymbol{→}~\AgdaBound{k}~\AgdaFunction{∈}~\AgdaBound{vs}~\AgdaSymbol{→}~\AgdaFunction{f}~\AgdaBound{k}~\AgdaFunction{≈}~\AgdaFunction{f′}~\AgdaBound{k}, which shows that \AgdaFunction{f} and \AgdaFunction{f′} agree on all visited graph vertices.
-
-Below, to aid the reader, we present the formal proof, using Agda's equational reasoning mechanism, with explicative comments describing each equational reasoning step:
+Below we present the formal proof of the inductive step case, using Agda's equational reasoning mechanism, with explicative comments describing each equational reasoning step to aid the reader:
 \begin{code}
   pcorrect (suc step) {s≤n} j =
     begin
@@ -270,12 +269,12 @@ We omit the straightforward proof of this fact, which we refer to as \AgdaFuncti
 
 \begin{code}
   correct : ∀ j → RLS n {≤-refl} j
-  correct j =
-    begin
-      r j                                                       ≈⟨ pcorrect n j ⟩
-      I[ i , j ] + (⨁[ k ← seen n {≤-refl} ] r k * A[ k , j ])  ≡⟨ P.cong₂ _+_ P.refl lemma ⟩
-      I[ i , j ] + (⨁[ k ← ⊤ ] r k * A[ k , j ])
-    ∎
+  correct j = begin
+      r j
+        ≈⟨ pcorrect n j ⟩
+      I[ i , j ] + (⨁[ k ← seen n {≤-refl} ] r k * A[ k , j ])
+        ≡⟨ P.cong₂ _+_ P.refl lemma ⟩
+      I[ i , j ] + (⨁[ k ← ⊤ ] r k * A[ k , j ]) ∎
 \end{code}
 \AgdaHide{
 \begin{code}
