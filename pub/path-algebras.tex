@@ -13,27 +13,26 @@ Addition is selective, and addition absorbs multiplication,
 The usual closure and congruence properties for the unit elements and operations apply.
 \end{itemize}
 
-For the reader's benefit, in the table below we compare the operations and laws of a Sobrinho Algebra with the more familiar notion of a Semiring---algebraic structures themselves often used in work on algebraic routing:
-
-\begin{center}
-  \begin{tabular}{l||l@{\;\;\;}|l}
-  \emph{Operation} & \emph{Semiring} & \emph{Sobrinho Algebra} \\
-  \midrule
-$\_{+}\_$ & Associative & Associative \\
-                   & Commutative & Commutative \\
-                   & Identity: $0$ & Identity: $0$ \\
-                   & ---                      & Selective \\
-                   & ---                      & Zero: $1$ \\
-  \midrule
-  $\_{*}\_$ & Associative & --- \\
-                   & Identity: $1$ & Left identity: $1$ \\
-                   & Zero: $0$     & --- \\
-  \midrule
-  $\_{*}\_$ and $\_{+}\_$ & $\_{*}\_$ distributes over $\_{+}\_$ &
-                     $\_{+}\_$ absorbs $\_{*}\_$ \\
-  \midrule
-  \end{tabular}
-\end{center}
+% For the reader's benefit, in the table below we compare the operations and laws of a Sobrinho Algebra with the more familiar notion of a Semiring---algebraic structures themselves often used in work on algebraic routing:
+% \begin{center}
+%   \begin{tabular}{l||l@{\;\;\;}|l}
+%   \emph{Operation} & \emph{Semiring} & \emph{Sobrinho Algebra} \\
+%   \midrule
+% $\_{+}\_$ & Associative & Associative \\
+%                    & Commutative & Commutative \\
+%                    & Identity: $0$ & Identity: $0$ \\
+%                    & ---                      & Selective \\
+%                    & ---                      & Zero: $1$ \\
+%   \midrule
+%   $\_{*}\_$ & Associative & --- \\
+%                    & Identity: $1$ & Left identity: $1$ \\
+%                    & Zero: $0$     & --- \\
+%   \midrule
+%   $\_{*}\_$ and $\_{+}\_$ & $\_{*}\_$ distributes over $\_{+}\_$ &
+%                      $\_{+}\_$ absorbs $\_{*}\_$ \\
+%   \midrule
+%   \end{tabular}
+% \end{center}
 
 Following established convention, we capture the notion of a Sobrinho Algebra as an Agda record named \AgdaRecord{SobrinhoAlgebra}.
 We use the name \AgdaField{Carrier} for the carrier type of a Sobrinho Algebra, corresponding to the carrier set $S$ above, obtaining the closure properties mentioned above for `free' as a side-effect of Agda's typing discipline, and assume that there exists a decidable setoid equivalence relation on elements of this type, \AgdaField{\_≈\_}.
