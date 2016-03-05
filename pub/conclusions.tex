@@ -1,6 +1,7 @@
 In this paper we have presented a purely functional implementation of a generalised shortest path algorithm, and proved it correct.
 We have made extensive use of dependent types, and some of Agda's more advanced features, such as induction-recursion, to help structure the implementation and proof.
 
+\paragraph{Related Work}
 Remarkably, despite the algorithm being well-known, Chen seems to have been the first to verify the correctness of Dijkstra's Algorithm in any proof assistant, when he produced a Mizar implementation in 2003~\cite{chen:dijkstra:2003}.
 Later, Moore and Zhang verified Dijkstra's Algorithm in ACL2~\cite{moore:proof-pearl:2005}.
 Gordon, Hurd, and Slind verified Dijkstra's reachability algorithm in HOL4 as part of a wider formalisation of the Accellera Property Specification Language~\cite{gordon:executing:2003}.
@@ -9,7 +10,9 @@ Nordhoff and Lammich verified Dijkstra's algorithm in Isabelle/HOL as a showcase
 Lammich also later implemented and verified an imperative version of Dijkstra's Algorithm in Isabelle~\cite{lammich:refinement:2015}.
 All of these prior formalisations take a very concrete, very classical approach to shortest path algorithms and their proofs of correctness, largely following textbook treatments, in contrast to our work presented in this paper.
 
-\todo{talk about equilibrium routing, etc. and relationship to this work}
+%\todo{talk about equilibrium routing, etc. and relationship to this work}
+
+The idea that Dijkstra's algorithm can be generalized to an algorithm that solves a matrix fixpoint equation was first explored by Sobrinho~\cite{sobrinho_algebra_2001}. Griffin and Sobrinho explored the solutions found by the generalized algorithm when distributivity is not assumed~\cite{sobrinho_routing_2010}. Our work builds on their ideas, but goes beyond it in several key aspects: we spell out in detail the properties of the algebraic structure, give a concrete implementation of the algorithm and a mechanically verified correctness proof in Agda.
 
 Our implementation and all supporting files are available anonymously from a public \texttt{git} repository~\cite{markert_formalised_2015}.
 Documentation for type checking the formalisation is available in the repository.
