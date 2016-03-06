@@ -79,9 +79,13 @@ where $\mathbf{I}$ is the identity matrix and the multiplication and addition op
 
 \todo{finish me}
 
-Following Sobrinho and Griffin, we call solutions for \(\mathbf{L}\) and \(\mathbf{R}\) \emph{left-local} and \emph{right-local} solutions, respectively; they represent two types of \emph{routing in equilibrium}~\cite{sobrinho_routing_2010}. Their key insight was that a generalized form of Dijkstra's algorithm can find \emph{local optima} when distributivity does not hold.
+Following Sobrinho and Griffin, we call solutions for \(\mathbf{L}\) and \(\mathbf{R}\) \emph{left-local} and \emph{right-local} solutions, respectively; they represent two types of \emph{routing in equilibrium}~\cite{sobrinho_routing_2010}. Their key insight was that a generalized variant of Dijkstra's algorithm finds right-local solutions and a generalized variant of Bellman-Ford gives left-local solutions, both forms of \emph{local optima}, when distributivity does not hold.
 
-In this paper, we present an implementation of an algorithm in the spirit of Dijkstra's algorithm together with a non-distributive algebraic structure we then use to prove the implementation correct. Our algorithm is a variant of Dijkstra's algorithm in the sense that it keeps a queue of all the nodes that have not yet been visited, sorted by their estimated distance from the source node such that the head of the queue is always the unvisited node with the minimum distance estimate. However, unlike the usual description of Dijkstra's algorithm, our implementation is not imperative and sacrifices efficiency for readability.
+In this paper, we present an implementation of an algorithm in the spirit of Dijkstra's algorithm together with a non-distributive algebraic structure we then use to prove the implementation correct.
+
+Our algorithm is a variant of Dijkstra's algorithm in the sense that it keeps a queue of all the nodes that have not yet been visited, sorted by their estimated distance from the source node such that the head of the queue is always the unvisited node with the minimum distance estimate. However, unlike the usual description of Dijkstra's algorithm, our implementation is not imperative and sacrifices efficiency for readability.
+
+The correctness proof shows that the algorithm we have implemented does indeed compute the right-local solution given any adjacency matrix representing a graph over the algebra we describe.
 
 \paragraph{Agda}
 
