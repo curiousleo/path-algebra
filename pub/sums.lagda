@@ -1,5 +1,5 @@
 We introduce a notion of lightweight `big sum'~\cite{bertot_canonical_2008} that will be used in our algorithm and proof of correctness when calculating path weights.
-Though in the rest of the paper they will be used over Sobrinho Algebras, we here define path weight sums over commutative monoids for convenience as they are well supported by the standard library and Sobrinho Algebras subsume commutative monoids.
+Though in the rest of the paper they will be used over Sobrinho Algebras, we here define path weight sums over commutative monoids for convenience as they are well supported by the Standard Library, and Sobrinho Algebras subsume commutative monoids.
 We explicitly require a proof of idempotency whenever needed.
 
 We use the function \AgdaFunction{fold} to define sums over subsets of finite sets using the underlying monoid's identity element \AgdaField{ε} and binary operator \AgdaField{\_∙\_}:

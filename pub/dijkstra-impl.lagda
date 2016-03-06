@@ -46,7 +46,7 @@ module dijkstra-impl
 
 
 Our purely functional implementation in Agda consists of nine mutually recursive definitions, the most important of which are \AgdaFunction{order}, \AgdaFunction{estimate}, \AgdaFunction{seen} and \AgdaFunction{queue}.
-Throughout this section we maintain the invariant that $i$ is the start node of the graph search, and use the suggestive name \AgdaFunction{Weight} to refer to the carrier set of our Sobrinho Algebra.
+Throughout this section we use $i$ to denote the start node of the search, and use the suggestive name \AgdaFunction{Weight} to refer to the carrier set of our Sobrinho Algebra.
 
 At each \AgdaBound{step} of the algorithm graph nodes are totally ordered.
 This total order is constructed using the \AgdaFunction{order} function, which is parameterised by the \AgdaBound{step} of the algorithm:
@@ -71,19 +71,18 @@ This is merely a trivial change and the two are equivalent.
 Note also that since the addition operation, \AgdaFunction{\_+\_}, of a Sobrinho Algebra is selective, the inductive case of \AgdaFunction{estimate} encodes a \emph{choice} between \AgdaFunction{r}~\AgdaBound{j} and \AgdaFunction{r}~\AgdaFunction{q}~\AgdaFunction{*}~\AgdaFunction{A[}~\AgdaFunction{q}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}.
 The former is simply the previous distance estimate to $j$, whilst the latter represents the option of going from the start node to \AgdaFunction{q} via the best known path from the previous step, and then directly from \AgdaFunction{q} to $j$ (where \AgdaFunction{q} is the head of the priority queue of nodes that have not yet been visited).
 
-We keep track of the set of visited nodes at a given \AgdaBound{step} using the function \AgdaFunction{seen}, which is defined as follows:
+The set of visited nodes at a given \AgdaBound{step} is computed by the function \AgdaFunction{seen}:
 \begin{code}
     seen : (step : ℕ) → {s≤n : step ≤ n} → Subset (suc n)
     seen zero                 = ⁅ i ⁆
-    seen (suc step) {step≤n}  =
-      seen step {≤-step′ step≤n} ∪
+    seen (suc step) {step≤n}  = seen step {≤-step′ step≤n} ∪
       ⁅ Sorted.head (order step {≤-step′ step≤n}) (queue step {step≤n}) ⁆
 \end{code}
 Here, \AgdaFunction{⁅} \AgdaBound{i} \AgdaFunction{⁆} is a singleton set containing only the start node, \AgdaBound{i}.
 The inductive case of \AgdaFunction{seen} unions together all visited nodes from previous steps of the algorithm with the next node to be visited.
 Once a node has been visited, its distance estimate stays constant and is optimal---this important invariant will be proved and used later in the proof of correctness of the algorithm in the remainder of the paper.
 
-The following is an auxiliary definition needed to define the function \AgdaFunction{queue}, which computes the priortiy queue of nodes that have not yet been visited by the algorithm:
+The following is an auxiliary definition needed to define the function \AgdaFunction{queue}, computing the queue of nodes that have not yet been visited by the algorithm:
 \begin{code}
     queue′ : (step : ℕ) {s≤n : step ≤ n} → Sorted.Vec _ (size $ ∁ $ seen step {s≤n})
     queue′ step {s≤n} = Sorted.fromVec (order step {s≤n}) $ toVec $ ∁ $ seen step
