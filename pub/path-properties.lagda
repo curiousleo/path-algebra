@@ -76,7 +76,7 @@ module itp16-requires-commutative-monoid
   a ⊲ᴿ b = a ⊴ᴿ b × ¬ a ≈ b
 \end{code}}
 
-Note that \AgdaFunction{∃} is defined in Agda's standard library as a shorthand for a dependent pair where the type of the first element (\AgdaField{Carrier} in this case) is inferred automatically.
+Recall that \AgdaFunction{∃} is defined in Agda's Standard Library as a shorthand for a dependent pair where the type of the first element (\AgdaField{Carrier} in this case) is inferred automatically.
 Both Left and Right Canonical Orders are reflexive:
 
 \begin{code}
@@ -102,7 +102,7 @@ We also have transitivity:
 
 The proof of transitivity is slightly more involved.
 Using the monoid's associative and commutative laws, we show that \AgdaBound{a}~\AgdaField{≈}~\AgdaBound{c}~\AgdaField{∙}~\AgdaSymbol{(}\AgdaBound{x}~\AgdaField{∙}~\AgdaBound{y}\AgdaSymbol{)} which implies \AgdaBound{a}~\AgdaFunction{⊴ᴸ}~\AgdaBound{c}.
-We use the Agda standard library's equational reasoning constructs---\AgdaFunction{begin\_}, \AgdaFunction{\_≈⟨\_⟩\_} and \AgdaFunction{\_∎}---here and in the rest of the paper to structure proofs.
+We use Agda Standard Library's equational reasoning constructs---\AgdaFunction{begin\_}, \AgdaFunction{\_≈⟨\_⟩\_} and \AgdaFunction{\_∎}---here and in the rest of the paper to structure proofs.
 
 The Left Canonical Order is also total---that is, for any \AgdaBound{a} and \AgdaBound{b}, \AgdaBound{a}~\AgdaFunction{⊴ᴸ}~\AgdaBound{b} or \AgdaBound{b}~\AgdaFunction{⊴ᴸ}~\AgdaBound{a}---whenever \AgdaField{\_∙\_} is selective.
 We remind the reader that \AgdaField{\_∙\_} is \emph{selective} when~\AgdaBound{a}~\AgdaField{∙}~\AgdaBound{b} is equivalent to either \AgdaBound{a} or \AgdaBound{b}.
