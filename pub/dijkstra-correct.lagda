@@ -84,8 +84,7 @@ In particular, the estimate $r_j^{(n)}$ for node $j$ at step $n$ is a Partial Ri
 \begin{displaymath}
 r_j^{(n)} ≈ I_{i,j} + \bigoplus_{k ∈ S_n} r_k^{(n)} * A_{k,j}
 \end{displaymath}
-holds, where $S_n$ is the set of visited nodes at step $n$.
-We express this in Agda as follows:
+holds ($S_n$ is the set of visited nodes at step $n$), expressing this in Agda as:
 \AgdaHide{
 \begin{code}
   pRLS : (step : ℕ) {s≤n : step N≤ n} → Pred (Fin (suc n)) _
@@ -97,9 +96,9 @@ We express this in Agda as follows:
       r j ≈ I[ i , j ] + (⨁[ k ← seen step {s≤n} ] r k * A[ k , j ])
 \end{code}
 
-This definition of a Partial Right Local Solution, as captured by \AgdaFunction{pRLS}, is central to our proof of correctness, as we will prove by induction on the number of algorithm steps taken that the predicate \AgdaFunction{pRLS} holds for any \AgdaBound{step} and \AgdaBound{j}.
+This definition of a Partial Right Local Solution, as captured by \AgdaFunction{pRLS}, is central to our proof, as we will prove by induction on the number of algorithm steps taken that the predicate \AgdaFunction{pRLS} holds for any \AgdaBound{step} and \AgdaBound{j}.
 We then show that \AgdaFunction{pRLS}~\AgdaBound{n}~\AgdaBound{j}, and the fact that at step \AgdaBound{n} the algorithm has visited all graph nodes, implies \AgdaFunction{RLS}~\AgdaBound{n}~\AgdaBound{j}.
-Correctness, as defined above, will follow.
+Correctness will follow.
 The following lemma
 \begin{code}
   pcorrect : (step : ℕ) {s≤n : step N≤ n} → ∀ j → pRLS step {s≤n} j
@@ -186,8 +185,7 @@ Further, the right-hand side (\AgdaFunction{A[}~\AgdaBound{i}~\AgdaFunction{,}~\
 \end{code}}
 
 \paragraph{Induction step.}
-Next, we have the induction step case (\AgdaBound{step} = \AgdaInductiveConstructor{suc}~\AgdaBound{step}) of the partial correctness proof.
-We make use of the following shorthands to conserve space:
+Next, we have the induction step case (\AgdaBound{step} = \AgdaInductiveConstructor{suc}~\AgdaBound{step}) of the partial correctness proof, using the following shorthands to conserve space:
 
 \begin{itemize}
 \item
@@ -264,7 +262,7 @@ Below we present the formal proof of the inductive step case, using Agda's equat
 %\end{align*}
 
 This completes the proof of \AgdaFunction{pcorrect}.
-Now, we can show that after $n$ iterations all $n$ of the graph's nodes have been visited, so \AgdaFunction{seen}~\AgdaBound{n}~\AgdaDatatype{≡}~\AgdaFunction{⊤}.
+Now, after $n$ iterations all $n$ of the graph's nodes have been visited, so \AgdaFunction{seen}~\AgdaBound{n}~\AgdaDatatype{≡}~\AgdaFunction{⊤}.
 We omit the straightforward proof of this fact, which we refer to as \AgdaFunction{lemma} in the following proof that a Partial Right Local Solution after \(n\) steps is the same as a Right Local Solution:
 
 \begin{code}

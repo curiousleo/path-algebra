@@ -166,4 +166,3 @@ Using \AgdaFunction{queue′} and \AgdaFunction{queue-size}, we can then give th
 
 \end{code}
 }
-We omit the obvious definition.

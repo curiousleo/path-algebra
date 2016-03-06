@@ -1,23 +1,21 @@
 In this paper we have presented a purely functional implementation of a generalised shortest path algorithm, and proved it correct.
 We have made extensive use of dependent types, and some of Agda's more advanced features, such as induction-recursion, to help structure the implementation and proof.
 
-\paragraph{Related Work}
-Remarkably, despite the algorithm being well-known, Chen seems to have been the first to verify the correctness of Dijkstra's Algorithm in any proof assistant, when he produced a Mizar implementation in 2003~\cite{chen:dijkstra:2003}.
+Despite the algorithm's fame, Chen seems to have been the first to verify the correctness of Dijkstra's Algorithm in any proof assistant, producing a Mizar implementation in 2003~\cite{chen:dijkstra:2003}.
 Later, Moore and Zhang verified Dijkstra's Algorithm in ACL2~\cite{moore:proof-pearl:2005}.
-Gordon, Hurd, and Slind verified Dijkstra's reachability algorithm in HOL4 as part of a wider formalisation of the Accellera Property Specification Language~\cite{gordon:executing:2003}.
+Gordon, Hurd, and Slind verified Dijkstra's reachability algorithm in HOL4 as part of a wider formalisation of Accellera~\cite{gordon:executing:2003}.
 Fleury verified Floyd's all-pairs shortest path algorithm in Coq~\cite{fleury:implantation:1990}, and in unpublished work, Paulin and Fill\^iatre later verified Floyd's algorithm again in imperative form with the aid of an additional tool, also in Coq.
 Nordhoff and Lammich verified Dijkstra's algorithm in Isabelle/HOL as a showcase of the Isabelle refinement and collections frameworks~\cite{nordhoff-dijkstra-2012}.
-Lammich also later implemented and verified an imperative version of Dijkstra's Algorithm in Isabelle~\cite{lammich:refinement:2015}.
-All of these prior formalisations take a very concrete, very classical approach to shortest path algorithms and their proofs of correctness, largely following textbook treatments, in contrast to our work presented in this paper.
-In particular, we believe that we are the first to present a verified implementation of a shortest path algorithm employing the algebraic method.
+Lammich also later implemented and verified an imperative version of Dijkstra's Algorithm in Isabelle/HOL~\cite{lammich:refinement:2015}.
+These prior formalisations take a classical approach to shortest path algorithms and their proofs of correctness, following textbook treatments, in contrast to our work presented in this paper.
+We believe that we are the first to present a verified implementation of a shortest path algorithm employing the algebraic method.
 %\todo{talk about equilibrium routing, etc. and relationship to this work}
 
 The idea that Dijkstra's algorithm can be generalised to an algorithm that solves a matrix fixpoint equation was first explored by Sobrinho~\cite{sobrinho_algebra_2001}, with Mohri later presenting a general semiring framework for shortest path algorithms~\cite{mohri:semiring:2002} where the underlying semiring and queing discipline used by the algorithm are abstracted over, with Dijkstra being a special case.
 Griffin and Sobrinho explored the solutions found by the generalised algorithm whenever distributivity is not assumed~\cite{sobrinho_routing_2010}.
 Our work builds on these latter ideas, but goes beyond it in several ways: we specify the properties of the algebraic structure assumed, give a concrete implementation of the algorithm, and mechanically verify its correctness.
 
-All implementation files, and supporting documentation, are available anonymously from a public \texttt{git} repository~\cite{markert_formalised_2015}.
-The formalisation consists of approximately 2,400 lines of Agda and was developed using Agda~2.4.2.1 and~2.4.2.2 and Standard Library version~0.9.
+All implementation files, and supporting documentation, are available anonymously from a public \texttt{git} repository\footnote{\url{https://bitbucket.org/curiousleo/path-algebra}}, consisting of approximately 2,400 lines of Agda, developed with Agda~2.4.2.1 and~2.4.2.2 and Standard Library~0.9.
 
 We thank Timothy G.~Griffin for helpful comments when preparing this paper.
 The second author is employed on EPSRC grant EP/K008528.

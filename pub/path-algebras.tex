@@ -1,17 +1,18 @@
-Fix a carrier set $S$ and an equivalence relation $\_{≈}\_$.
-We call a binary operation on $S$ \emph{selective} whenever $x \bullet y ≈ x$ or $x \bullet y ≈ y$ for any $x$ and $y$.
-Intuitively, a selective binary operation denotes a `choice' between any two elements.
-With this definition in mind, we call a 6-tuple $\langle S, \_{≈}\_, \_{+}\_, \_{*}\_, 0, 1 \rangle$ a `Sobrinho Algebra' whenever:
+Fix a carrier set $S$ and call a binary operation \emph{selective} when $x \bullet y = x$ or $x \bullet y = y$ for any $x, y \in S$.
+Intuitively, a selective binary operation denotes a `choice' between elements.
+We call $\langle S, \oplus, \otimes, 0, 1 \rangle$ a `Sobrinho Algebra' whenever:
 \begin{itemize}
 \item
-$\langle S, \_{≈}\_, \_{+}\_, 0 \rangle$ forms a commutative monoid,
+$\langle S, \oplus, 0 \rangle$ forms a commutative monoid,
 \item
 $1$ is a left identity for multiplication, and a left- and right zero for addition,
 \item
-Addition is selective, and addition absorbs multiplication,
-\item
-The usual closure and congruence properties for the unit elements and operations apply.
+addition is selective, and addition absorbs multiplication.
 \end{itemize}
+All closure and congruence properties for the operations apply as usual.
+Following convention, we capture the notion of a Sobrinho Algebra as an Agda record, \AgdaRecord{SobrinhoAlgebra}.
+We use \AgdaField{Carrier} for the carrier type of a Sobrinho Algebra, corresponding to the carrier set $S$ above, obtaining the closure properties mentioned above for `free' as a side-effect of Agda's typing discipline, assuming that there exists a decidable setoid equivalence relation on elements of this type, \AgdaField{\_≈\_}.
+We use \AgdaField{1\#} and \AgdaField{0\#} for our two identity elements, in order to avoid clashing with Agda's in-built numeral parsing notation for natural numbers.
 
 % For the reader's benefit, in the table below we compare the operations and laws of a Sobrinho Algebra with the more familiar notion of a Semiring---algebraic structures themselves often used in work on algebraic routing:
 % \begin{center}
@@ -33,7 +34,3 @@ The usual closure and congruence properties for the unit elements and operations
 %   \midrule
 %   \end{tabular}
 % \end{center}
-
-Following established convention, we capture the notion of a Sobrinho Algebra as an Agda record named \AgdaRecord{SobrinhoAlgebra}.
-We use the name \AgdaField{Carrier} for the carrier type of a Sobrinho Algebra, corresponding to the carrier set $S$ above, obtaining the closure properties mentioned above for `free' as a side-effect of Agda's typing discipline, and assume that there exists a decidable setoid equivalence relation on elements of this type, \AgdaField{\_≈\_}.
-We use the names \AgdaField{1\#} and \AgdaField{0\#} for our two identity elements of the algebra within Agda, in order to avoid clashing with Agda's in-built numeral parsing notation for natural numbers.

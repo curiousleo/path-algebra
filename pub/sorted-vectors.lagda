@@ -77,8 +77,8 @@ The relation is decidable and also \emph{quasi-transitive} in the sense that if 
   head (x ∷ xs ⟨ prf ⟩) = x
 \end{code}}
 % $
-The insertion of an element into an existing sorted vector is defined by mutual recursion between two functions \AgdaFunction{insert} and \AgdaFunction{≼-insert}.
-The function \AgdaFunction{insert} places the inserted element in the correct position in the vector, `bumping up' the length index, whilst \AgdaFunction{≼-insert} constructs the required domination proof for the new element:
+The insertion of an element into a sorted vector is defined by mutual recursion between two functions \AgdaFunction{insert} and \AgdaFunction{≼-insert}.
+The function \AgdaFunction{insert} places the inserted element in the correct position in the vector, modifying the length index, whilst \AgdaFunction{≼-insert} constructs the required domination proof for the new element:
 \begin{code}
   mutual
     insert : ∀ {n} → Carrier → SortedVec n → SortedVec (ℕ.suc n)
@@ -111,7 +111,7 @@ We use \AgdaFunction{≼-trans} to construct the domination proof in the `cons' 
 \end{code}}
 
 Typical list functions may be given the precise types one usually expects when working with vectors.
-Vector membership, \AgdaDatatype{\_∈\_}, used throughout the paper, is defined using an inductive relation with two constructors, \AgdaInductiveConstructor{here} and \AgdaInductiveConstructor{there}, as usual only complicated slightly by the need to quantify over explicit domination proofs:
+Vector membership, \AgdaDatatype{\_∈\_}, used throughout the paper, is defined using an inductive relation with two constructors as usual, complicated only slightly by the need to quantify over explicit domination proofs:
 \begin{code}
   data _∈_ (x : Carrier) : ∀ {n} → SortedVec n → Set (ℓ₁ ⊔ a ⊔ ℓ₂) where
     here   : ∀ {n} →  (xs : SortedVec n) → ∀ prf → x ∈ (x ∷ xs ⟨ prf ⟩)

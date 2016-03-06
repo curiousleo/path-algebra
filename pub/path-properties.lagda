@@ -199,8 +199,7 @@ The second, \AgdaFunction{≉⇒⋬ᴸ}, states that if \AgdaBound{b}~\AgdaField
   ... | inj₁ a≈b = ¬b∙a≈a (trans (∙-cong (sym a≈b) refl) (∙-idempotent a))
   ... | inj₂ a≈x = ¬b∙a≈a (trans (∙-cong refl a≈x) (sym a≈b∙x))
 \end{code}
-Using these two lemmas, we may prove decidability of the Left Canonical Order.
-We proceed by splitting on whether \AgdaBound{b}~\AgdaField{∙}~\AgdaBound{a} is equivalent to \AgdaBound{a}, or not, with the only interesting case being the second, where we make use of both of our auxiliary lemmas above:
+Using these we may now prove decidability of the Left Canonical Order, proceeding by splitting on whether \AgdaBound{b}~\AgdaField{∙}~\AgdaBound{a} is equivalent to \AgdaBound{a}, or not, with the interesting case being the second, where we make use of both of our auxiliary lemmas above:
 \begin{code}
   _⊴ᴸ?_ : Decidable _⊴ᴸ_
   a ⊴ᴸ? b with (b ∙ a) ≟ a
