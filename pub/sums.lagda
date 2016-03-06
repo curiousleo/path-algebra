@@ -85,7 +85,7 @@ Folding a function \AgdaBound{f} over a union of two subsets, \AgdaBound{xs} and
             fold f (xs ∪ ys) ≈ fold f xs ∙ fold f ys
 \end{code}
 
-The proof proceeds by simultaneous induction on both subsets, combined with equational reasoning.
+The proof proceeds by simultaneous induction on both subsets.
 For each element of the two sets we must consider whether it lies inside or outside of the subsets being described by \AgdaBound{xs} and \AgdaBound{ys}.
 
 \AgdaHide{

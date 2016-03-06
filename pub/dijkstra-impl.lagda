@@ -65,10 +65,7 @@ The function \AgdaFunction{estimate} provides an estimate of the distance from t
         r  = estimate step {≤-step′ step≤n}
 \end{code}
 The base case for the \AgdaFunction{estimate} function is a lookup in the adjacency matrix of the graph.
-Note that in the imperative algorithm discussed in Section~\ref{sect.introduction}, the base case is equivalent to a lookup in the identity matrix instead of the adjacency matrix, whereas our base case here therefore corresponds to the \emph{second} iteration of the imperative algorithm.
-This is merely a trivial change and the two are equivalent.
-
-Note also that since the addition operation, \AgdaFunction{\_+\_}, of a Sobrinho Algebra is selective, the inductive case of \AgdaFunction{estimate} encodes a \emph{choice} between \AgdaFunction{r}~\AgdaBound{j} and \AgdaFunction{r}~\AgdaFunction{q}~\AgdaFunction{*}~\AgdaFunction{A[}~\AgdaFunction{q}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}.
+Note that since the addition operation, \AgdaFunction{\_+\_}, of a Sobrinho Algebra is selective, the inductive case of \AgdaFunction{estimate} encodes a \emph{choice} between \AgdaFunction{r}~\AgdaBound{j} and \AgdaFunction{r}~\AgdaFunction{q}~\AgdaFunction{*}~\AgdaFunction{A[}~\AgdaFunction{q}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}.
 The former is simply the previous distance estimate to $j$, whilst the latter represents the option of going from the start node to \AgdaFunction{q} via the best known path from the previous step, and then directly from \AgdaFunction{q} to $j$ (where \AgdaFunction{q} is the head of the priority queue of nodes that have not yet been visited).
 
 The set of visited nodes at a given \AgdaBound{step} is computed by the function \AgdaFunction{seen}:

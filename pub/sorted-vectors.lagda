@@ -2,13 +2,12 @@
 
 %Dijkstra's algorithm fixes the order that nodes in a graph are visited by maintaining a priority queue of previously unvisited nodes---the node with the lowest priority in this queue is the node that will be considered next by the algorithm.\footnote{How these priorities are assigned to a node in our particular implementation of Dijkstra's algorithm will be further discussed in Section~\ref{sect.dijkstras.algorithm.and.its.correctness}.}
 We define an indexed family of types of sorted vectors that we will use in Section~\ref{sect.dijkstras.algorithm.and.its.correctness} to implement a priority queue of unvisited nodes.
-Here, for generality we keep the particular type used to implement priorties abstract, and any type with a decidable total order structure defined over them will suffice.
+Here, for generality we keep the particular type used to implement priorities abstract, and any type with a decidable total order structure defined over them will suffice.
 
 Note that we prefer working with a linear sorted data structure, compared to a balanced binary tree such as Agda's existing implementation of AVL trees in \AgdaModule{Data.AVL}, to simplify proofs.
 Using a length-indexed data structure also allows us to straightforwardly statically assert the non-emptiness of our priority queue by mandating that the queue's length must be of the form \AgdaInductiveConstructor{suc}~\AgdaBound{n}, for some $n$.
 
-Throughout this Section we fix and open a decidable total order record, \AgdaRecord{DecTotalOrder}.
-We write \AgdaField{Carrier}, \AgdaField{≤} and \AgdaField{≤?} for the ordering's carrier set, ordering relation, and proof that the ordering relation is decidable, respectively.
+Throughout this Section we fix a decidable total order record, \AgdaRecord{DecTotalOrder} and write \AgdaField{Carrier}, \AgdaField{≤} and \AgdaField{≤?} for the ordering's carrier set, ordering relation, and proof that the ordering relation is decidable, respectively.
 Assuming this, we define a type of sorted vectors, or sorted lists indexed by their length:
 
 \AgdaHide{
@@ -56,7 +55,7 @@ module sorted-vectors
     x ≼ (y ∷ ys ⟨ prf ⟩)  = (x ≤ y) × (x ≼ ys)
 \end{code}
 Our `cons' constructor, \AgdaInductiveConstructor{\_∷\_⟨\_⟩}, takes a proof that the head element \emph{dominates} the tail of the list.
-The domination relation, \AgdaFunction{\_≼\_}, is defined mutually our type definition via induction-recursion~\cite{dybjer_general_2000} making it impossible to construct a vector that is not sorted.
+The domination relation, \AgdaFunction{\_≼\_}, is defined mutually with our type definition via induction-recursion~\cite{dybjer_general_2000} making it impossible to construct a vector that is not sorted.
 The relation is decidable and also \emph{quasi-transitive} in the sense that if $x$ dominates $xs$ and $y$ is less than $x$ according to our total order then $y$ also dominates $xs$ (proof omitted):
 \begin{code}
   ≼-trans : ∀ {n y x} → (xs : SortedVec n) → x ≼ xs → y ≤ x → y ≼ xs

@@ -33,7 +33,7 @@ Solutions to this equation encode the path weights of shortest paths between nod
 Dijkstra's Algorithm, a single-source shortest path algorithm, may then be seen as computing one row of a solution to this equation---the $i^\mathrm{th}$ row for source node $i$.
 
 A compelling advantage of working in this algebraic setting is that the semiring parameterising the algorithm can be varied.
-Instantiating the algorithm with particular semirings causes the algorithm to compute shortest paths through the graph, \emph{a la} traditional presentations of Dijkstra, whereas others cause the algorithm to compute maximum bottleneck capacity, and so on.
+Instantiating the algorithm with particular semirings causes the algorithm to compute shortest paths through the graph, \emph{à la} traditional presentations of Dijkstra, whereas others cause the algorithm to compute maximum bottleneck capacity, and so on.
 The key idea here is that a generic, parametric implementation of a shortest path algorithm can be developed and then instantiated with different semirings, and thereafter uniformly used to calculate different properties of graphs.
 The interested reader can find a more thorough introduction to this material in~\cite{gondran_graphs_2008}.
 
@@ -111,7 +111,7 @@ We use Agda for our implementation and proof of correctness, and we make extensi
 
 %Following Sobrinho and Griffin, we call solutions for \(\mathbf{L}\) and \(\mathbf{R}\) \emph{left-local} and \emph{right-local} solutions, respectively; they represent two types of \emph{routing in equilibrium}~\cite{sobrinho_routing_2010}. Their key insight was that a generalized variant of Dijkstra's algorithm finds right-local solutions and a generalized variant of Bellman-Ford gives left-local solutions, both forms of \emph{local optima}, when distributivity does not hold.
 
-\paragraph{Agda}
+\paragraph{Implementation}
 
 Agda~\cite{norell_dependently_2009} is a dependently-typed programming language \emph{cum} proof assistant for higher-order intuitionistic logic.
 In contrast to similar systems~\cite{bertot_short_2008,asperti_matita_2011} proof terms are constructed by hand via a type-direct refinement process.

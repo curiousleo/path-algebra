@@ -102,7 +102,7 @@ We also have transitivity:
 
 The proof of transitivity is slightly more involved.
 Using the monoid's associative and commutative laws, we show that \AgdaBound{a}~\AgdaField{≈}~\AgdaBound{c}~\AgdaField{∙}~\AgdaSymbol{(}\AgdaBound{x}~\AgdaField{∙}~\AgdaBound{y}\AgdaSymbol{)} which implies \AgdaBound{a}~\AgdaFunction{⊴ᴸ}~\AgdaBound{c}.
-We use Agda Standard Library's equational reasoning constructs---\AgdaFunction{begin\_}, \AgdaFunction{\_≈⟨\_⟩\_} and \AgdaFunction{\_∎}---here and in the rest of the paper to structure proofs.
+We use the Agda Standard Library's equational reasoning constructs---\AgdaFunction{begin\_}, \AgdaFunction{\_≈⟨\_⟩\_} and \AgdaFunction{\_∎}---here and in the rest of the paper to structure proofs.
 
 The Left Canonical Order is also total---that is, for any \AgdaBound{a} and \AgdaBound{b}, \AgdaBound{a}~\AgdaFunction{⊴ᴸ}~\AgdaBound{b} or \AgdaBound{b}~\AgdaFunction{⊴ᴸ}~\AgdaBound{a}---whenever \AgdaField{\_∙\_} is selective.
 We remind the reader that \AgdaField{\_∙\_} is \emph{selective} when~\AgdaBound{a}~\AgdaField{∙}~\AgdaBound{b} is equivalent to either \AgdaBound{a} or \AgdaBound{b}.
@@ -203,8 +203,8 @@ Using these we may now prove decidability of the Left Canonical Order, proceedin
 \begin{code}
   _⊴ᴸ?_ : Decidable _⊴ᴸ_
   a ⊴ᴸ? b with (b ∙ a) ≟ a
-  ... | yes b∙a≈a = yes (a , sym b∙a≈a)
-  ... | no ¬b∙a≈a = no (≉⇒⋬ᴸ ¬b∙a≈a)
+  ... | yes b∙a≈a  = yes (a , sym b∙a≈a)
+  ... | no ¬b∙a≈a  = no (≉⇒⋬ᴸ ¬b∙a≈a)
 \end{code}
 
 \AgdaHide{
