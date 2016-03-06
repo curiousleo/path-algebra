@@ -21,9 +21,9 @@ with the empty path assigned the weight $1$.
 The generalised shortest-path problem is then to find a matrix $\mathbf{A}^*$ such that
 \begin{gather*}
 \label{eq:global}
-\mathbf{A}^*(i,\ j) = \displaystyle\bigoplus_{p \in \pi(i,\ j)} w_{\mathbf{A}}(p)
+\mathbf{A}^*(i,\ j) = \displaystyle\bigoplus_{p \in \mathcal{P}(i,\ j)} w_{\mathbf{A}}(p)
 \end{gather*}
-where $\pi(i,\ j)$ represents the set of all paths from node $i$ to node $j$.
+where $\mathcal{P}(i,\ j)$ represents the set of all paths from node $i$ to node $j$.
 The matrix $\mathbf{A}^*$ need not always exist, but it is well known that if it does then it is a solution for $\mathbf{L}$ or $\mathbf{R}$ in the following left and right equations
 \begin{gather*}
 \mathbf{L} = (\mathbf{A} \otimes \mathbf{L}) \oplus \mathbf{I} \qquad\qquad
@@ -78,6 +78,10 @@ where $\mathbf{I}$ is the identity matrix and the multiplication and addition op
 % \end{figure}
 
 \todo{finish me}
+
+Following Sobrinho and Griffin, we call solutions for \(\mathbf{L}\) and \(\mathbf{R}\) \emph{left-local} and \emph{right-local} solutions, respectively; they represent two types of \emph{routing in equilibrium}~\cite{sobrinho_routing_2010}. Their key insight was that a generalized form of Dijkstra's algorithm can find \emph{local optima} when distributivity does not hold.
+
+In this paper, we present an implementation of an algorithm in the spirit of Dijkstra's algorithm together with a non-distributive algebraic structure we then use to prove the implementation correct. Our algorithm is a variant of Dijkstra's algorithm in the sense that it keeps a queue of all the nodes that have not yet been visited, sorted by their estimated distance from the source node such that the head of the queue is always the unvisited node with the minimum distance estimate. The implementation is not imperative, however, and sacrifices efficiency for readability.
 
 \paragraph{Agda}
 
