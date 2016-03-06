@@ -46,7 +46,7 @@ module dijkstra-impl
 
 
 Our purely functional implementation in Agda consists of nine mutually recursive definitions, the most important of which are \AgdaFunction{order}, \AgdaFunction{estimate}, \AgdaFunction{seen} and \AgdaFunction{queue}.
-Throughout this section we maintain the invariant that $i$ is the start node of the graph search, and use the suggestive name \AgdaFunction{Weight} to refer to the carrier set of our Sobrinho Algebra.
+Throughout this section we use $i$ to denote the start node of the search, and use the suggestive name \AgdaFunction{Weight} to refer to the carrier set of our Sobrinho Algebra.
 
 At each \AgdaBound{step} of the algorithm graph nodes are totally ordered.
 This total order is constructed using the \AgdaFunction{order} function, which is parameterised by the \AgdaBound{step} of the algorithm:
@@ -83,7 +83,7 @@ Here, \AgdaFunction{⁅} \AgdaBound{i} \AgdaFunction{⁆} is a singleton set con
 The inductive case of \AgdaFunction{seen} unions together all visited nodes from previous steps of the algorithm with the next node to be visited.
 Once a node has been visited, its distance estimate stays constant and is optimal---this important invariant will be proved and used later in the proof of correctness of the algorithm in the remainder of the paper.
 
-The following is an auxiliary definition needed to define the function \AgdaFunction{queue}, which computes the priortiy queue of nodes that have not yet been visited by the algorithm:
+The following is an auxiliary definition needed to define the function \AgdaFunction{queue}, computing the queue of nodes that have not yet been visited by the algorithm:
 \begin{code}
     queue′ : (step : ℕ) {s≤n : step ≤ n} → Sorted.Vec _ (size $ ∁ $ seen step {s≤n})
     queue′ step {s≤n} = Sorted.fromVec (order step {s≤n}) $ toVec $ ∁ $ seen step
