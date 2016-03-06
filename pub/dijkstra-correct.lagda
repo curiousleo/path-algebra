@@ -136,16 +136,14 @@ This, in turn, is equivalent to \AgdaFunction{1\#} by the adjacency matrix diago
 The result follows by the identity matrix' diagonal property and the fact that \AgdaFunction{1\#} is a zero element for \AgdaFunction{\_+\_}:
 \begin{code}
   pcorrect zero {s≤n} j with i FP.≟ j
-  ... | yes i≡j =
-    begin
-      r j              ≡⟨⟩
-      A[ i , j ]       ≡⟨ P.cong₂ A[_,_] (P.refl {x = i}) j≡i ⟩
-      A[ i , i ]       ≈⟨ Adj.diag adj i ⟩
-      1#               ≈⟨ sym (proj₁ +-zero _) ⟩
-      1#          + _  ≈⟨ +-cong (sym (Adj.diag I j)) refl ⟩
-      I[ j , j ]  + _  ≡⟨ P.cong₂ _+_ (P.cong₂ I[_,_] j≡i (P.refl {x = j})) P.refl ⟩
-      I[ i , j ]  + _
-    ∎
+  ... | yes i≡j = begin
+    r j              ≡⟨⟩
+    A[ i , j ]       ≡⟨ P.cong₂ A[_,_] (P.refl {x = i}) j≡i ⟩
+    A[ i , i ]       ≈⟨ Adj.diag adj i ⟩
+    1#               ≈⟨ sym (proj₁ +-zero _) ⟩
+    1#          + _  ≈⟨ +-cong (sym (Adj.diag I j)) refl ⟩
+    I[ j , j ]  + _  ≡⟨ P.cong₂ _+_ (P.cong₂ I[_,_] j≡i (P.refl {x = j})) P.refl ⟩
+    I[ i , j ]  + _ ∎
 \end{code}
 \AgdaHide{
 \begin{code}
@@ -160,16 +158,14 @@ We expand the definition of \AgdaFunction{estimate} and use the identity propert
 The left-hand side (\AgdaFunction{0\#}) is equal to \AgdaFunction{I[}~\AgdaBound{i}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]} by the definition of the identity matrix and the assumption \(i ≠ j\).
 Further, the right-hand side (\AgdaFunction{A[}~\AgdaBound{i}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}) can be massaged into \(\bigoplus_{k ∈ \{i\}} r_k * A_{k,j}\) using the left-identity property of \AgdaFunction{*} and the adjacency matrix diagonal property, as follows:
 \begin{code}
-  ... | no ¬i≡j =
-    begin
-      r j                             ≡⟨⟩
-      A[ i , j ]                      ≈⟨ sym (proj₁ +-identity _) ⟩
-      0#          + A[ i , j ]        ≡⟨ P.cong₂ _+_ (P.sym I[i,j]≡0) P.refl ⟩
-      I[ i , j ]  + A[ i , j ]        ≈⟨ +-cong refl (sym (*-identityˡ _)) ⟩
-      I[ i , j ]  + 1# * A[ i , j ]   ≈⟨ +-cong refl (*-cong (sym (Adj.diag adj i)) refl) ⟩
-      I[ i , j ]  + r i * A[ i , j ]  ≈⟨ +-cong refl (sym fold) ⟩
-      I[ i , j ]  + (⨁[ k ← ⁅ i ⁆ ] r k * A[ k , j ])
-    ∎
+  ... | no ¬i≡j = begin
+    r j                             ≡⟨⟩
+    A[ i , j ]                      ≈⟨ sym (proj₁ +-identity _) ⟩
+    0#          + A[ i , j ]        ≡⟨ P.cong₂ _+_ (P.sym I[i,j]≡0) P.refl ⟩
+    I[ i , j ]  + A[ i , j ]        ≈⟨ +-cong refl (sym (*-identityˡ _)) ⟩
+    I[ i , j ]  + 1# * A[ i , j ]   ≈⟨ +-cong refl (*-cong (sym (Adj.diag adj i)) refl) ⟩
+    I[ i , j ]  + r i * A[ i , j ]  ≈⟨ +-cong refl (sym fold) ⟩
+    I[ i , j ]  + (⨁[ k ← ⁅ i ⁆ ] r k * A[ k , j ]) ∎
 \end{code}
 \AgdaHide{
 \begin{code}
@@ -206,31 +202,29 @@ Next, we have the induction step case (\AgdaBound{step} = \AgdaInductiveConstruc
 Note, in the definition of \AgdaFunction{fold}, we make use of a small \AgdaFunction{lemma}, with type \AgdaSymbol{∀}~\AgdaBound{k}~\AgdaSymbol{→}~\AgdaBound{k}~\AgdaFunction{∈}~\AgdaBound{vs}~\AgdaSymbol{→}~\AgdaFunction{f}~\AgdaBound{k}~\AgdaFunction{≈}~\AgdaFunction{f′}~\AgdaBound{k}, which shows that \AgdaFunction{f} and \AgdaFunction{f′} agree on all visited graph vertices.
 Below we present the formal proof of the inductive step case, using Agda's equational reasoning mechanism, with explicative comments describing each equational reasoning step to aid the reader:
 \begin{code}
-  pcorrect (suc step) {s≤n} j =
-    begin
-      r′ j
-      {- Definition of `estimate' -}
-        ≡⟨⟩
-      r j + r q * A[ q , j ]
-      {- Induction Hypothesis -}
-        ≈⟨ +-cong (pcorrect step {≤-step′ s≤n} j) refl ⟩
-      (I[ i , j ] + (⨁[ k ← vs ] r k * A[ k , j ])) + r q * A[ q , j ]
-      {- Associativity of _+_ -}
-        ≈⟨ +-assoc _ _ _ ⟩
-      I[ i , j ] + ((⨁[ k ← vs ] r k * A[ k , j ]) + r q * A[ q , j ])
-      {- Absorptivity -}
-        ≈⟨ +-cong refl (+-cong fold (*-cong (sym (+-absorbs-* _ _)) refl)) ⟩
-      I[ i , j ] + ((⨁[ k ← vs ] r′ k * A[ k , j ]) + r′ q * A[ q , j ])
-      {- Singleton Fold -}
-        ≈⟨ +-cong refl (+-cong refl (sym (fold-⁅i⁆ f′ q))) ⟩
-      I[ i , j ] + ((⨁[ k ← vs ] r′ k * A[ k , j ]) + (⨁[ k ← ⁅ q ⁆ ] r′ k * A[ k , j ]))
-      {- Commutativity and Associativity of _+_ -}
-        ≈⟨ +-cong refl (sym (fold-∪ +-idempotent f′ (seen step) ⁅ q ⁆)) ⟩
-      I[ i , j ] + (⨁[ k ← vs ∪ ⁅ q ⁆ ] r′ k * A[ k , j ])
-      {- Definition of `seen` -}
-        ≡⟨⟩
-      I[ i , j ] + (⨁[ k ← seen (suc step) {s≤n} ] r′ k * A[ k , j ])
-    ∎
+  pcorrect (suc step) {s≤n} j = begin
+    r′ j
+    {- Definition of `estimate' -}
+      ≡⟨⟩
+    r j + r q * A[ q , j ]
+    {- Induction Hypothesis -}
+      ≈⟨ +-cong (pcorrect step {≤-step′ s≤n} j) refl ⟩
+    (I[ i , j ] + (⨁[ k ← vs ] r k * A[ k , j ])) + r q * A[ q , j ]
+    {- Associativity of _+_ -}
+      ≈⟨ +-assoc _ _ _ ⟩
+    I[ i , j ] + ((⨁[ k ← vs ] r k * A[ k , j ]) + r q * A[ q , j ])
+    {- Absorptivity -}
+      ≈⟨ +-cong refl (+-cong fold (*-cong (sym (+-absorbs-* _ _)) refl)) ⟩
+    I[ i , j ] + ((⨁[ k ← vs ] r′ k * A[ k , j ]) + r′ q * A[ q , j ])
+    {- Singleton Fold -}
+      ≈⟨ +-cong refl (+-cong refl (sym (fold-⁅i⁆ f′ q))) ⟩
+    I[ i , j ] + ((⨁[ k ← vs ] r′ k * A[ k , j ]) + (⨁[ k ← ⁅ q ⁆ ] r′ k * A[ k , j ]))
+    {- Commutativity and Associativity of _+_ -}
+      ≈⟨ +-cong refl (sym (fold-∪ +-idempotent f′ (seen step) ⁅ q ⁆)) ⟩
+    I[ i , j ] + (⨁[ k ← vs ∪ ⁅ q ⁆ ] r′ k * A[ k , j ])
+    {- Definition of `seen` -}
+      ≡⟨⟩
+    I[ i , j ] + (⨁[ k ← seen (suc step) {s≤n} ] r′ k * A[ k , j ]) ∎
 \end{code}
 
 \AgdaHide{

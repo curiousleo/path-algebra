@@ -75,8 +75,7 @@ We keep track of the set of visited nodes at a given \AgdaBound{step} using the 
 \begin{code}
     seen : (step : ℕ) → {s≤n : step ≤ n} → Subset (suc n)
     seen zero                 = ⁅ i ⁆
-    seen (suc step) {step≤n}  =
-      seen step {≤-step′ step≤n} ∪
+    seen (suc step) {step≤n}  = seen step {≤-step′ step≤n} ∪
       ⁅ Sorted.head (order step {≤-step′ step≤n}) (queue step {step≤n}) ⁆
 \end{code}
 Here, \AgdaFunction{⁅} \AgdaBound{i} \AgdaFunction{⁆} is a singleton set containing only the start node, \AgdaBound{i}.
