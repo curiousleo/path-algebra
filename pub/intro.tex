@@ -1,34 +1,41 @@
 Few algorithms are better known than Dijkstra's Algorithm~\cite{dijkstra:note:1959}, belying the importance of shortest path algorithms to Computer Science.
 Most textbook presentations of Dijkstra's Algorithm (see, for example,~\cite[Chapter 24]{clrs}) are particularly concrete, presenting the algorithm as working over directed graphs with non-negative numeric arc weights.
-Interestingly, the algorithm exists in a more general form where path weights are not numeric but drawn from a large class of \emph{semirings}~\cite{gondran_graphs_2008, mohri:semiring:2002}.
-A semiring $\langle S, \oplus, \otimes, 0, 1 \rangle$ is composed of a commutative monoid $\langle S, \oplus, 0\rangle$ and a monoid $\langle S, \otimes, 1\rangle$ such that two \emph{distributivity} and an \emph{annihilation} axiom hold, connecting the two substructures:
+It is well known the algorithm exists in a more general form where path weights are not numeric but drawn from a large class of \emph{semirings}~\cite{gondran_graphs_2008, mohri:semiring:2002}.
+
+Recent work on modelling the Border Gateway Protocol (BGP), the Internet routing protocol which maintains connectivity between Internet Service Providers, in an algebraic framework has led to the idea of \emph{local} optimal paths (also called equilibrium solutions) where the underlying algebraic structure is non-distributive.
+
+In this setting where graphs are represented as adjacency matrics and instead of path weights we use the carrier of the non-distributive path algebra, Dijkstra's algorithm is generalised to solve the \emph{right-local equilibrium equation},
 \begin{gather*}
-a\otimes (b \oplus c) = (a\otimes b) \oplus (a\otimes c) \qquad
-(b \oplus c) \otimes a = (b\otimes a) \oplus (c\otimes a) \qquad
-0 \otimes a = 0
-\end{gather*}
-\noindent
-Given a path $p = v_0, v_1, \ldots, v_k$---a sequence of nodes---its \emph{weight} is defined as
-\begin{gather*}
-    w_{\mathbf{A}}(p)
-    \equiv
-    \mathbf{A}(v_0,\ v_1)
-    \otimes \mathbf{A}(v_1,\ v_2)
-    \otimes \cdots
-    \otimes \mathbf{A}(v_{k-1},\ v_k),
-\end{gather*}
-with the empty path assigned the weight $1$.
-The generalised shortest-path problem is then to find a matrix $\mathbf{A}^*$ such that
-\begin{gather*}
-\label{eq:global}
-\mathbf{A}^*(i,\ j) = \displaystyle\bigoplus_{p \in \mathcal{P}(i,\ j)} w_{\mathbf{A}}(p)
-\end{gather*}
-where $\mathcal{P}(i,\ j)$ represents the set of all paths from node $i$ to node $j$.
-The matrix $\mathbf{A}^*$ need not always exist, but it is well known that if it does then it is a solution for $\mathbf{L}$ or $\mathbf{R}$ in the following left and right equations
-\begin{gather*}
-\mathbf{L} = (\mathbf{A} \otimes \mathbf{L}) \oplus \mathbf{I} \qquad\qquad
 \mathbf{R} = (\mathbf{R} \otimes \mathbf{A}) \oplus \mathbf{I}
 \end{gather*}
+%A semiring $\langle S, \oplus, \otimes, 0, 1 \rangle$ is composed of a commutative monoid $\langle S, \oplus, 0\rangle$ and a monoid $\langle S, \otimes, 1\rangle$ such that two \emph{distributivity} and an \emph{annihilation} axiom hold, connecting the two substructures:
+%\begin{gather*}
+%a\otimes (b \oplus c) = (a\otimes b) \oplus (a\otimes c) \qquad
+%(b \oplus c) \otimes a = (b\otimes a) \oplus (c\otimes a) \qquad
+%0 \otimes a = 0
+%\end{gather*}
+%\noindent
+%Given a path $p = v_0, v_1, \ldots, v_k$---a sequence of nodes---its \emph{weight} is defined as
+%\begin{gather*}
+%    w_{\mathbf{A}}(p)
+%    \equiv
+%    \mathbf{A}(v_0,\ v_1)
+%    \otimes \mathbf{A}(v_1,\ v_2)
+%    \otimes \cdots
+%    \otimes \mathbf{A}(v_{k-1},\ v_k),
+%\end{gather*}
+%with the empty path assigned the weight $1$.
+%The generalised shortest-path problem is then to find a matrix $\mathbf{A}^*$ such that
+%\begin{gather*}
+%\label{eq:global}
+%\mathbf{A}^*(i,\ j) = \displaystyle\bigoplus_{p \in \mathcal{P}(i,\ j)} w_{\mathbf{A}}(p)
+%\end{gather*}
+%where $\mathcal{P}(i,\ j)$ represents the set of all paths from node $i$ to node $j$.
+%The matrix $\mathbf{A}^*$ need not always exist, but it is well known that if it does then it is a solution for $\mathbf{L}$ or $\mathbf{R}$ in the following left and right equations
+%\begin{gather*}
+%\mathbf{L} = (\mathbf{A} \otimes \mathbf{L}) \oplus \mathbf{I} \qquad\qquad
+%\mathbf{R} = (\mathbf{R} \otimes \mathbf{A}) \oplus \mathbf{I}
+%\end{gather*}
 where $\mathbf{I}$ is the identity matrix and the multiplication and addition operations of the semiring have been lifted to matrix multiplication and addition in the obvious manner.
 
 % A nice feature of working in this algebraic setting is that the semiring parameterising the algorithm can be varied: some semirings cause the algorithm to compute shortest paths through the graph, \emph{a la} traditional presentations of Dijkstra, whereas other cause the algorithm to compute maximum bottleneck capacity, or some other feature of the graph.
@@ -77,11 +84,12 @@ where $\mathbf{I}$ is the identity matrix and the multiplication and addition op
 % \label{fig.algorithm}
 % \end{figure}
 
-\todo{finish me}
+%\todo{finish me}
 
-Following Sobrinho and Griffin, we call solutions for \(\mathbf{L}\) and \(\mathbf{R}\) \emph{left-local} and \emph{right-local} solutions, respectively; they represent two types of \emph{routing in equilibrium}~\cite{sobrinho_routing_2010}. Their key insight was that a generalized variant of Dijkstra's algorithm finds right-local solutions and a generalized variant of Bellman-Ford gives left-local solutions, both forms of \emph{local optima}, when distributivity does not hold.
+%Following Sobrinho and Griffin, we call solutions for \(\mathbf{L}\) and \(\mathbf{R}\) \emph{left-local} and \emph{right-local} solutions, respectively; they represent two types of \emph{routing in equilibrium}~\cite{sobrinho_routing_2010}. Their key insight was that a generalized variant of Dijkstra's algorithm finds right-local solutions and a generalized variant of Bellman-Ford gives left-local solutions, both forms of \emph{local optima}, when distributivity does not hold.
 
 In this paper, we present an implementation of an algorithm in the spirit of Dijkstra's algorithm together with a non-distributive algebraic structure we then use to prove the implementation correct.
+Along the way, we hope to convey to the reader a sense of how we used Agda to `prototype' algebra: starting from partial implementations and postulates, we developed the algorithms and algebraic structures presented in this paper by refinement while always having the type checker at hand to give us confidence in the correctness of the gaps we had already filled in.
 
 Our algorithm is a variant of Dijkstra's algorithm in the sense that it keeps a queue of all the nodes that have not yet been visited, sorted by their estimated distance from the source node such that the head of the queue is always the unvisited node with the minimum distance estimate. However, unlike the usual description of Dijkstra's algorithm, our implementation is not imperative and sacrifices efficiency for readability.
 
