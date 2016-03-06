@@ -2,29 +2,33 @@ Few algorithms are better known than Dijkstra's Algorithm~\cite{dijkstra:note:19
 Most textbook presentations of Dijkstra's Algorithm (see, for example,~\cite[Chapter 24]{clrs}) are particularly concrete, presenting the algorithm as working over directed graphs with non-negative numeric arc weights.
 Interestingly, the algorithm exists in a more general form where path weights are not numeric but drawn from a large class of \emph{semirings}~\cite{gondran_graphs_2008, mohri:semiring:2002}.
 
+
+A semiring $\langle S, \oplus, \otimes, 0, 1 \rangle$ is composed of a commutative monoid $\langle S, \oplus, 0\rangle$ and a monoid $\langle S, \otimes, 1\rangle$ such that two \emph{distributivity} and an \emph{annihilation} axiom hold, connecting the two substructures:
+\begin{gather*}
+a\otimes (b \oplus c) = (a\otimes b) \oplus (a\otimes c) \qquad
+(b \oplus c) \otimes a = (b\otimes a) \oplus (c\otimes a) \qquad
+0 \otimes a = 0
+\end{gather*}
+\noindent
+Given a path $p = v_0, v_1, \ldots, v_k$---a sequence of nodes---its \emph{weight} is defined as
+\begin{gather*}
+    w_{\mathbf{A}}(p)
+    \equiv
+    \mathbf{A}(v_0,\ v_1)
+    \otimes \mathbf{A}(v_1,\ v_2)
+    \otimes \cdots
+    \otimes \mathbf{A}(v_{k-1},\ v_k),
+\end{gather*}
+with the empty path assigned the weight $1$.
+
 Recent work on modelling the Border Gateway Protocol (BGP), the Internet routing protocol which maintains connectivity between Internet Service Providers, in an algebraic framework has led to the idea of \emph{local} optimal paths (also called equilibrium solutions) where the underlying algebraic structure is non-distributive.
 
 In this setting where graphs are represented as adjacency matrics and instead of path weights we use the carrier of the non-distributive path algebra, Dijkstra's algorithm is generalised to solve the \emph{right-local equilibrium equation},
 \begin{gather*}
 \mathbf{R} = (\mathbf{R} \otimes \mathbf{A}) \oplus \mathbf{I}
 \end{gather*}
-%A semiring $\langle S, \oplus, \otimes, 0, 1 \rangle$ is composed of a commutative monoid $\langle S, \oplus, 0\rangle$ and a monoid $\langle S, \otimes, 1\rangle$ such that two \emph{distributivity} and an \emph{annihilation} axiom hold, connecting the two substructures:
-%\begin{gather*}
-%a\otimes (b \oplus c) = (a\otimes b) \oplus (a\otimes c) \qquad
-%(b \oplus c) \otimes a = (b\otimes a) \oplus (c\otimes a) \qquad
-%0 \otimes a = 0
-%\end{gather*}
-%\noindent
-%Given a path $p = v_0, v_1, \ldots, v_k$---a sequence of nodes---its \emph{weight} is defined as
-%\begin{gather*}
-%    w_{\mathbf{A}}(p)
-%    \equiv
-%    \mathbf{A}(v_0,\ v_1)
-%    \otimes \mathbf{A}(v_1,\ v_2)
-%    \otimes \cdots
-%    \otimes \mathbf{A}(v_{k-1},\ v_k),
-%\end{gather*}
-%with the empty path assigned the weight $1$.
+
+
 %The generalised shortest-path problem is then to find a matrix $\mathbf{A}^*$ such that
 %\begin{gather*}
 %\label{eq:global}
