@@ -1,7 +1,7 @@
 Few algorithms are better known than Dijkstra's Algorithm~\cite{dijkstra:note:1959}, belying the importance of shortest path algorithms to Computer Science.
 Most textbook presentations of Dijkstra's Algorithm (see, for example,~\cite[Chapter 24]{clrs}) are particularly concrete, presenting the algorithm as working over directed graphs with non-negative numeric arc weights.
 Interestingly, the algorithm exists in a more general form where path weights are not numeric but drawn from a large class of \emph{semirings}~\cite{gondran_graphs_2008, mohri:semiring:2002}.
-A semiring $\langle S, \oplus, \otimes, 0, 1 \rangle$ is composed from a commutative monoid $\langle S, \oplus, 0\rangle$ and a monoid $\langle S, \otimes, 1\rangle$ such that two \emph{distributivity} and an \emph{annihilation} axiom hold, connecting the two substructures:
+A semiring $\langle S, \oplus, \otimes, 0, 1 \rangle$ is composed of a commutative monoid $\langle S, \oplus, 0\rangle$ and a monoid $\langle S, \otimes, 1\rangle$ such that two \emph{distributivity} and an \emph{annihilation} axiom hold, connecting the two substructures:
 \begin{gather*}
 a\otimes (b \oplus c) = (a\otimes b) \oplus (a\otimes c) \qquad
 (b \oplus c) \otimes a = (b\otimes a) \oplus (c\otimes a) \qquad
