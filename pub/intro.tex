@@ -24,20 +24,27 @@ Given a path $p = v_0, v_1, \ldots, v_k$---a sequence of nodes---this is defined
     \otimes \mathbf{A}(v_{k-1},\ v_k),
 \end{gather*}
 with the empty path assigned the weight $1$.
-The matrix $\mathbf{A}^*$ need not always exist, but it is well known that if it does then it is a solution for $\mathbf{L}$ or $\mathbf{R}$ in the following left and right equations
+The matrix $\mathbf{A}^*$ need not always exist, but it is well known that if it does then it is a solution for $\mathbf{R}$ in the following right equation
 \begin{gather*}
-\mathbf{L} = (\mathbf{A} \otimes \mathbf{L}) \oplus \mathbf{I} \qquad\qquad
 \mathbf{R} = (\mathbf{R} \otimes \mathbf{A}) \oplus \mathbf{I}
 \end{gather*}
 where $\mathbf{I}$ is the identity matrix, and the multiplication and addition operations of the semiring have been lifted to matrix multiplication and addition in the `obvious' manner, with solutions to these equations encoding the path weights of shortest paths between nodes of the graph.
+Single source shortest path algorithms, such as Dijkstra's Algorithm, may then be seen as computing one row of a solution to the above fixpoint equation.
 
-Algebraically, Dijkstra's Algorithm relies crucially on the distributivity axioms of the underlying semiring, mentioned above, to compute \emph{globally optimal} paths.
-However, recent work on algebraically modelling the Border Gateway Protocol (BGP), the Internet routing protocol which maintains connectivity between Internet Service Providers, has led to the idea of \emph{local} optimal paths (also called equilibrium solutions) where the underlying algebraic structure is non-distributive~\cite{sobrinho_routing_2010}.
-In this relaxed setting non-distributive path algebras are used in favour of semirings, and Dijkstra's Algorithm
+A nice feature of working in this algebraic setting is that the semiring parameterising the algorithm can be varied: some semirings cause the algorithm to compute shortest paths through the graph, \emph{a la} traditional presentations of Dijkstra, whereas other cause the algorithm to compute maximum bottleneck capacity, or some other feature of the graph.
+The key idea here is that a generic, parametric implementation of a shortest path algorithm can be developed and then instantiated with different semirings, and thereafter uniformly used to calculate different properties of graphs.
+The interested reader can find a thorough treatment of this material in~\cite{gondran_graphs_2008}.
 
-\begin{gather*}
-\mathbf{R} = (\mathbf{R} \otimes \mathbf{A}) \oplus \mathbf{I}
-\end{gather*}
+Further, we may ask what happens when we vary the underlying algebraic structure, for example by weakening the axioms of a semiring.
+In particular, it can be seen that Dijkstra's Algorithm relies crucially on the distributivity axioms of the underlying semiring to compute \emph{globally optimal} paths.
+However, recent work on mathematically modelling the Border Gateway Protocol (BGP), the Internet routing protocol which maintains connectivity between Internet Service Providers, has led to the idea of \emph{local} optimal paths (also called equilibrium solutions). where the underlying algebraic structure, in contrast to semirings, is non-distributive~\cite{sobrinho_routing_2010}.
+In this relaxed, non-distributive setting, Dijkstra's Algorithm once more computes solutions to the right fixed-point equation above, but these solutions are now locally optimal, rather than global.
+
+In this paper, we present an implementation of a generalised, non-distributive variant of Dijkstra's Algorithm.
+In order to 
+Our algorithm is a variant of Dijkstra's algorithm in the sense that it keeps a queue of all the nodes that have not yet been visited, sorted by their estimated distance from the source node such that the head of the queue is always the unvisited node with the minimum distance estimate. However, unlike the usual description of Dijkstra's algorithm, our implementation is not imperative and sacrifices efficiency for readability.
+
+The correctness proof shows that the algorithm we have implemented does indeed compute the right-local solution given any adjacency matrix representing a graph over the algebra we describe.
 
 %The generalised shortest-path problem is then to find a matrix $\mathbf{A}^*$ such that
 %\begin{gather*}
@@ -100,13 +107,6 @@ In this relaxed setting non-distributive path algebras are used in favour of sem
 %\todo{finish me}
 
 %Following Sobrinho and Griffin, we call solutions for \(\mathbf{L}\) and \(\mathbf{R}\) \emph{left-local} and \emph{right-local} solutions, respectively; they represent two types of \emph{routing in equilibrium}~\cite{sobrinho_routing_2010}. Their key insight was that a generalized variant of Dijkstra's algorithm finds right-local solutions and a generalized variant of Bellman-Ford gives left-local solutions, both forms of \emph{local optima}, when distributivity does not hold.
-
-In this paper, we present an implementation of an algorithm in the spirit of Dijkstra's algorithm together with a non-distributive algebraic structure we then use to prove the implementation correct.
-Along the way, we hope to convey to the reader a sense of how we used Agda to `prototype' algebra: starting from partial implementations and postulates, we developed the algorithms and algebraic structures presented in this paper by refinement while always having the type checker at hand to give us confidence in the correctness of the gaps we had already filled in.
-
-Our algorithm is a variant of Dijkstra's algorithm in the sense that it keeps a queue of all the nodes that have not yet been visited, sorted by their estimated distance from the source node such that the head of the queue is always the unvisited node with the minimum distance estimate. However, unlike the usual description of Dijkstra's algorithm, our implementation is not imperative and sacrifices efficiency for readability.
-
-The correctness proof shows that the algorithm we have implemented does indeed compute the right-local solution given any adjacency matrix representing a graph over the algebra we describe.
 
 \paragraph{Agda}
 
