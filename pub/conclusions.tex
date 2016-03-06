@@ -12,7 +12,7 @@ We believe that we are the first to present a verified implementation of a short
 %\todo{talk about equilibrium routing, etc. and relationship to this work}
 
 The idea that Dijkstra's algorithm can be generalised to an algorithm that solves a matrix fixpoint equation was first explored by Sobrinho~\cite{sobrinho_algebra_2001}, with Mohri later presenting a general semiring framework for shortest path algorithms~\cite{mohri:semiring:2002} where the underlying semiring and queing discipline used by the algorithm are abstracted over, with Dijkstra being a special case.
-Griffin and Sobrinho explored the solutions found by the generalised algorithm whenever distributivity is not assumed~\cite{sobrinho_routing_2010}.
+Griffin and Sobrinho, motivated by internet routing problems, explored the solutions found by the generalised algorithm whenever distributivity is not assumed~\cite{sobrinho_routing_2010}.
 Our work builds on these latter ideas, but goes beyond it in several ways: we specify the properties of the algebraic structure assumed, give a concrete implementation of the algorithm, and mechanically verify its correctness.
 
 All implementation files, and supporting documentation, are available anonymously from a public \texttt{git} repository\footnote{\url{https://bitbucket.org/curiousleo/path-algebra}}, consisting of approximately 2,400 lines of Agda, developed with Agda~2.4.2.1 and~2.4.2.2 and Standard Library~0.9.
