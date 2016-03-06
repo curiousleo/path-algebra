@@ -22,10 +22,11 @@ module example where
   open DecTotalOrder Nat.decTotalOrder using () renaming (refl to ≤-refl)
 \end{code}}
 
-We provide a short demonstration of our shortest path algorithm in action by executing it within Agda, showing that executing our algorithm on an adjacency matrix produces the expected matrix encoding shortest paths.
+We demonstrate our algorithm in action by executing it within Agda, showing that a computed Right Local Solution matches a precomputed matrix of weights of shortest paths.
 All matrix coefficients are taken from the shortest path algebra---the algebra over \AgdaDatatype{ℕ∞} with \AgdaFunction{\_⊓\_} as addition and \AgdaFunction{\_+\_} as multiplication---described in Section~\ref{subsect.models}.
 We will suggestively refer to the carrier of this algebra as \AgdaFunction{Weight}.
 The two matrices are:
+\vspace{-0.3em}
 \begin{gather*}
 \text{Adjacency} =
 \begin{pmatrix}
@@ -41,6 +42,7 @@ The two matrices are:
 1 & 2 & 0
 \end{pmatrix}
 \end{gather*}
+\vspace{-0.3em}
 The fact that the right-hand matrix is correct can easily be established by hand.
 We implement both matrices using our matrix library, calling the first matrix \AgdaFunction{adj} and the second \AgdaFunction{rls-expected}.
 For convenience we define the following function \AgdaFunction{rls} that computes the entire Right Local Solution for a given adjacency matrix:
@@ -77,7 +79,7 @@ For convenience we define the following function \AgdaFunction{rls} that compute
   rls adj = M.tabulate (λ i → let open Algo alg i adj in estimate _ {≤-refl})
 \end{code}
 
-The Right Local Solution computed by our algorithm and the expected result are pointwise propositionally equal, with the execution time (within Agda) being on the order of seconds:
+The computed Right Local Solution and the expected result are pointwise equal, with the execution time (within Agda) being on the order of seconds:
 
 \begin{code}
   rls-correct : Pointwise _≡_ (rls adj) rls-expected

@@ -24,7 +24,7 @@ Given a path $p = v_0, v_1, \ldots, v_k$---a sequence of nodes---this is defined
     \otimes \mathbf{A}(v_{k-1},\ v_k),
 \end{gather*}
 with the empty path assigned the weight $1$.
-The matrix $\mathbf{A}^*$ need not always exist, but it is well known that if it does then it is a solution for $\mathbf{R}$ in the following right equation\footnote{And also a solution for an analogous left equation.}
+The matrix $\mathbf{A}^*$ need not always exist, but if it does then it is a solution for $\mathbf{R}$ in the following right equation\footnote{And also a solution for an analogous left equation.}
 \begin{gather*}
 \mathbf{R} = (\mathbf{R} \otimes \mathbf{A}) \oplus \mathbf{I}
 \end{gather*}
@@ -42,7 +42,7 @@ In this relaxed setting, Dijkstra's Algorithm also computes solutions to the rig
 
 In this paper, we present a purely-functional implementation of a generalised, non-distributive variant of Dijkstra's Algorithm, along with a mechanised proof of correctness.
 Our algorithm is a variant of Dijkstra's Algorithm in the sense that it maintains the queue discipline characteristic of that algorithm: the next node to be visited is always the unvisited node with the minimum distance estimate.
-Further, our algorithm is parameterised by a non-distributive algebraic structure---a `Sobrinho Algebra' after Jo\~ao Lu\'is Sobrinho---which distills the algebraic properties assumed in previous work on this topic into a concrete structure.
+Further, our algorithm is parameterised by a non-distributive algebraic structure---a `Sobrinho Algebra' after Jo\~ao Lu\'is Sobrinho---which distills the assumed algebraic properties left implicit in previous work on this topic into a concrete structure.
 We prove that our algorithm does indeed compute the Right Local solution to the fixpoint equation mentioned above, given a graph's adjacency matrix over a Sobrinho Algebra.
 We believe that this is the first axiom-free correctness proof of a shortest path algorithm using the `algebraic approach', rather than follow more traditional proof strategies.
 We use Agda for our implementation and proof of correctness, and we make extensive use of Agda's dependent types, and some more cutting edge features of the language---such as induction-recursion---to structure and complete the proof.
