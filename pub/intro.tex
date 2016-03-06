@@ -42,8 +42,9 @@ In this relaxed setting, Dijkstra's Algorithm also computes solutions to the rig
 
 In this paper, we present a purely-functional implementation of a generalised, non-distributive variant of Dijkstra's Algorithm, along with a mechanised proof of correctness.
 Our algorithm is a variant of Dijkstra's Algorithm in the sense that it maintains the queue discipline characteristic of that algorithm: the next node to be visited is always the unvisited node with the minimum distance estimate.
-Further, our algorithm is parameterised by a non-distributive algebraic structure, which we call a `Sobrinho Algebra', which distills the precise properties assumed in previous work on this topic.
-The correctness proof shows that our algorithm does indeed compute the Right Local solution to the fixpoint equation mentioned above, given a graph's adjacency matrix over a Sobrinho Algebra.
+Further, our algorithm is parameterised by a non-distributive algebraic structure, which we call a `Sobrinho Algebra', which distills the algebraic properties assumed in previous work on this topic into a concrete algebraic structure.
+The correctness proof shows that our algorithm does indeed compute the Right Local solution to the fixpoint equation mentioned above, given a graph's adjacency matrix over a Sobrinho Algebra, and we believe that this is the first axiom-free correctness proof of a shortest path algorithm using the `algebraic approach', rather than follow more traditional proof strategies.
+Our implementation, and proof of correctness, are carried out in Agda, and we make extensive use of Agda's dependent types, and some more cutting edge features of the language---such as induction-recursion---to structure and complete the proof.
 
 %The generalised shortest-path problem is then to find a matrix $\mathbf{A}^*$ such that
 %\begin{gather*}
