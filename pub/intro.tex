@@ -1,13 +1,14 @@
-Shortest path algorithms are of central importance in Computer Science, and Dijkstra's Algorithm~\cite{dijkstra:note:1959}, being widely taught to undergraduates, is perhaps \emph{the} most famous algorithm in this class.
+Few algorithms are better known than Dijkstra's Algorithm~\cite{dijkstra:note:1959}, belying the importance of shortest path algorithms to Computer Science.
 Most textbook presentations of Dijkstra's Algorithm (see, for example,~\cite[Chapter 24]{clrs}) are particularly concrete, presenting the algorithm as working over directed graphs with non-negative numeric arc weights.
-Remarkably, however, the algorithm exists in a more general form where path weights are not numeric but drawn from a large class of \emph{semirings}~\cite{gondran_graphs_2008}.
-A semiring $\langle S, \oplus, \otimes, 0, 1 \rangle$ is a structure comprised of a commutative monoid $\langle S, \oplus, 0\rangle$ and a monoid $\langle S, \otimes, 1\rangle$ such that two \emph{distributivity axioms} hold:
+Remarkably, however, the algorithm exists in a more general form where path weights are not numeric but drawn from a large class of \emph{semirings}~\cite{gondran_graphs_2008, mohri:semiring:2002}.
+A semiring $\langle S, \oplus, \otimes, 0, 1 \rangle$ is a structure comprised of a commutative monoid $\langle S, \oplus, 0\rangle$ and a monoid $\langle S, \otimes, 1\rangle$ such that two \emph{distributivity} and an \emph{annihilation} axiom hold and connect the two substructures:
 \begin{gather*}
 a\otimes (b \oplus c) = (a\otimes b) \oplus (a\otimes c) \qquad
-(b \oplus c) \otimes a = (b\otimes a) \oplus (c\otimes a)
+(b \oplus c) \otimes a = (b\otimes a) \oplus (c\otimes a) \qquad
+0 \otimes a = 0
 \end{gather*}
 
-In this generalised, algebraic setting a directed graph having $n$ nodes and arc weights in $S$ can be represented as a $n\times n$-matrix $\mathbf{A}$ over $S$, the graph's adjacency matrix where \(\mathbf{A}_{i,j}\) is the weight of the arc from node \(i\) to node \(j\).
+In this generalised, algebraic setting a directed graph having $n$ nodes and arc weights in $S$ can be represented as a $n\times n$-matrix $\mathbf{A}$ over $S$, the graph's adjacency matrix, where \(\mathbf{A}_{i,j}\) is the weight of the arc from node \(i\) to node \(j\).
 Given a path $p = v_0, v_1, \ldots, v_k$---a sequence of nodes---its \emph{weight} is defined as
 \begin{gather*}
     w_{\mathbf{A}}(p)
