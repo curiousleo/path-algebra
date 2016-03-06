@@ -31,21 +31,19 @@ The matrix $\mathbf{A}^*$ need not always exist, but it is well known that if it
 where $\mathbf{I}$ is the identity matrix, and the multiplication and addition operations of the semiring have been lifted to matrix multiplication and addition in the `obvious' manner, with solutions to these equations encoding the path weights of shortest paths between nodes of the graph.
 Dijkstra's Algorithm, as a single source shortest path algorithm, may then be seen as computing one row of a solution to the above fixpoint equation.
 
-A nice feature of working in this algebraic setting is that the semiring parameterising the algorithm can be varied: instantiating the algorithm with some semirings cause the algorithm to compute shortest paths through the graph, \emph{a la} traditional presentations of Dijkstra, whereas others cause the algorithm to compute maximum bottleneck capacity, or some other feature of the graph.
+A nice feature of working in this algebraic setting is that the semiring parameterising the algorithm can be varied: instantiating the algorithm with some semirings causes the algorithm to compute shortest paths through the graph, \emph{a la} traditional presentations of Dijkstra, whereas others cause the algorithm to compute maximum bottleneck capacity, and so on.
 The key idea here is that a generic, parametric implementation of a shortest path algorithm can be developed and then instantiated with different semirings, and thereafter uniformly used to calculate different properties of graphs.
-The interested reader can find a thorough treatment of this material in~\cite{gondran_graphs_2008, mohri:semiring:2002}.
+The interested reader can find a more thorough introduction to this material in~\cite{gondran_graphs_2008, mohri:semiring:2002}.
 
 Further, in this abstract, algebraic setting, we may also ask what happens when we vary the underlying algebraic structure, for example by weakening the axioms of a semiring.
-In particular, it can be seen that Dijkstra's Algorithm relies crucially on the distributivity axioms of semirings to compute \emph{globally optimal} paths.
-However, recent work on mathematically modelling the Border Gateway Protocol (BGP), the Internet routing protocol which maintains connectivity between Internet Service Providers, has led to the idea of \emph{local} optimal paths (also called equilibrium solutions), where the underlying algebraic structure lacks the distributivity property~\cite{sobrinho_routing_2010}.
+In particular, it can be seen that Dijkstra's Algorithm relies crucially on distributivity to compute \emph{globally optimal} paths.
+However, recent work on mathematically modelling the Border Gateway Protocol (BGP), the Internet routing protocol which maintains connectivity between Internet Service Providers, has led to the idea of \emph{local} optimal paths (also called \emph{equilibrium solutions}), where the underlying algebraic structure lacks the distributivity property~\cite{sobrinho_routing_2010}.
 In this relaxed setting, Dijkstra's Algorithm also computes solutions to the right fixpoint equation above, but these solutions now encode the path weights of locally optimal paths, rather than global.
 
-In this paper, we present a purely-functional implementation of a generalised, non-distributive variant of Dijkstra's Algorithm.
-Our algorithm is a variant of Dijkstra's Algorithm in the sense that it maintains the queue discipline characteristic of Dijkstra's Algorithm, where the next node to be visited is always the unvisited node with the minimum distance estimate.
-Further, our algorithm is parameterised by a non-distributive semiring-like algebraic structure, which we coin a `Sobinho Algebra'.
-
-
-The correctness proof shows that the algorithm we have implemented does indeed compute the right-local solution given any adjacency matrix representing a graph over the algebra we describe.
+In this paper, we present a purely-functional implementation of a generalised, non-distributive variant of Dijkstra's Algorithm, along with a mechanised proof of correctness.
+Our algorithm is a variant of Dijkstra's Algorithm in the sense that it maintains the queue discipline characteristic of that algorithm: the next node to be visited is always the unvisited node with the minimum distance estimate.
+Further, our algorithm is parameterised by a non-distributive algebraic structure, which we call a `Sobrinho Algebra', which distills the precise properties assumed in previous work on this topic.
+The correctness proof shows that our algorithm does indeed compute the Right Local solution to the fixpoint equation mentioned above, given a graph's adjacency matrix over a Sobrinho Algebra.
 
 %The generalised shortest-path problem is then to find a matrix $\mathbf{A}^*$ such that
 %\begin{gather*}
