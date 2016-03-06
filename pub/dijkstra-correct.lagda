@@ -283,5 +283,4 @@ Above, we have omitted the definition of \AgdaFunction{lemma}, which proves that
 \AgdaFunction{⨁[}~\AgdaBound{k}~\AgdaFunction{←}~\AgdaFunction{⊤}~\AgdaFunction{]}~\AgdaFunction{r}~\AgdaBound{k}~\AgdaField{*}~\AgdaFunction{A[}~\AgdaBound{k}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}%
 \) %
 using the fact that after \AgdaBound{n} steps, all nodes have been visited, that is, \AgdaFunction{seen}~\AgdaBound{n}~\AgdaInductiveConstructor{≡}~\AgdaFunction{⊤}.
-
 With this, we have Property~\ref{eqn.correctness.correct}, and have the correctness proof of the algorithm.
