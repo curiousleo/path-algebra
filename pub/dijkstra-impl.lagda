@@ -71,7 +71,7 @@ This is merely a trivial change and the two are equivalent.
 Note also that since the addition operation, \AgdaFunction{\_+\_}, of a Sobrinho Algebra is selective, the inductive case of \AgdaFunction{estimate} encodes a \emph{choice} between \AgdaFunction{r}~\AgdaBound{j} and \AgdaFunction{r}~\AgdaFunction{q}~\AgdaFunction{*}~\AgdaFunction{A[}~\AgdaFunction{q}~\AgdaFunction{,}~\AgdaBound{j}~\AgdaFunction{]}.
 The former is simply the previous distance estimate to $j$, whilst the latter represents the option of going from the start node to \AgdaFunction{q} via the best known path from the previous step, and then directly from \AgdaFunction{q} to $j$ (where \AgdaFunction{q} is the head of the priority queue of nodes that have not yet been visited).
 
-We keep track of the set of visited nodes at a given \AgdaBound{step} using the function \AgdaFunction{seen}, which is defined as follows:
+The set of visited nodes at a given \AgdaBound{step} is computed by the function \AgdaFunction{seen}:
 \begin{code}
     seen : (step : ℕ) → {s≤n : step ≤ n} → Subset (suc n)
     seen zero                 = ⁅ i ⁆
