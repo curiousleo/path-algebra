@@ -107,8 +107,7 @@ implements the central argument of our correctness proof, as previously describe
 We step through its proof, which proceeds by induction on \AgdaBound{step}, the number of steps of the algorithm so far completed.
 
 \paragraph{Base case.}
-In the base case (\AgdaBound{step}~\AgdaSymbol{=}~\AgdaInductiveConstructor{zero}), we perform a case split on whether the node \AgdaBound{j} is equal to the start node, \AgdaBound{i}.
-For the base case we use the following shorthands to conserve space:
+In the base case (\AgdaBound{step}~\AgdaSymbol{=}~\AgdaInductiveConstructor{zero}), we case split on whether the node \AgdaBound{j} is equal to the start node, \AgdaBound{i}, using the following shorthands to conserve space:
 
 \begin{itemize}
 \item
