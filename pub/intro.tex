@@ -1,6 +1,6 @@
 Few algorithms are better known than Dijkstra's Algorithm~\cite{dijkstra:note:1959} amongst working Computer Scientists, underlining the importance of shortest path algorithms to the field.
-Most textbook presentations of Dijkstra's Algorithm (see, for example,~\cite[Chapter 24]{clrs}) are particularly concrete, presenting the algorithm as working over directed graphs with non-negative numeric arc weights.
-Interestingly, but potentially less well known, the algorithm exists in a more general form where path weights are not numeric but drawn from a large class of \emph{semirings}~\cite{mohri:semiring:2002}.
+Most textbook presentations of Dijkstra's Algorithm (see, for example,~\cite[Chapter 24]{clrs}) are particularly concrete, presenting the algorithm as operating on directed graphs with non-negative numeric arc weights---typically positive reals or naturals.
+Interestingly, though potentially less well known, the algorithm exists in a more general form where path weights are not numeric but drawn from a large class of \emph{semirings}~\cite{mohri:semiring:2002}.
 
 Recall that a semiring $\langle S, \oplus, \otimes, 0, 1 \rangle$ is composed of a commutative monoid $\langle S, \oplus, 0\rangle$ and a monoid $\langle S, \otimes, 1\rangle$ such that two \emph{distributivity} and an \emph{annihilation} axiom hold, connecting the two substructures:
 \begin{gather*}
@@ -24,15 +24,16 @@ Given a path $p = v_0, v_1, \ldots, v_k$---a sequence of nodes---this is defined
     \otimes \mathbf{A}(v_{k-1},\ v_k),
 \end{gather*}
 with the empty path assigned the weight $1$.
-The matrix $\mathbf{A}^*$ need not always exist, but if it does then it is a solution for $\mathbf{R}$ in the following right equation\footnote{And also a solution for an analogous left equation.}
+This matrix, $\mathbf{A}^*$, need not always exist but if it does then it is a solution for $\mathbf{R}$ in the following right equation\footnote{And also a solution for an analogous left equation.}
 \begin{gather*}
 \mathbf{R} = (\mathbf{R} \otimes \mathbf{A}) \oplus \mathbf{I}
 \end{gather*}
 where $\mathbf{I}$ is the identity matrix, and the multiplication and addition operations of the semiring have been lifted to matrix multiplication and addition in the `obvious' manner.
 Solutions to this equation encode the path weights of shortest paths between nodes of the graph.
-Dijkstra's Algorithm, a single-source shortest path algorithm, may then be seen as computing one row of a solution to this equation.
+Dijkstra's Algorithm, a single-source shortest path algorithm, may then be seen as computing one row of a solution to this equation---the $i^\mathrm{th}$ row for source node $i$.
 
-A nice feature of working in this algebraic setting is that the semiring parameterising the algorithm can be varied: instantiating the algorithm with some semirings causes the algorithm to compute shortest paths through the graph, \emph{a la} traditional presentations of Dijkstra, whereas others cause the algorithm to compute maximum bottleneck capacity, and so on.
+A compelling advantage of working in this algebraic setting is that the semiring parameterising the algorithm can be varied.
+Instantiating the algorithm with particular semirings causes the algorithm to compute shortest paths through the graph, \emph{a la} traditional presentations of Dijkstra, whereas others cause the algorithm to compute maximum bottleneck capacity, and so on.
 The key idea here is that a generic, parametric implementation of a shortest path algorithm can be developed and then instantiated with different semirings, and thereafter uniformly used to calculate different properties of graphs.
 The interested reader can find a more thorough introduction to this material in~\cite{gondran_graphs_2008}.
 
@@ -42,9 +43,9 @@ However, recent work on mathematically modelling the Border Gateway Protocol (BG
 In this relaxed setting, Dijkstra's Algorithm also computes solutions to the right fixpoint equation above, but these solutions now encode the path weights of locally optimal paths, rather than the globally optimal paths its semiring-oriented cousin computes.
 
 In this paper, we present a purely-functional implementation of a generalised, non-distributive variant of Dijkstra's Algorithm, along with a mechanised proof of its correctness.
-Our algorithm is a variant of Dijkstra's Algorithm in the sense that it maintains the queue discipline characteristic of that algorithm: the next node to be visited is always the unvisited node with the minimum distance estimate.
+Our algorithm is a variant of Dijkstra's Algorithm in the sense that it maintains the queue discipline characteristic of that algorithm: the next node to be visited is always the unvisited node with the minimum distance estimate from the source node.
 Further, our algorithm is parameterised by a non-distributive algebraic structure---a `Sobrinho Algebra', after Jo\~ao Lu\'is Sobrinho---which distills the algebraic properties assumed, but left implicit, in previous work on this topic into a concrete structure whose properties can be explored.
-Our correctness proof demonstrates that our algorithm does indeed compute the Right Local Solution to the fixpoint equation mentioned above, given a graph's adjacency matrix over a Sobrinho Algebra.
+Our correctness proof establishes that our algorithm does indeed compute the Right Local Solution to the fixpoint equation mentioned above, given a graph's adjacency matrix over a Sobrinho Algebra.
 In particular, we believe that this is the first mechanised, axiom-free correctness proof of a shortest path algorithm using the `algebraic approach', rather than following more traditional proof strategies.
 We use Agda for our implementation and proof of correctness, and we make extensive use of Agda's dependent types, and some more cutting edge features of the language---such as induction-recursion---to structure and complete the proof.
 
