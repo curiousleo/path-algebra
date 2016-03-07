@@ -33,18 +33,18 @@ Solutions to this equation encode the path weights of shortest paths between nod
 Dijkstra's Algorithm, a single-source shortest path algorithm, may then be seen as computing one row of a solution to this equation---the $i^\mathrm{th}$ row for source node $i$.
 
 A compelling advantage of working in this algebraic setting is that the semiring parameterising the algorithm can be varied.
-Instantiating the algorithm with particular semirings causes the algorithm to compute shortest paths through the graph, \emph{à la} traditional presentations of Dijkstra, whereas others cause the algorithm to compute maximum bottleneck capacity, and so on.
+Instantiating the algorithm with particular semirings causes the algorithm to compute shortest paths through the graph, \emph{à la} classical presentations of Dijkstra, whereas others cause the algorithm to compute maximum bottleneck capacity, and so on.
 The key idea here is that a generic, parametric implementation of a shortest path algorithm can be developed and then instantiated with different semirings, and thereafter uniformly used to calculate different properties of graphs.
-The interested reader can find a more thorough introduction to this material in~\cite{gondran_graphs_2008}.
+Space is limited here, therefore the interested reader can find a more thorough introduction to this material in~\cite{gondran_graphs_2008}.
 
-Further, in this abstract, algebraic setting, we may also ask what happens when we vary the underlying algebraic structure, for example by weakening the axioms of a semiring.
+Further, in this abstract, algebraic setting, we may also ask what happens when we vary the structure parameterising our algorithm, for example by weakening or otherwise varying the axioms of a semiring.
 In particular, it can be seen that Dijkstra's Algorithm relies crucially on distributivity to compute \emph{globally optimal} paths.
 However, recent work on mathematically modelling the Border Gateway Protocol (BGP), the Internet routing protocol which maintains connectivity between Internet Service Providers, has led to the idea of \emph{locally} optimal paths (also called \emph{equilibrium solutions}), where the underlying algebraic structure lacks the distributivity property~\cite{sobrinho_routing_2010}.
 In this relaxed setting, Dijkstra's Algorithm also computes solutions to the right fixpoint equation above, but these solutions now encode the path weights of locally optimal paths, rather than the globally optimal paths its semiring-oriented cousin computes.
 
-In this paper, we present a purely-functional implementation of a generalised, non-distributive variant of Dijkstra's Algorithm, along with a mechanised proof of its correctness.
+In this paper, we present a purely-functional implementation of a generalised, non-distributive variant of Dijkstra's Algorithm, along with a mechanised proof of its correctness (see Section~\ref{sect.dijkstras.algorithm.and.its.correctness}).
 Our algorithm is a variant of Dijkstra's Algorithm in the sense that it maintains the queue discipline characteristic of that algorithm: the next node to be visited is always the unvisited node with the minimum distance estimate from the source node.
-Further, our algorithm is parameterised by a non-distributive algebraic structure---a `Sobrinho Algebra', after Jo\~ao Lu\'is Sobrinho---which distills the algebraic properties assumed, but left implicit, in previous work on this topic into a concrete structure whose properties can be explored.
+Further, our algorithm is parameterised by a non-distributive algebraic structure---a `Sobrinho Algebra', after Jo\~ao Lu\'is Sobrinho---which distills the algebraic properties assumed, but left implicit, in previous work on this topic into a concrete structure whose properties can be explored (see Section~\ref{sect.path.algebras.their.properties.and.models}).
 Our correctness proof establishes that our algorithm does indeed compute the Right Local Solution to the fixpoint equation mentioned above, given a graph's adjacency matrix over a Sobrinho Algebra.
 In particular, we believe that this is the first mechanised, axiom-free correctness proof of a shortest path algorithm using the `algebraic approach', rather than following more traditional proof strategies.
 We use Agda for our implementation and proof of correctness, and we make extensive use of Agda's dependent types, and some more cutting edge features of the language---such as induction-recursion---to structure and complete the proof.
@@ -114,7 +114,7 @@ We use Agda for our implementation and proof of correctness, and we make extensi
 \paragraph{Implementation}
 
 Agda~\cite{norell_dependently_2009} is a dependently-typed programming language \emph{cum} proof assistant for higher-order intuitionistic logic.
-In contrast to similar systems~\cite{bertot_short_2008,asperti_matita_2011} proof terms are constructed by hand via a type-direct refinement process.
+In contrast to similar systems~\cite{bertot_short_2008,asperti_matita_2011} proof terms are hand constructed via a type-directed refinement process, rather than constructed via tactic-oriented metaprogramming.
 
 Agda has a uniform syntax, though one syntactic novelty is a flexible system of user-declared Unicode mixfix identifiers~\cite{danielsson_parsing_2011} with `holes' in an identifier being denoted by underscores.
 We write \AgdaSymbol{(}\AgdaBound{x}~\AgdaSymbol{:}~\AgdaBound{A}\AgdaSymbol{)}~\AgdaSymbol{→}~\AgdaBound{B} for the dependent function space where \AgdaBound{x} may occur in \AgdaBound{B}, write \AgdaBound{A}~\AgdaSymbol{→}~\AgdaBound{B} when \AgdaBound{x} does not occur in \AgdaBound{B}, and write \AgdaSymbol{\{}\AgdaBound{x}~\AgdaSymbol{:}~\AgdaBound{A}\AgdaSymbol{\}}~\AgdaSymbol{→}~\AgdaBound{B} (sometimes making use of the shorthands \AgdaSymbol{∀}~\AgdaBound{x}~\AgdaSymbol{→}~\AgdaBound{B} and \AgdaSymbol{∀}~\AgdaSymbol{\{}\AgdaBound{x}\AgdaSymbol{\}}~\AgdaSymbol{→}~\AgdaBound{B}), when types can be inferred.
